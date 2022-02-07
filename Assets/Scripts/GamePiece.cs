@@ -11,6 +11,21 @@ public class GamePiece : MonoBehaviour
 
     Board m_board;
 
+    public MatchValue matchValue;
+    public enum MatchValue
+    {
+        Yellow,
+        Blue,
+        Magenta,
+        Indigo,
+        Green,
+        Teal,
+        Red,
+        Cyan,
+        Wild
+    }
+
+
     public void Update()
     {   
         /*
