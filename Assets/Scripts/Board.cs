@@ -21,6 +21,8 @@ public class Board : MonoBehaviour
     Tile m_clickedTile;
     Tile m_targetTile;
 
+    bool m_playerInputEnabled = true;
+
     private void Start()
     {
         m_AllTiles = new Tile[width, height];
@@ -28,7 +30,7 @@ public class Board : MonoBehaviour
 
         SetupTiles();
         SetupCamera();
-        FillBoard();
+        FillBoard(10,0.5f);
     }
 
     void SetupTiles()
@@ -96,7 +98,7 @@ public class Board : MonoBehaviour
         return (x >= 0 && x < width && y >= 0 && y < height);
     }
 
-    void FillBoard()
+    void FillBoard(int falseYOffset = 0, float moveTime = 0.1f)
     {
         int maxIterations = 100; // to ensure while loop not going infinity
         int iterations = 0;
@@ -105,26 +107,29 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                GamePiece piece= FillRandomAt(i, j);
-                iterations = 0;
-
-                while (HasMatchOnFill(i,j))
+                if (m_allGamePieces[i, j] == null)
                 {
-                    ClearPieceAt(i, j);
-                    piece = FillRandomAt(i, j);
-                    iterations++;
+                    GamePiece piece = FillRandomAt(i, j,falseYOffset,moveTime);
+                    iterations = 0;
 
-                    if (iterations>=maxIterations)
+                    while (HasMatchOnFill(i, j))
                     {
-                        Debug.Log("break ===============");
-                        break;
+                        ClearPieceAt(i, j);
+                        piece = FillRandomAt(i, j,falseYOffset,moveTime);
+                        iterations++;
+
+                        if (iterations >= maxIterations)
+                        {
+                            Debug.Log("break ===============");
+                            break;
+                        }
                     }
                 }
             }
         }
     }
 
-    GamePiece FillRandomAt(int x, int y)
+    GamePiece FillRandomAt(int x, int y, int falseYOffset=0, float moveTime=0.1f)
     {
         GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
 
@@ -132,13 +137,18 @@ public class Board : MonoBehaviour
         {
             randomPiece.GetComponent<GamePiece>().Init(this);
             PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), x, y);
+
+            if (falseYOffset!=0)
+            {
+                randomPiece.transform.position = new Vector3(x, y + falseYOffset, 0);
+                randomPiece.GetComponent<GamePiece>().Move(x, y, moveTime);
+            }
             randomPiece.transform.parent = transform;
             return randomPiece.GetComponent<GamePiece>();
         }
 
         return null;
     }
-
 
     bool HasMatchOnFill(int x, int y, int minLength=3)
     {
@@ -195,35 +205,37 @@ public class Board : MonoBehaviour
 
     IEnumerator SwitchTileRoutine(Tile clickedTile, Tile targetTile)
     {
-        GamePiece clickedPiece = m_allGamePieces[clickedTile.xIndex, clickedTile.yIndex];
-        GamePiece targetPiece = m_allGamePieces[targetTile.xIndex, targetTile.yIndex];
-
-        if (clickedPiece!=null && targetPiece !=null)
+        if (m_playerInputEnabled)
         {
-            clickedPiece.Move(targetTile.xIndex, targetTile.yIndex, swapTime);
-            targetPiece.Move(clickedTile.xIndex, clickedTile.yIndex, swapTime);
+            GamePiece clickedPiece = m_allGamePieces[clickedTile.xIndex, clickedTile.yIndex];
+            GamePiece targetPiece = m_allGamePieces[targetTile.xIndex, targetTile.yIndex];
 
-            //we have to wait until the swap is done 
-            yield return new WaitForSeconds(swapTime);
+            if (clickedPiece != null && targetPiece != null)
+            {
+                clickedPiece.Move(targetTile.xIndex, targetTile.yIndex, swapTime);
+                targetPiece.Move(clickedTile.xIndex, clickedTile.yIndex, swapTime);
 
-            List<GamePiece> clickedPieceMatches = FindMatchesAt(clickedTile.xIndex, clickedTile.yIndex);
-            List<GamePiece> targetPieceMatches = FindMatchesAt(targetTile.xIndex, targetTile.yIndex);
-            
-            //we bring back the pieces if there is not any matches
-            if (clickedPieceMatches.Count == 0 && targetPieceMatches.Count == 0)
-            {
-                clickedPiece.Move(clickedTile.xIndex, clickedTile.yIndex, swapTime);
-                targetPiece.Move(targetTile.xIndex, targetTile.yIndex, swapTime);
-            }
-            else
-            {
+                //we have to wait until the swap is done 
                 yield return new WaitForSeconds(swapTime);
 
-                //we combine all matches, order is not important
-                ClearAndRefillBoard(clickedPieceMatches.Union(targetPieceMatches).ToList());
+                List<GamePiece> clickedPieceMatches = FindMatchesAt(clickedTile.xIndex, clickedTile.yIndex);
+                List<GamePiece> targetPieceMatches = FindMatchesAt(targetTile.xIndex, targetTile.yIndex);
 
+                //we bring back the pieces if there is not any matches
+                if (clickedPieceMatches.Count == 0 && targetPieceMatches.Count == 0)
+                {
+                    clickedPiece.Move(clickedTile.xIndex, clickedTile.yIndex, swapTime);
+                    targetPiece.Move(targetTile.xIndex, targetTile.yIndex, swapTime);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(swapTime);
+
+                    //we combine all matches, order is not important
+                    ClearAndRefillBoard(clickedPieceMatches.Union(targetPieceMatches).ToList());
+
+                }
             }
-
         }
     }
 
@@ -369,6 +381,21 @@ public class Board : MonoBehaviour
 
     }
 
+    List<GamePiece> FindAllMatches()
+    {
+        List<GamePiece> combinedMatches = new List<GamePiece>();
+
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                List<GamePiece> matches = FindMatchesAt(i, j);
+                combinedMatches = combinedMatches.Union(matches).ToList();                     
+            }
+        }
+        return combinedMatches;
+    }
+
     void HighlightMatches()
     {
         for (int i = 0; i < width; i++)
@@ -464,7 +491,7 @@ public class Board : MonoBehaviour
                 {
                     if (m_allGamePieces[column,j]!=null)
                     {
-                        m_allGamePieces[column, j].Move(column,i,collapseTime);
+                        m_allGamePieces[column, j].Move(column,i,collapseTime*(j-i)); // j-i proportional adjustment for falling down
                         //Actually above line doing the settings but we repeat some of them, we don't want to wait some time 
 
                         m_allGamePieces[column, i] = m_allGamePieces[column, j];
@@ -518,10 +545,32 @@ public class Board : MonoBehaviour
 
     IEnumerator ClearAndRefillBoardRoutine(List<GamePiece> gamePieces)
     {
-        //clear and colapse
-        StartCoroutine(ClearAndCollapseRoutine(gamePieces));
+        
+        m_playerInputEnabled = false;
+
+        List<GamePiece> matches = gamePieces;
+
+        do
+        {
+            //clear and colapse
+            yield return StartCoroutine(ClearAndCollapseRoutine(matches));
+            yield return null;
+
+            // refill
+            yield return StartCoroutine(RefillRoutine());
+            matches = FindAllMatches();
+
+            yield return new WaitForSeconds(0.3f);
+        }
+        while (matches.Count != 0);
+        m_playerInputEnabled = true;
+
+    }
+
+    IEnumerator RefillRoutine()
+    {
+        FillBoard(10,0.5f);
         yield return null;
-        // refill
     }
 
     IEnumerator ClearAndCollapseRoutine(List<GamePiece> gamePieces)
@@ -539,7 +588,14 @@ public class Board : MonoBehaviour
             ClearPieceAt(gamePieces);
             yield return new WaitForSeconds(0.25f);
             movingPieces = CollapseColumn(gamePieces);
-            yield return new WaitForSeconds(0.25f);
+
+            while (!IsCollapsed(movingPieces))
+            {
+                yield return null;
+            }
+
+
+            yield return new WaitForSeconds(0.2f);
 
             matches = FindMatchesAt(movingPieces);
 
@@ -553,9 +609,22 @@ public class Board : MonoBehaviour
                 yield return StartCoroutine(ClearAndCollapseRoutine(matches));
             }
         }
-
         yield return null;
     }
 
+    bool IsCollapsed(List<GamePiece> gamePieces) //to check if the spesific list of GamePiece is collapsing or not 
+    {
+        foreach (GamePiece piece in gamePieces)
+        {
+            if (piece != null)
+            {
+                if (piece.transform.position.y - (float) piece.yIndex >0.001f)
+                {
+                    return false;
+                }                
+            }
+        }
+        return true;
+    }
 
 }
