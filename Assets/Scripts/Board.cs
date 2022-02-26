@@ -13,12 +13,12 @@ public class Board : MonoBehaviour
     public GameObject[] gamePiecePrefabs;
 
     Tile[,] m_AllTiles;
-    GamePiece[,] m_AllGamePieces;
+    GamepieceBase[,] m_AllGamePieces;
 
     private void Start()
     {
         m_AllTiles = new Tile[width, height];
-        m_AllGamePieces = new GamePiece[width, height];
+        m_AllGamePieces = new GamepieceBase[width, height];
 
         SetupTiles();
         SetupCamera();
@@ -69,7 +69,7 @@ public class Board : MonoBehaviour
         return gamePiecePrefabs[randomIndex];
     }
 
-    void PlaceGamePiece(GamePiece gamePiece,int x, int y)
+    void PlaceGamePiece(GamepieceBase gamePiece,int x, int y)
     {
         if (gamePiece == null)
         {
@@ -88,10 +88,11 @@ public class Board : MonoBehaviour
             for (int j = 0; j < height; j++)
             {
                 GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
+                randomPiece.transform.parent = transform;
 
                 if (randomPiece !=null)
                 {
-                    PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), i, j);
+                    PlaceGamePiece(randomPiece.GetComponent<GamepieceBase>(), i, j);
                 }
 
             }

@@ -16,5 +16,4 @@ public class Tile : MonoBehaviour
         m_board = board;
     }
 
-
 }

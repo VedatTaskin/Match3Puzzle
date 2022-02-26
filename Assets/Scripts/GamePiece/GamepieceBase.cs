@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GamePiece : MonoBehaviour
+public class GamepieceBase : MonoBehaviour
 {
     public int xIndex;
     public int yIndex;
@@ -13,4 +13,8 @@ public class GamePiece : MonoBehaviour
         yIndex = y;
     }
 
+    public void Move(int destX,int destY)
+    {
+
+    }
 }
