@@ -4,51 +4,28 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
-    public int width;
-    public int height;
+    int width;
+    int height;
 
     public int borderSize;
     [Range(0, 1)]
     public float swapTime = 0.5f;
 
-    public GameObject tilePrefab;
-    public GameObject[] gamePiecePrefabs;
-
-    Tile[,] allTiles;
-    Gamepiece[,] allGamePieces;
+    public GamepieceData gamepieceData;
+    public TileData tileData;
 
     Tile clickedTile;
     Tile targetTile;
 
     private void Start()
     {
-        allTiles = new Tile[width, height];
-        allGamePieces = new Gamepiece[width, height];
-
-        SetupTiles();
+        width = tileData.width;
+        height = tileData.height;
+        tileData.SetupTiles(this);
         SetupCamera();
         FillRandom();
     }
 
-    void SetupTiles()
-    {
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                GameObject tile= Instantiate(tilePrefab, new Vector3(i, j, 0), Quaternion.identity) as GameObject;
-                
-                tile.name = "Tile (" + i + "," + j +")";
-                
-                allTiles[i, j] = tile.GetComponent<Tile>();
-
-                allTiles[i, j].Init(i, j, this);
-
-                tile.transform.parent = this.transform;            
-            }
-
-        }
-    }
 
     void SetupCamera()
     {
@@ -64,16 +41,6 @@ public class Board : MonoBehaviour
     
     }
 
-    GameObject GetRandomGamePiece()
-    {
-        int randomIndex = Random.Range(0, gamePiecePrefabs.Length);
-        if (gamePiecePrefabs[randomIndex] == null)
-        {
-            Debug.LogWarning("BOARD" + randomIndex + " doesn't contain a vaild Gamepiece prefab");
-        }
-        return gamePiecePrefabs[randomIndex];
-    }
-
     public void PlaceGamePiece(Gamepiece gamePiece,int x, int y)
     {
         if (gamePiece == null)
@@ -85,7 +52,7 @@ public class Board : MonoBehaviour
         gamePiece.transform.rotation = Quaternion.identity;
         if (IsWithInBounds(x,y))
         {
-            allGamePieces[x, y] = gamePiece;
+            gamepieceData.allGamepieces[x, y] = gamePiece;
         }
         gamePiece.SetCoordinate(x, y);
     }
@@ -102,7 +69,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
+                GameObject randomPiece = Instantiate(gamepieceData.GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
                 randomPiece.transform.parent = transform;
 
                 if (randomPiece !=null)
@@ -140,8 +107,8 @@ public class Board : MonoBehaviour
     void SwitchTiles( Tile clickedTile, Tile targetTile)
     {
 
-        Gamepiece clickedGamepiece = allGamePieces[clickedTile.xIndex, clickedTile.yIndex];
-        Gamepiece targetGamepiece = allGamePieces[targetTile.xIndex, targetTile.yIndex];
+        Gamepiece clickedGamepiece = gamepieceData.allGamepieces[clickedTile.xIndex, clickedTile.yIndex];
+        Gamepiece targetGamepiece = gamepieceData.allGamepieces[targetTile.xIndex, targetTile.yIndex];
 
         clickedGamepiece.Move(targetGamepiece.xIndex, targetGamepiece.yIndex, swapTime);
         targetGamepiece.Move(clickedGamepiece.xIndex, clickedGamepiece.yIndex, swapTime);

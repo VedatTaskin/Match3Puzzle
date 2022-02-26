@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9a4c48a3819d2b4f8d180ea5207f834, type: 3}
+  m_Name: GamepiecesData
+  m_EditorClassIdentifier: 
+  gamePiecePrefabs:
+  - {fileID: 4228407111365599603, guid: 3124e7319b9cd894a91b3722c109a747, type: 3}
+  - {fileID: 7132622636802816104, guid: a3779d54fae99984fa875fd9d07240ac, type: 3}
+  - {fileID: 5306969579727560201, guid: 3347acc6dad6b0742981a1e466178c98, type: 3}
+  - {fileID: 6370274208849203935, guid: 7f8b018b82126be4e9f1ba455875bef7, type: 3}
+  - {fileID: 350485285113832418, guid: 87c3719038fdff342ae447bb920212ee, type: 3}
+  tileData: {fileID: 11400000, guid: 4773f26f0b85f15499b21afcde027a39, type: 2}
