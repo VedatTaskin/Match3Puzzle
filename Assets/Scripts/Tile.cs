@@ -7,13 +7,30 @@ public class Tile : MonoBehaviour
     public int xIndex;
     public int yIndex;
 
-    Board m_board;
+    Board board;
 
     public void Init(int x, int y, Board board )
     {
         xIndex = x;
         yIndex = y;
-        m_board = board;
+        this.board = board;
+    }
+
+
+    private void OnMouseDown()
+    {
+        board.ClickTile(this);
+    }
+
+
+    private void OnMouseEnter()
+    {
+        board.DragToTile(this);
+    }
+
+    private void OnMouseUp()
+    {
+        board.ReleaseTile();        
     }
 
 }

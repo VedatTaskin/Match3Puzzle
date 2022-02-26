@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NormalGamepiece : GamepieceBase
+public class NormalGamepiece : Gamepiece
 {
     [HideInInspector] public GamepieceType gamepieceType = GamepieceType.Normal;
 
