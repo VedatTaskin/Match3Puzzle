@@ -96,4 +96,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xIndex: 0
   yIndex: 0
+  normalGamepieceType: 4
   easeType: 12

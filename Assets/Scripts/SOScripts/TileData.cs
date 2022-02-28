@@ -17,7 +17,6 @@ public class TileData : ScriptableObject
         allTiles = new Tile[width, height];     
     }
 
-
     public void SetupTiles(Board board)
     {
         for (int i = 0; i < width; i++)

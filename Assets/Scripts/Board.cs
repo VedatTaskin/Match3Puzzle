@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Board : MonoBehaviour
 {
@@ -55,13 +56,7 @@ public class Board : MonoBehaviour
             gamepieceData.allGamepieces[x, y] = gamePiece;
         }
         gamePiece.SetCoordinate(x, y);
-    }
-
-    bool IsWithInBounds(int x, int y)
-    {
-        return (x >= 0 && x < width && y >= 0 && y < height);
-
-    }
+    }     
 
     void FillRandom()
     {
@@ -84,44 +79,104 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void ClickTile(Tile tile)
+    public void ClickTile(Tile _tile)
     {
-        clickedTile = tile;
+        clickedTile = _tile;      
     }
 
     public void DragToTile(Tile _tile)
     {
-        if (clickedTile !=null && isNextTo(clickedTile,_tile))
+        if (clickedTile !=null )
         {
             targetTile = _tile;
-            SwitchTiles(clickedTile, targetTile);
+
+            if (Utility.IsNextTo(clickedTile, _tile))
+            {
+                SwitchTiles(clickedTile, targetTile);
+            }
         }
     }
 
-
-    void SwitchTiles( Tile _clickedTile, Tile _targetTile)
+    public void ReleaseTile()
     {
-
-        Gamepiece clickedGamepiece = gamepieceData.allGamepieces[_clickedTile.xIndex, _clickedTile.yIndex];
-        Gamepiece targetGamepiece = gamepieceData.allGamepieces[_targetTile.xIndex, _targetTile.yIndex];
-
-        clickedGamepiece.Move(targetGamepiece.xIndex, targetGamepiece.yIndex, swapTime);
-        targetGamepiece.Move(clickedGamepiece.xIndex, clickedGamepiece.yIndex, swapTime);
-
         clickedTile = null;
         targetTile = null;
     }
 
-    bool isNextTo(Tile clicked, Tile target)
+    void SwitchTiles( Tile _clickedTile, Tile _targetTile)
     {
-        if (Mathf.Abs(clicked.xIndex - target.xIndex) == 1 && clicked.yIndex == target.yIndex)
-        {
-            return true;
-        }
-        if (Mathf.Abs(clicked.yIndex - target.yIndex) == 1 && clicked.xIndex == target.xIndex)
-        {
-            return true;
-        }
-        return false;
+        StartCoroutine(SwitchTileRoutine(_clickedTile, _targetTile));
+        clickedTile = null;
+        targetTile = null;
     }
+
+    IEnumerator SwitchTileRoutine(Tile _clickedTile, Tile _targetTile)
+    {
+        Gamepiece clickedGamepiece = gamepieceData.allGamepieces[_clickedTile.xIndex, _clickedTile.yIndex];
+        Gamepiece targetGamepiece = gamepieceData.allGamepieces[_targetTile.xIndex, _targetTile.yIndex];
+
+        if (targetGamepiece!= null && clickedGamepiece != null)
+        {
+            clickedGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime);
+            targetGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
+
+            yield return new WaitForSeconds(swapTime); // we wait end of the switch movement
+
+            List<Gamepiece> matchesAtClickedGamepiece = gamepieceData.FindMatchesAt(_clickedTile.xIndex, _clickedTile.yIndex);
+            List<Gamepiece> matchesAtTargetGamepiece = gamepieceData.FindMatchesAt(_targetTile.xIndex, _targetTile.yIndex);
+
+            if (matchesAtClickedGamepiece.Count == 0 && matchesAtTargetGamepiece.Count == 0)
+            {
+                clickedGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
+                targetGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime);
+            }
+
+            yield return new WaitForSeconds(swapTime);
+
+            HighlightMatchesAt(targetGamepiece.xIndex, targetGamepiece.yIndex);
+            HighlightMatchesAt(clickedGamepiece.xIndex, clickedGamepiece.yIndex);
+        }
+    }
+
+    bool IsWithInBounds(int x, int y)
+    {
+        return (x >= 0 && x < width && y >= 0 && y < height);
+    }
+
+    void HighLightMatches()
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                HighlightMatchesAt(i, j);
+            }
+        }
+    }
+
+    private void HighlightMatchesAt(int x, int y)
+    {
+        SpriteRenderer spriteRenderer = tileData.allTiles[x, y].GetComponent<SpriteRenderer>();
+        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
+
+        List<Gamepiece> combinedMatches =gamepieceData.FindMatchesAt(x, y);
+
+        if (combinedMatches.Count > 0)
+        {
+            foreach (var item in combinedMatches)
+            {
+                spriteRenderer = tileData.allTiles[item.xIndex, item.yIndex].GetComponent<SpriteRenderer>();
+                spriteRenderer.color = item.GetComponent<SpriteRenderer>().color;
+            }
+        }
+    }
+
 }
+
+
+
+
+
+
+
+
