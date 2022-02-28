@@ -89,29 +89,39 @@ public class Board : MonoBehaviour
         clickedTile = tile;
     }
 
-    public void DragToTile(Tile tile)
+    public void DragToTile(Tile _tile)
     {
-        targetTile = tile;
-    }
-
-    public void ReleaseTile()
-    {
-        if (clickedTile != null && targetTile != null)
+        if (clickedTile !=null && isNextTo(clickedTile,_tile))
         {
+            targetTile = _tile;
             SwitchTiles(clickedTile, targetTile);
         }
-        clickedTile = null;
-        targetTile = null;
     }
 
-    void SwitchTiles( Tile clickedTile, Tile targetTile)
+
+    void SwitchTiles( Tile _clickedTile, Tile _targetTile)
     {
 
-        Gamepiece clickedGamepiece = gamepieceData.allGamepieces[clickedTile.xIndex, clickedTile.yIndex];
-        Gamepiece targetGamepiece = gamepieceData.allGamepieces[targetTile.xIndex, targetTile.yIndex];
+        Gamepiece clickedGamepiece = gamepieceData.allGamepieces[_clickedTile.xIndex, _clickedTile.yIndex];
+        Gamepiece targetGamepiece = gamepieceData.allGamepieces[_targetTile.xIndex, _targetTile.yIndex];
 
         clickedGamepiece.Move(targetGamepiece.xIndex, targetGamepiece.yIndex, swapTime);
         targetGamepiece.Move(clickedGamepiece.xIndex, clickedGamepiece.yIndex, swapTime);
 
+        clickedTile = null;
+        targetTile = null;
+    }
+
+    bool isNextTo(Tile clicked, Tile target)
+    {
+        if (Mathf.Abs(clicked.xIndex - target.xIndex) == 1 && clicked.yIndex == target.yIndex)
+        {
+            return true;
+        }
+        if (Mathf.Abs(clicked.yIndex - target.yIndex) == 1 && clicked.xIndex == target.xIndex)
+        {
+            return true;
+        }
+        return false;
     }
 }

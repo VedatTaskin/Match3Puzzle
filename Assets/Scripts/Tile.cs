@@ -28,9 +28,4 @@ public class Tile : MonoBehaviour
         board.DragToTile(this);
     }
 
-    private void OnMouseUp()
-    {
-        board.ReleaseTile();        
-    }
-
 }
