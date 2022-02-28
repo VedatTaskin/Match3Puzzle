@@ -60,15 +60,21 @@ public class GamepieceData : ScriptableObject
 
             Gamepiece nextPiece = allGamepieces[nextX, nextY];
 
-            if (startPiece.normalGamepieceType == nextPiece.normalGamepieceType )
-            {
-                matches.Add(nextPiece);
-            }
-            else
+            if (nextPiece == null )
             {
                 break;
             }
-
+            else
+            {
+                if (startPiece.normalGamepieceType == nextPiece.normalGamepieceType)
+                {
+                    matches.Add(nextPiece);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
         if (matches.Count >= minLength)
@@ -152,4 +158,11 @@ public class GamepieceData : ScriptableObject
         }
     }
 
+    public void ClearGamepieces(List<Gamepiece> gamepieces)
+    {
+        foreach (var piece in gamepieces)
+        {
+            ClearGamepieceAt(piece.xIndex, piece.yIndex);
+        }
+    }
 }

@@ -129,12 +129,13 @@ public class Board : MonoBehaviour
             {
                 clickedGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
                 targetGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime);
+                yield return new WaitForSeconds(swapTime);
             }
-
-            yield return new WaitForSeconds(swapTime);
-
-            HighlightMatchesAt(targetGamepiece.xIndex, targetGamepiece.yIndex);
-            HighlightMatchesAt(clickedGamepiece.xIndex, clickedGamepiece.yIndex);
+            else
+            {
+                gamepieceData.ClearGamepieces(matchesAtClickedGamepiece);
+                gamepieceData.ClearGamepieces(matchesAtTargetGamepiece);
+            }
         }
     }
 
