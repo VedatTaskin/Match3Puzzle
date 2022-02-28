@@ -24,7 +24,7 @@ public class Board : MonoBehaviour
         height = tileData.height;
         tileData.SetupTiles(this);
         SetupCamera();
-        FillRandom();
+        FillBoard();
     }
 
 
@@ -58,25 +58,46 @@ public class Board : MonoBehaviour
         gamePiece.SetCoordinate(x, y);
     }     
 
-    void FillRandom()
+    void FillBoard()
     {
+        int maxIterations=100;
+        int iterations=0;
+
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                GameObject randomPiece = Instantiate(gamepieceData.GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
-                randomPiece.transform.parent = transform;
+                Gamepiece piece = FillRandomAt(i, j);
+                iterations = 0;
 
-                if (randomPiece !=null)
+                while (gamepieceData.HasMatchOnFill(i,j))
                 {
-                    randomPiece.GetComponent<Gamepiece>().Init(this);
-                    PlaceGamePiece(randomPiece.GetComponent<Gamepiece>(), i, j);
-                    transform.parent = transform;
+                    gamepieceData.ClearGamepieceAt(i, j);
+                    piece = FillRandomAt(i, j);
+                    iterations++;
+
+                    if (iterations>=maxIterations)
+                    {                        
+                        Debug.Log("********************");
+                        break;
+                    }
                 }
-
             }
-
         }
+    }
+
+    Gamepiece FillRandomAt(int x, int y)
+    {
+        GameObject randomPiece = Instantiate(gamepieceData.GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
+
+        if (randomPiece != null)
+        {
+            randomPiece.GetComponent<Gamepiece>().Init(this);
+            PlaceGamePiece(randomPiece.GetComponent<Gamepiece>(), x, y);
+            transform.parent = transform;
+            return randomPiece.GetComponent<Gamepiece>();
+        }
+        return null;
     }
 
     public void ClickTile(Tile _tile)
@@ -120,11 +141,14 @@ public class Board : MonoBehaviour
             clickedGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime);
             targetGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
 
-            yield return new WaitForSeconds(swapTime); // we wait end of the switch movement
+            // we wait until end of the switch movement
+            yield return new WaitForSeconds(swapTime); 
 
             List<Gamepiece> matchesAtClickedGamepiece = gamepieceData.FindMatchesAt(_clickedTile.xIndex, _clickedTile.yIndex);
             List<Gamepiece> matchesAtTargetGamepiece = gamepieceData.FindMatchesAt(_targetTile.xIndex, _targetTile.yIndex);
 
+
+            // we check for the match count, if there are not any match we swap back again
             if (matchesAtClickedGamepiece.Count == 0 && matchesAtTargetGamepiece.Count == 0)
             {
                 clickedGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);

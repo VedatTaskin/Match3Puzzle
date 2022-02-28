@@ -154,7 +154,7 @@ public class GamepieceData : ScriptableObject
         if (gamepieceToClear != null)
         {
             allGamepieces[x, y] = null;
-            gamepieceToClear.gameObject.SetActive(false);
+            Destroy(gamepieceToClear.gameObject);
         }
     }
 
@@ -164,5 +164,22 @@ public class GamepieceData : ScriptableObject
         {
             ClearGamepieceAt(piece.xIndex, piece.yIndex);
         }
+    }
+
+    public bool HasMatchOnFill(int x, int y, int minLength = 3)
+    {
+        List<Gamepiece> leftMatches = FindMatches(x, y, new Vector2(-1, 0), minLength);
+        List<Gamepiece> downMatches = FindMatches(x, y, new Vector2(0, -1), minLength);
+
+        if (leftMatches == null)
+        {
+            leftMatches = new List<Gamepiece>();
+        }
+
+        if (downMatches == null)
+        {
+            downMatches = new List<Gamepiece>();
+        }
+        return (downMatches.Count > 0 || leftMatches.Count > 0);
     }
 }
