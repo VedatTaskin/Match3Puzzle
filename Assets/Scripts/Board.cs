@@ -27,7 +27,6 @@ public class Board : MonoBehaviour
         FillBoard();
     }
 
-
     void SetupCamera()
     {
         Camera.main.transform.position = new Vector3( (float)(width-1) / 2, (float)(height-1) / 2, -10f);
@@ -159,6 +158,9 @@ public class Board : MonoBehaviour
             {
                 gamepieceData.ClearGamepieces(matchesAtClickedGamepiece);
                 gamepieceData.ClearGamepieces(matchesAtTargetGamepiece);
+
+                gamepieceData.CollapseColumn(matchesAtTargetGamepiece);
+                gamepieceData.CollapseColumn(matchesAtClickedGamepiece);
             }
         }
     }

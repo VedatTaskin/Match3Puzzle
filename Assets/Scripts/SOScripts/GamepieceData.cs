@@ -12,6 +12,7 @@ public class GamepieceData : ScriptableObject
 
     int width;
     int height;
+    float collapseTime=0.1f;
     private void OnEnable()
     {
         width = tileData.width;
@@ -181,5 +182,53 @@ public class GamepieceData : ScriptableObject
             downMatches = new List<Gamepiece>();
         }
         return (downMatches.Count > 0 || leftMatches.Count > 0);
+    }
+
+
+
+    public List<int> FindCollapsingColumn(List<Gamepiece> gamepieces)
+    {
+        List<int> columns = new List<int>();
+
+        foreach (var piece in gamepieces)
+        {
+            if (!columns.Contains(piece.xIndex))
+            {
+                columns.Add(piece.xIndex);
+            }
+        }
+        return columns;
+    }
+
+
+    public void CollapseColumn(List<Gamepiece> gamepieces)
+    {
+        //which pillars will be collapse
+        List<int> columns = FindCollapsingColumn(gamepieces);
+
+
+        for (int c = 0; c < columns.Count; c++)
+        {
+            // one pillar will collapse
+            for (int i = 0; i < height - 1; i++)
+            {
+                if (allGamepieces[columns[c], i] == null)
+                {
+                    for (int j = i + 1; j < height; j++)
+                    {
+                        if (allGamepieces[columns[c],j] !=null)
+                        {
+                            var piece = allGamepieces[columns[c], j];
+                            allGamepieces[columns[c], i] = piece;
+                            piece.Move(columns[c], i, collapseTime * j);
+                            piece.SetCoordinate(columns[c], i);
+                            
+                            allGamepieces[columns[c], j] = null;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
