@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-
+using System.Collections;
 
 [CreateAssetMenu(fileName ="Gamepieces Data", menuName ="Create/Gamepiece Data Holder")]
 public class GamepieceData : ScriptableObject
@@ -30,6 +30,7 @@ public class GamepieceData : ScriptableObject
         return gamePiecePrefabs[randomIndex];
     }
 
+    //This function find matches form specific point to specific direction
     List<Gamepiece> FindMatches(int startX, int startY, Vector2 searchDirection, int minLength = 3)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
@@ -163,7 +164,10 @@ public class GamepieceData : ScriptableObject
     {
         foreach (var piece in gamepieces)
         {
-            ClearGamepieceAt(piece.xIndex, piece.yIndex);
+            if (piece != null)
+            {
+                ClearGamepieceAt(piece.xIndex, piece.yIndex);
+            }
         }
     }
 
@@ -184,9 +188,7 @@ public class GamepieceData : ScriptableObject
         return (downMatches.Count > 0 || leftMatches.Count > 0);
     }
 
-
-
-    public List<int> FindCollapsingColumn(List<Gamepiece> gamepieces)
+    public List<int> FindCollapsingColumnNumbers(List<Gamepiece> gamepieces)
     {
         List<int> columns = new List<int>();
 
@@ -200,16 +202,17 @@ public class GamepieceData : ScriptableObject
         return columns;
     }
 
-
-    public void CollapseColumn(List<Gamepiece> gamepieces)
+    public List<Gamepiece> CollapseColumn(List<Gamepiece> gamepieces)
     {
         //which pillars will be collapse
-        List<int> columns = FindCollapsingColumn(gamepieces);
+        List<int> columns = FindCollapsingColumnNumbers(gamepieces);
 
+        // we want to know which pieces are moving, we will check if they make another match after collapsing
+        List<Gamepiece> movingPieces = new List<Gamepiece>();
 
         for (int c = 0; c < columns.Count; c++)
         {
-            // one pillar will collapse
+            // each pillar will check seperately
             for (int i = 0; i < height - 1; i++)
             {
                 if (allGamepieces[columns[c], i] == null)
@@ -220,6 +223,12 @@ public class GamepieceData : ScriptableObject
                         {
                             var piece = allGamepieces[columns[c], j];
                             allGamepieces[columns[c], i] = piece;
+
+                            if (!movingPieces.Contains(piece))
+                            {
+                                movingPieces.Add(piece);
+                            }                            
+
                             piece.Move(columns[c], i, collapseTime * j);
                             piece.SetCoordinate(columns[c], i);
                             
@@ -230,5 +239,52 @@ public class GamepieceData : ScriptableObject
                 }
             }
         }
+        return movingPieces;
+    }
+
+    public IEnumerator ClearAndCollapseRoutine(List<Gamepiece> _allMatches)
+    {
+        var matches = _allMatches;
+        bool routineIsFinished = true;
+        int maxIterations = 100;
+        int iterations = 0;
+
+        do
+        {
+            yield return new WaitForSeconds(0.5f);
+            ClearGamepieces(matches);
+
+            yield return new WaitForSeconds(0.5f);
+            var movingPieces = CollapseColumn(matches); 
+            
+            yield return new WaitForSeconds(0.5f);
+            var newMatches = new List<Gamepiece>();
+
+            foreach (var piece in movingPieces)
+            {
+                newMatches =newMatches.Union(FindMatchesAt(piece.xIndex,piece.yIndex)).ToList();
+            }
+
+            if (newMatches.Count==0)
+            {
+                Debug.Log("no new match");
+                routineIsFinished = true;
+            }
+
+            else
+            {
+                routineIsFinished = false;
+                matches = newMatches;
+            }
+
+            // check point to prevent infinite loop
+            iterations++;
+            if (iterations>maxIterations)
+            {
+                break;
+            }
+
+        } while (!routineIsFinished);
+
     }
 }

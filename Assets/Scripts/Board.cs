@@ -145,22 +145,20 @@ public class Board : MonoBehaviour
 
             List<Gamepiece> matchesAtClickedGamepiece = gamepieceData.FindMatchesAt(_clickedTile.xIndex, _clickedTile.yIndex);
             List<Gamepiece> matchesAtTargetGamepiece = gamepieceData.FindMatchesAt(_targetTile.xIndex, _targetTile.yIndex);
-
+            List<Gamepiece> allMatches = matchesAtClickedGamepiece.Union(matchesAtTargetGamepiece).ToList();
 
             // we check for the match count, if there are not any match we swap back again
-            if (matchesAtClickedGamepiece.Count == 0 && matchesAtTargetGamepiece.Count == 0)
+            if (allMatches.Count==0)
             {
                 clickedGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
                 targetGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime);
                 yield return new WaitForSeconds(swapTime);
             }
+
+            //if there is a match we start to clear and collapse routine
             else
             {
-                gamepieceData.ClearGamepieces(matchesAtClickedGamepiece);
-                gamepieceData.ClearGamepieces(matchesAtTargetGamepiece);
-
-                gamepieceData.CollapseColumn(matchesAtTargetGamepiece);
-                gamepieceData.CollapseColumn(matchesAtClickedGamepiece);
+                StartCoroutine(gamepieceData.ClearAndCollapseRoutine(allMatches));
             }
         }
     }

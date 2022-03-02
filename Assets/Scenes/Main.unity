@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.43921572, g: 0.14901961, b: 0.40784317, a: 1}
+  m_Color: {r: 0.2735849, g: 0.10453009, b: 0.25530872, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -321,8 +321,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 208d1f9570df0564da8ca6765e8e6390, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 7
-  height: 9
   borderSize: 1
   swapTime: 0.374
   gamepieceData: {fileID: 11400000, guid: 8b65cc04ecad75c409414682e8757105, type: 2}
