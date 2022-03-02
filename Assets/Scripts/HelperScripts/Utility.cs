@@ -17,4 +17,19 @@ public static class Utility
         return false;
     }
 
+    public static bool GamepiecesAreCollapsed(List<Gamepiece> gamepieces)
+    {
+        foreach (var piece in gamepieces)
+        {
+            if (piece != null)
+            {
+                if (piece.transform.position.y -piece.yIndex >0.001)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }

@@ -229,7 +229,7 @@ public class GamepieceData : ScriptableObject
                                 movingPieces.Add(piece);
                             }                            
 
-                            piece.Move(columns[c], i, collapseTime * j);
+                            piece.Move(columns[c], i, collapseTime * (j-i));
                             piece.SetCoordinate(columns[c], i);
                             
                             allGamepieces[columns[c], j] = null;
@@ -251,13 +251,18 @@ public class GamepieceData : ScriptableObject
 
         do
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             ClearGamepieces(matches);
 
-            yield return new WaitForSeconds(0.5f);
-            var movingPieces = CollapseColumn(matches); 
-            
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
+            var movingPieces = CollapseColumn(matches);
+
+            while (!Utility.GamepiecesAreCollapsed(movingPieces))
+            {
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(0.2f);
             var newMatches = new List<Gamepiece>();
 
             foreach (var piece in movingPieces)
@@ -267,10 +272,8 @@ public class GamepieceData : ScriptableObject
 
             if (newMatches.Count==0)
             {
-                Debug.Log("no new match");
                 routineIsFinished = true;
             }
-
             else
             {
                 routineIsFinished = false;
