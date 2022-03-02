@@ -1,4 +1,10 @@
-﻿public enum GamepieceType
+﻿public enum GameState
+{
+    CanSwap,
+    Busy
+}
+
+public enum GamepieceType
 {
     Normal,
     Special

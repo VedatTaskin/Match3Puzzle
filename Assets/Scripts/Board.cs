@@ -15,6 +15,7 @@ public class Board : MonoBehaviour
     public GamepieceData gamepieceData;
     public TileData tileData;
 
+    GameState gameState;
     Tile clickedTile;
     Tile targetTile;
 
@@ -25,6 +26,7 @@ public class Board : MonoBehaviour
         tileData.SetupTiles(this);
         SetupCamera();
         FillBoard();
+        gameState = GameState.CanSwap;
     }
 
     void SetupCamera()
@@ -101,12 +103,15 @@ public class Board : MonoBehaviour
 
     public void ClickTile(Tile _tile)
     {
-        clickedTile = _tile;      
+        if (gameState==GameState.CanSwap)
+        {
+            clickedTile = _tile;
+        }     
     }
 
     public void DragToTile(Tile _tile)
     {
-        if (clickedTile !=null )
+        if (clickedTile !=null && gameState==GameState.CanSwap)
         {
             targetTile = _tile;
 
@@ -126,6 +131,7 @@ public class Board : MonoBehaviour
     void SwitchTiles( Tile _clickedTile, Tile _targetTile)
     {
         StartCoroutine(SwitchTileRoutine(_clickedTile, _targetTile));
+        gameState = GameState.Busy;
         clickedTile = null;
         targetTile = null;
     }
@@ -158,9 +164,10 @@ public class Board : MonoBehaviour
             //if there is a match we start to clear and collapse routine
             else
             {
-                StartCoroutine(gamepieceData.ClearAndCollapseRoutine(allMatches));
+                yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(allMatches));
             }
         }
+        gameState = GameState.CanSwap;
     }
 
     bool IsWithInBounds(int x, int y)
