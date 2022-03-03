@@ -19,6 +19,8 @@ public class Board : MonoBehaviour
     GameState gameState;
     Tile clickedTile;
     Tile targetTile;
+    int offset=10;
+    int firstFill=0; 
 
     private void Start()
     {
@@ -62,14 +64,19 @@ public class Board : MonoBehaviour
 
     void FillBoard()
     {
-        int maxIterations=100;
-        int iterations=0;
+        int maxIterations = 100;
+        int iterations = 0;
 
+        // firstly we instantiate ordered gamepieces
+        FirstFillCheck();
+
+        // than we instantiate randomly gamepieces
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                if (gamepieceData.allGamepieces[i,j] ==null && tileData.allTiles[i,j].tileType != TileType.Obstacle)
+
+                if (gamepieceData.allGamepieces[i, j] == null && tileData.allTiles[i, j].tileType != TileType.Obstacle)
                 {
                     Gamepiece piece = FillRandomAt(i, j);
                     iterations = 0;
@@ -85,26 +92,41 @@ public class Board : MonoBehaviour
                             Debug.Log("********************");
                             break;
                         }
-                    }                    
+                    }
                 }
             }
         }
     }
 
+    private void FirstFillCheck()
+    {
+        if (gamepieceData.orderedGamepieces.Length != 0 && firstFill == 0)
+        {
+            foreach (var item in gamepieceData.orderedGamepieces)
+            {
+                GameObject itemGO = Instantiate(item.prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                CraeateGamepiece(itemGO, item.xCoord, item.yCoord);
+            }
+            firstFill++;
+        }
+    }
+
+    private void CraeateGamepiece(GameObject prefab, int x, int y)
+    {
+        prefab.GetComponent<Gamepiece>().Init(this);
+        PlaceGamePiece(prefab.GetComponent<Gamepiece>(), x, y);
+        prefab.transform.position = new Vector3(x, y+ offset, 0);
+        prefab.GetComponent<Gamepiece>().Move(x, y, fallTime);
+        transform.parent = transform;
+    }
+
     Gamepiece FillRandomAt(int x, int y)
     {
         GameObject randomPiece = Instantiate(gamepieceData.GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
-        int offset = 10;
 
         if (randomPiece != null)
         {
-            randomPiece.GetComponent<Gamepiece>().Init(this);
-            PlaceGamePiece(randomPiece.GetComponent<Gamepiece>(), x, y);
-
-            randomPiece.transform.position = new Vector3(x, y + offset, 0);
-            randomPiece.GetComponent<Gamepiece>().Move(x, y, fallTime);
-
-            transform.parent = transform;
+            CraeateGamepiece(randomPiece, x, y);
             return randomPiece.GetComponent<Gamepiece>();
         }
         return null;

@@ -10,6 +10,9 @@ public class GamepieceData : ScriptableObject
     public GameObject[] gamePiecePrefabs;
     public TileData tileData;
 
+
+    public OrderedGamepieces [] orderedGamepieces;
+
     int width;
     int height;
     float collapseTime=0.1f;
@@ -312,4 +315,12 @@ public class GamepieceData : ScriptableObject
         } while (!routineIsFinished);
 
     }
+}
+
+[System.Serializable]
+public class OrderedGamepieces
+{
+    public GameObject prefab;
+    public int xCoord;
+    public int yCoord;
 }

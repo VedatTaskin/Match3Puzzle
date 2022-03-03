@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
+
 public class Gamepiece : MonoBehaviour
 {
     public int xIndex;
@@ -30,5 +31,5 @@ public class Gamepiece : MonoBehaviour
         transform.DOMove(new Vector3(destX, destY, transform.position.z), timeToMove).SetEase(easeType).
             OnComplete(()=>board.PlaceGamePiece(this, destX, destY));
     } 
-
 }
+

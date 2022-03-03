@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2399463796155963136}
   - component: {fileID: -7194517579752678838}
   m_Layer: 0
-  m_Name: TileBreakable
+  m_Name: TileBreakable1Shot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -127,5 +127,5 @@ MonoBehaviour:
   spriteList:
   - {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 21300000, guid: 5faa26685acf1da40b88067b1393e7e8, type: 3}
-  - {fileID: 21300000, guid: e7d6cfbc836e79c4081641a7d84f9e65, type: 3}
+  normalColor: {r: 0, g: 0, b: 0, a: 0}
   breakableValue: 0

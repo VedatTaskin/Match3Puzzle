@@ -35,3 +35,8 @@ MonoBehaviour:
     x: 2
     y: 4
     z: 0
+  - prefab: {fileID: 471453342949099660, guid: d0b3248d71ad269449e1d57903cb61b1, type: 3}
+    tileType: 1
+    x: 2
+    y: 5
+    z: 0
