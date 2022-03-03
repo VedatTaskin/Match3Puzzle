@@ -15,6 +15,7 @@ public enum TileType
     Normal,
     Breakable,
     Nonbreakable,
+    Obstacle
 }
 
 public enum SpecialGamepieceType

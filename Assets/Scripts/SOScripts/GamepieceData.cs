@@ -30,7 +30,7 @@ public class GamepieceData : ScriptableObject
         return gamePiecePrefabs[randomIndex];
     }
 
-    //This function find matches form specific point to specific direction
+    //This function find matches from specific point to specific direction
     List<Gamepiece> FindMatches(int startX, int startY, Vector2 searchDirection, int minLength = 3)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
@@ -144,6 +144,19 @@ public class GamepieceData : ScriptableObject
         return combinedMatches;
     }
 
+    public List<Gamepiece> FindAllMatches()
+    {
+        List<Gamepiece> matches = new List<Gamepiece>();
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                matches=matches.Union(FindMatchesAt(i, j)).ToList();
+            }
+        }
+        return (matches.Count == 0) ? null : matches;
+    } 
+
     bool IsWithInBounds(int x, int y)
     {
         return (x >= 0 && x < width && y >= 0 && y < height);
@@ -215,7 +228,7 @@ public class GamepieceData : ScriptableObject
             // each pillar will check seperately
             for (int i = 0; i < height - 1; i++)
             {
-                if (allGamepieces[columns[c], i] == null)
+                if (allGamepieces[columns[c], i] == null && tileData.allTiles[columns[c], i].tileType !=TileType.Obstacle )
                 {
                     for (int j = i + 1; j < height; j++)
                     {

@@ -11,6 +11,7 @@ public class Board : MonoBehaviour
     public int borderSize;
     [Range(0, 1)]
     public float swapTime = 0.5f;
+    public float fallTime = 0.5f;
 
     public GamepieceData gamepieceData;
     public TileData tileData;
@@ -50,7 +51,7 @@ public class Board : MonoBehaviour
             Debug.LogWarning("BOARD: invalid gamepiece");
             return;
         }
-        gamePiece.transform.position = new Vector3(x, y, 0);
+        gamePiece.transform.position = new Vector3(x, y , 0);
         gamePiece.transform.rotation = Quaternion.identity;
         if (IsWithInBounds(x,y))
         {
@@ -68,20 +69,23 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                Gamepiece piece = FillRandomAt(i, j);
-                iterations = 0;
-
-                while (gamepieceData.HasMatchOnFill(i,j))
+                if (gamepieceData.allGamepieces[i,j] ==null && tileData.allTiles[i,j].tileType != TileType.Obstacle)
                 {
-                    gamepieceData.ClearGamepieceAt(i, j);
-                    piece = FillRandomAt(i, j);
-                    iterations++;
+                    Gamepiece piece = FillRandomAt(i, j);
+                    iterations = 0;
 
-                    if (iterations>=maxIterations)
-                    {                        
-                        Debug.Log("********************");
-                        break;
-                    }
+                    while (gamepieceData.HasMatchOnFill(i, j))
+                    {
+                        gamepieceData.ClearGamepieceAt(i, j);
+                        piece = FillRandomAt(i, j);
+                        iterations++;
+
+                        if (iterations >= maxIterations)
+                        {
+                            Debug.Log("********************");
+                            break;
+                        }
+                    }                    
                 }
             }
         }
@@ -90,11 +94,16 @@ public class Board : MonoBehaviour
     Gamepiece FillRandomAt(int x, int y)
     {
         GameObject randomPiece = Instantiate(gamepieceData.GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
+        int offset = 10;
 
         if (randomPiece != null)
         {
             randomPiece.GetComponent<Gamepiece>().Init(this);
             PlaceGamePiece(randomPiece.GetComponent<Gamepiece>(), x, y);
+
+            randomPiece.transform.position = new Vector3(x, y + offset, 0);
+            randomPiece.GetComponent<Gamepiece>().Move(x, y, fallTime);
+
             transform.parent = transform;
             return randomPiece.GetComponent<Gamepiece>();
         }
@@ -105,13 +114,16 @@ public class Board : MonoBehaviour
     {
         if (gameState==GameState.CanSwap)
         {
-            clickedTile = _tile;
+            if (_tile.tileType != TileType.Obstacle)
+            {
+                clickedTile = _tile;
+            }
         }     
     }
 
     public void DragToTile(Tile _tile)
     {
-        if (clickedTile !=null && gameState==GameState.CanSwap)
+        if (clickedTile !=null && _tile.tileType != TileType.Obstacle && gameState==GameState.CanSwap)
         {
             targetTile = _tile;
 
@@ -165,42 +177,32 @@ public class Board : MonoBehaviour
             else
             {
                 yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(allMatches));
+                yield return StartCoroutine(RefillBoard());
             }
         }
         gameState = GameState.CanSwap;
     }
 
+    IEnumerator RefillBoard()
+    {
+        FillBoard();        
+        yield return new WaitForSeconds(fallTime);
+        var newMatches= gamepieceData.FindAllMatches();
+
+        if (newMatches !=null)
+        {
+            gameState = GameState.Busy;
+            yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(newMatches));
+            yield return StartCoroutine(RefillBoard());
+            yield return new WaitForSeconds(fallTime);
+        }
+        gameState = GameState.CanSwap;
+
+    }
+
     bool IsWithInBounds(int x, int y)
     {
         return (x >= 0 && x < width && y >= 0 && y < height);
-    }
-
-    void HighLightMatches()
-    {
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                HighlightMatchesAt(i, j);
-            }
-        }
-    }
-
-    private void HighlightMatchesAt(int x, int y)
-    {
-        SpriteRenderer spriteRenderer = tileData.allTiles[x, y].GetComponent<SpriteRenderer>();
-        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
-
-        List<Gamepiece> combinedMatches =gamepieceData.FindMatchesAt(x, y);
-
-        if (combinedMatches.Count > 0)
-        {
-            foreach (var item in combinedMatches)
-            {
-                spriteRenderer = tileData.allTiles[item.xIndex, item.yIndex].GetComponent<SpriteRenderer>();
-                spriteRenderer.color = item.GetComponent<SpriteRenderer>().color;
-            }
-        }
     }
 
 }

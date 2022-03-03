@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0ae9742288b44f4d8965866ed701157, type: 3}
   m_Name: TileData
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 4947536348525257156, guid: 2abb806627225e74d8b4bd87955c514b,
-    type: 3}
+  tilePrefabs: {fileID: 11400000, guid: 93d135d425a96be4d9e226fb44adcefb, type: 2}
   width: 7
   height: 9

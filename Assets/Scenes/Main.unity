@@ -323,6 +323,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   borderSize: 1
   swapTime: 0.374
+  fallTime: 0.5
   gamepieceData: {fileID: 11400000, guid: 8b65cc04ecad75c409414682e8757105, type: 2}
   tileData: {fileID: 11400000, guid: 4773f26f0b85f15499b21afcde027a39, type: 2}
 --- !u!1 &1739543347
