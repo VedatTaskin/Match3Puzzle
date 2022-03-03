@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: ca84222a5cf5f3f47acad96e083feddf, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.19215687}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.7372549}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -124,3 +124,8 @@ MonoBehaviour:
   xIndex: 0
   yIndex: 0
   tileType: 0
+  spriteList:
+  - {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 21300000, guid: 5faa26685acf1da40b88067b1393e7e8, type: 3}
+  - {fileID: 21300000, guid: e7d6cfbc836e79c4081641a7d84f9e65, type: 3}
+  breakableValue: 0

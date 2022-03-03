@@ -24,7 +24,7 @@ public class TileData : ScriptableObject
         {
             if (item.tileType==TileType.Obstacle)
             {
-                MakeTile(board, item, item.x, item.y,TileType.Obstacle, 1);
+                MakeTile(board, item, item.x, item.y, 1);
             }
         }
 
@@ -33,7 +33,7 @@ public class TileData : ScriptableObject
         {
             if (item.tileType == TileType.Breakable)
             {
-                MakeTile(board, item, item.x, item.y, TileType.Breakable);
+                MakeTile(board, item, item.x, item.y);
             }
         }
 
@@ -49,7 +49,7 @@ public class TileData : ScriptableObject
                     {
                         if (allTiles[i,j] == null)
                         {
-                            MakeTile(board, item, i, j,TileType.Normal);
+                            MakeTile(board, item, i, j);
                         }
                     }
                 }
@@ -58,12 +58,12 @@ public class TileData : ScriptableObject
     }
 
     // z value for the correct placement of obstacle, to make behind the gamepieces
-    private void MakeTile(Board board, TilePrefab item, int i, int j, TileType _tileType,int z=0)
+    private void MakeTile(Board board, TilePrefab item, int i, int j,int z=0)
     {
         GameObject tile = Instantiate(item.prefab, new Vector3(i, j, z), Quaternion.identity) as GameObject;
         tile.name = "Tile (" + i + "," + j + ")";
         allTiles[i, j] = tile.GetComponent<Tile>();
-        allTiles[i, j].Init(i, j, board, _tileType);
+        allTiles[i, j].Init(i, j, board);
         tile.transform.parent = board.transform;
     }
 }

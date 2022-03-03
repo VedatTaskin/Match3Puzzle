@@ -6,15 +6,14 @@ public class Tile : MonoBehaviour
 {
     public int xIndex;
     public int yIndex;
-    [HideInInspector] public TileType tileType = TileType.Normal;
+    [HideInInspector] public TileType tileType;
 
     Board board;
 
-    public void Init(int x, int y, Board board, TileType _tileType = TileType.Normal)
+    public void Init(int x, int y, Board board)
     {
         xIndex = x;
         yIndex = y;
-        tileType = _tileType;
         this.board = board;
     }
 

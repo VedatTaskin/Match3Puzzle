@@ -170,6 +170,10 @@ public class GamepieceData : ScriptableObject
         {
             allGamepieces[x, y] = null;
             Destroy(gamepieceToClear.gameObject);
+            if (tileData.allTiles[x,y].tileType==TileType.Breakable)
+            {
+                tileData.allTiles[x, y].GetComponent<BreakableTile>().SetBreakableValue();
+            }
         }
     }
 
