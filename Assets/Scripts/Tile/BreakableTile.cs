@@ -5,9 +5,12 @@ using UnityEngine;
 public class BreakableTile : Tile
 {
     public Sprite[] spriteList;
+    public Color normalColor;
 
-    public int breakableValue;
+    [HideInInspector] public int breakableValue;
+
     SpriteRenderer spriteRenderer;
+
     private void OnEnable()
     {
         tileType = TileType.Breakable;
@@ -26,7 +29,6 @@ public class BreakableTile : Tile
         else
         {
             spriteRenderer.sprite = spriteList[breakableValue];
-            Debug.Log("hi" + breakableValue);
         }
     }
 
@@ -38,6 +40,7 @@ public class BreakableTile : Tile
         if (breakableValue==0)
         {
             tileType = TileType.Normal;
+            spriteRenderer.color = normalColor;
         }
     }
 }

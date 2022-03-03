@@ -25,9 +25,8 @@ MonoBehaviour:
     x: 2
     y: 2
     z: 0
-  - prefab: {fileID: 4620684841432577337, guid: 78e69536f2b5f354d9b63695f6c7837a,
-      type: 3}
-    tileType: 3
+  - prefab: {fileID: 471453342949099660, guid: fbf112d397ec30643a71f0c804684660, type: 3}
+    tileType: 1
     x: 2
     y: 3
     z: 0

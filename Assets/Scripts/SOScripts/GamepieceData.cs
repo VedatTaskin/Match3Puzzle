@@ -170,10 +170,14 @@ public class GamepieceData : ScriptableObject
         {
             allGamepieces[x, y] = null;
             Destroy(gamepieceToClear.gameObject);
-            if (tileData.allTiles[x,y].tileType==TileType.Breakable)
-            {
-                tileData.allTiles[x, y].GetComponent<BreakableTile>().SetBreakableValue();
-            }
+        }
+    }
+
+    private void BreakTilesAt(int x, int y)
+    {
+        if (tileData.allTiles[x, y].tileType == TileType.Breakable)
+        {
+            tileData.allTiles[x, y].GetComponent<BreakableTile>().SetBreakableValue();
         }
     }
 
@@ -184,6 +188,7 @@ public class GamepieceData : ScriptableObject
             if (piece != null)
             {
                 ClearGamepieceAt(piece.xIndex, piece.yIndex);
+                BreakTilesAt(piece.xIndex, piece.yIndex);
             }
         }
     }
