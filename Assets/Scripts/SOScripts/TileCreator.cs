@@ -7,7 +7,6 @@ using UnityEngine;
 public class TileCreator : ScriptableObject
 {
     public List<TilePrefab> tiles = new List<TilePrefab>();
-
 }
 
 [System.Serializable]

@@ -24,9 +24,19 @@ public class TileData : ScriptableObject
         {
             if (item.tileType==TileType.Obstacle)
             {
-                MakeTile(board, item, item.x, item.y,TileType.Obstacle);
+                MakeTile(board, item, item.x, item.y,TileType.Obstacle, 1);
             }
         }
+
+        // Than we instatiate breakable Tiles
+        foreach (var item in tilePrefabs.tiles)
+        {
+            if (item.tileType == TileType.Breakable)
+            {
+                MakeTile(board, item, item.x, item.y, TileType.Breakable);
+            }
+        }
+
 
         // Lastly we instantiate normal tiles in the empty slots
         foreach (var item in tilePrefabs.tiles)
@@ -47,9 +57,10 @@ public class TileData : ScriptableObject
         }
     }
 
-    private void MakeTile(Board board, TilePrefab item, int i, int j, TileType _tileType)
+    // z value for the correct placement of obstacle, to make behind the gamepieces
+    private void MakeTile(Board board, TilePrefab item, int i, int j, TileType _tileType,int z=0)
     {
-        GameObject tile = Instantiate(item.prefab, new Vector3(i, j, 0), Quaternion.identity) as GameObject;
+        GameObject tile = Instantiate(item.prefab, new Vector3(i, j, z), Quaternion.identity) as GameObject;
         tile.name = "Tile (" + i + "," + j + ")";
         allTiles[i, j] = tile.GetComponent<Tile>();
         allTiles[i, j].Init(i, j, board, _tileType);
