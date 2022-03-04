@@ -111,12 +111,12 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void CraeateGamepiece(GameObject prefab, int x, int y)
+    private void CraeateGamepiece(GameObject gamepieceGO, int x, int y)
     {
-        prefab.GetComponent<Gamepiece>().Init(this);
-        PlaceGamePiece(prefab.GetComponent<Gamepiece>(), x, y);
-        prefab.transform.position = new Vector3(x, y+ offset, 0);
-        prefab.GetComponent<Gamepiece>().Move(x, y, fallTime);
+        gamepieceGO.GetComponent<Gamepiece>().Init(this);
+        PlaceGamePiece(gamepieceGO.GetComponent<Gamepiece>(), x, y);
+        gamepieceGO.transform.position = new Vector3(x, y+ offset, 0);
+        gamepieceGO.GetComponent<Gamepiece>().Move(x, y, fallTime);
         transform.parent = transform;
     }
 
@@ -181,26 +181,39 @@ public class Board : MonoBehaviour
             targetGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
 
             // we wait until end of the switch movement
-            yield return new WaitForSeconds(swapTime); 
+            yield return new WaitForSeconds(swapTime);
 
-            List<Gamepiece> matchesAtClickedGamepiece = gamepieceData.FindMatchesAt(_clickedTile.xIndex, _clickedTile.yIndex);
-            List<Gamepiece> matchesAtTargetGamepiece = gamepieceData.FindMatchesAt(_targetTile.xIndex, _targetTile.yIndex);
-            List<Gamepiece> allMatches = matchesAtClickedGamepiece.Union(matchesAtTargetGamepiece).ToList();
-
-            // we check for the match count, if there are not any match we swap back again
-            if (allMatches.Count==0)
+            // we check both clicked and target to find out they are Normal or not
+            if (clickedGamepiece.gamepieceType==GamepieceType.Normal && targetGamepiece.gamepieceType==GamepieceType.Normal)
             {
-                clickedGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
-                targetGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime);
-                yield return new WaitForSeconds(swapTime);
+                List<Gamepiece> matchesAtClickedGamepiece = gamepieceData.FindMatchesAt(_clickedTile.xIndex, _clickedTile.yIndex);
+                List<Gamepiece> matchesAtTargetGamepiece = gamepieceData.FindMatchesAt(_targetTile.xIndex, _targetTile.yIndex);
+                List<Gamepiece> allMatches = matchesAtClickedGamepiece.Union(matchesAtTargetGamepiece).ToList();
+
+                // we check for the match count, if there are not any match we swap back again
+                if (allMatches.Count == 0)
+                {
+                    clickedGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
+                    targetGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime);
+                    yield return new WaitForSeconds(swapTime);
+
+                }
+
+                //if there is a match we start to clear and collapse routine
+                else
+                {
+                    yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(allMatches));
+                    yield return StartCoroutine(RefillBoard());
+                }
             }
 
-            //if there is a match we start to clear and collapse routine
+            // if one of the clicked and target is special we will apply special rule
             else
             {
-                yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(allMatches));
-                yield return StartCoroutine(RefillBoard());
+                ApplySpecialGamepieceRule(clickedGamepiece,targetGamepiece);
             }
+
+            
         }
         gameState = GameState.CanSwap;
     }
@@ -227,6 +240,19 @@ public class Board : MonoBehaviour
         return (x >= 0 && x < width && y >= 0 && y < height);
     }
 
+    void ApplySpecialGamepieceRule(Gamepiece clicked, Gamepiece target)
+    {
+        
+        if (clicked.gamepieceType==GamepieceType.Special && target.gamepieceType==GamepieceType.Special)
+        {
+            Debug.Log(" both special gamepiece");
+        }
+        else
+        {
+            Debug.Log(" one of them normal gamepiece");
+        }
+
+    }
 }
 
 

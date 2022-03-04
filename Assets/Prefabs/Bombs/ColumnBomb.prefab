@@ -96,7 +96,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xIndex: 0
   yIndex: 0
-  gamepieceType: 0
+  gamepieceType: 1
   normalGamepieceType: 0
-  specialGamepieceType: 0
+  specialGamepieceType: 1
   easeType: 12

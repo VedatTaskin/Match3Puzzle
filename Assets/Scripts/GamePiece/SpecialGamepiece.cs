@@ -2,7 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecialGamepiece : Gamepiece
+public class SpecialGamepiece : Gamepiece,ISpecialGamepieceRule
 {
-    [HideInInspector] public GamepieceType gamepieceType = GamepieceType.Special;
+
+
+
+    public virtual void PerformBombRule()
+    {
+        Debug.Log(this.gamepieceType + " my type");
+        Debug.Log(this.specialGamepieceType + " my special type");
+    }
 }

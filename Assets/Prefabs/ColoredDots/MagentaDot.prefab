@@ -97,6 +97,6 @@ MonoBehaviour:
   xIndex: 0
   yIndex: 0
   gamepieceType: 0
-  normalGamepieceType: 0
+  normalGamepieceType: 2
   specialGamepieceType: 0
   easeType: 12

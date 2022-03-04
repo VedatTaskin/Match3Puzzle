@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class RowBomb : SpecialGamepiece
 {
-    public override void OnEnable()
-    {
-        specialGamepieceType = SpecialGamepieceType.RowBomb;
-    }
+
 
     public override void PerformBombRule()
     {

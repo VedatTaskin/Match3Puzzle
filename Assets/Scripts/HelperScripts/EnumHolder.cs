@@ -20,9 +20,10 @@ public enum TileType
 
 public enum SpecialGamepieceType
 {
-    Stripped,
+    RowBomb,
+    ColumnBomb,
     Wrapped,
-    Coloured,
+    Coloured
 }
 
 public enum NormalGamepieceType

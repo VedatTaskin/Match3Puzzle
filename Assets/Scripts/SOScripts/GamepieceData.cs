@@ -39,7 +39,7 @@ public class GamepieceData : ScriptableObject
         List<Gamepiece> matches = new List<Gamepiece>();
         Gamepiece startPiece = allGamepieces[startX, startY];
 
-        if (startPiece != null)
+        if (startPiece != null )
         {
             matches.Add(startPiece);
         }
@@ -65,13 +65,15 @@ public class GamepieceData : ScriptableObject
 
             Gamepiece nextPiece = allGamepieces[nextX, nextY];
 
-            if (nextPiece == null )
+
+            if (nextPiece == null)
             {
                 break;
             }
             else
             {
-                if (startPiece.normalGamepieceType == nextPiece.normalGamepieceType)
+                if (startPiece.normalGamepieceType == nextPiece.normalGamepieceType &&
+                        startPiece.gamepieceType == GamepieceType.Normal && nextPiece.gamepieceType == GamepieceType.Normal)
                 {
                     matches.Add(nextPiece);
                 }

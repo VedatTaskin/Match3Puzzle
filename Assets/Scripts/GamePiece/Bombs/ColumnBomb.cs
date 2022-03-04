@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class ColumnBomb : SpecialGamepiece
 {
-    public override void OnEnable()
-    {
-        specialGamepieceType = SpecialGamepieceType.ColumnBomb;
-
-    }
 
     public override void PerformBombRule()
     {
-
+        
     }
 
 }

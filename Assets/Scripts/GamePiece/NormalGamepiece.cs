@@ -4,6 +4,5 @@ using UnityEngine;
 
 public class NormalGamepiece : Gamepiece
 {
-    [HideInInspector] public GamepieceType gamepieceType = GamepieceType.Normal;
 
 }
