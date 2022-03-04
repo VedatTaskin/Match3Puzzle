@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4228407111365599601}
   - component: {fileID: 4228407111365599602}
-  - component: {fileID: 7905805955932594490}
+  - component: {fileID: -8870707107016165631}
   m_Layer: 0
   m_Name: BlueDot
   m_TagString: Untagged
@@ -82,7 +82,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7905805955932594490
+--- !u!114 &-8870707107016165631
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,12 +91,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4228407111365599603}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91915d66ec9fb994086422e798874f87, type: 3}
+  m_Script: {fileID: 11500000, guid: d294534c71910ff4b896cbbb6553ea42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xIndex: 1
-  yIndex: 3
+  xIndex: 0
+  yIndex: 0
   gamepieceType: 0
-  normalGamepieceType: 1
+  normalGamepieceType: 0
   specialGamepieceType: 0
   easeType: 12
