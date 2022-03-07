@@ -1,18 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class EventManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    //public static Action<bool> isClearAndCollapseRoutineContinoue;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
+
 public class Interfaces
 {
 
@@ -7,5 +9,5 @@ public class Interfaces
 
 public interface ISpecialGamepieceRule
 {
-    void PerformBombRule();
+    List<Gamepiece> PerformBombRule(Gamepiece gamepiece);
 }
