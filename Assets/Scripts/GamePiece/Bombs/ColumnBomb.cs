@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class ColumnBomb : SpecialGamepiece
 {
-
-    public override void PerformBombRule()
+    public override SpecialGamepieceType specialGamepieceType => SpecialGamepieceType.ColumnBomb;
+    public override List<Gamepiece> PerformRule(Gamepiece gamepiece)
     {
-        
+        return board.gamepieceData.FindGamepieceInRow(gamepiece.yIndex);
     }
-
 }

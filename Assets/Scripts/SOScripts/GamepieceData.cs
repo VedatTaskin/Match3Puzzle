@@ -317,6 +317,22 @@ public class GamepieceData : ScriptableObject
         } while (!routineIsFinished);
 
     }
+
+    public List<Gamepiece> FindGamepieceInRow (int yIndex)
+    {
+        List<Gamepiece> matches = new List<Gamepiece>();
+
+        for (int i = 0; i < width; i++)
+        {
+            if (!matches.Contains(allGamepieces[i, yIndex]))
+            {
+                matches.Add(allGamepieces[i, yIndex]);
+            }            
+        }
+
+        return matches;
+    }
+
 }
 
 [System.Serializable]

@@ -210,7 +210,7 @@ public class Board : MonoBehaviour
             // if one of the clicked and target is special we will apply special rule
             else
             {
-                ApplySpecialGamepieceRule(clickedGamepiece,targetGamepiece);
+                StartCoroutine( ApplySpecialGamepieceRule(clickedGamepiece,targetGamepiece));
             }
 
             
@@ -240,18 +240,36 @@ public class Board : MonoBehaviour
         return (x >= 0 && x < width && y >= 0 && y < height);
     }
 
-    void ApplySpecialGamepieceRule(Gamepiece clicked, Gamepiece target)
+    IEnumerator ApplySpecialGamepieceRule(Gamepiece clicked, Gamepiece target)
     {
-        
-        if (clicked.gamepieceType==GamepieceType.Special && target.gamepieceType==GamepieceType.Special)
+        List<Gamepiece> gamepiecesWillClear  = new List<Gamepiece>();
+
+        if (clicked.gamepieceType==GamepieceType.Special)
         {
-            Debug.Log(" both special gamepiece");
-        }
-        else
-        {
-            Debug.Log(" one of them normal gamepiece");
+
+            ISpecialGamepieceRule specialGamepieceRule = clicked.GetComponent<ISpecialGamepieceRule>();
+            if (specialGamepieceRule != null)
+            {
+                gamepiecesWillClear=specialGamepieceRule.PerformRule(clicked);
+            }
+
+
         }
 
+        if (target.gamepieceType == GamepieceType.Special)
+        {
+            ISpecialGamepieceRule specialGamepieceRule = target.GetComponent<ISpecialGamepieceRule>();
+            if (specialGamepieceRule != null)
+            {
+                gamepiecesWillClear = specialGamepieceRule.PerformRule(target);
+            }
+        }
+
+        yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(gamepiecesWillClear));
+        yield return StartCoroutine(RefillBoard());
+
+
+        yield return null;
     }
 }
 

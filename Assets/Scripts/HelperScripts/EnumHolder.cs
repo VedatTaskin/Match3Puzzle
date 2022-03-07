@@ -36,5 +36,6 @@ public enum NormalGamepieceType
     Teal,
     Red,
     Cyan,
-    Wild
+    Wild,
+    None
 }

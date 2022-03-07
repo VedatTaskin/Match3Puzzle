@@ -8,12 +8,13 @@ public class Gamepiece : MonoBehaviour
 {
     public int xIndex;
     public int yIndex;
-    public GamepieceType gamepieceType;
+    public virtual GamepieceType gamepieceType { get; }
+
     public NormalGamepieceType normalGamepieceType;
-    public SpecialGamepieceType specialGamepieceType;
+    public virtual SpecialGamepieceType specialGamepieceType { get; }
 
     public Ease easeType;
-    Board board;
+    [HideInInspector] public Board board;
 
     public void Init( Board _board)
     {

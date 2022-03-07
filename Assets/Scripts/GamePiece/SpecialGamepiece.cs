@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecialGamepiece : Gamepiece,ISpecialGamepieceRule
+public class SpecialGamepiece : Gamepiece, ISpecialGamepieceRule
 {
+    public override GamepieceType gamepieceType => GamepieceType.Special;
 
-
-
-    public virtual void PerformBombRule()
+    private void OnEnable() => normalGamepieceType = NormalGamepieceType.None;
+    public virtual List<Gamepiece> PerformRule(Gamepiece gamepiece)
     {
-        Debug.Log(this.gamepieceType + " my type");
-        Debug.Log(this.specialGamepieceType + " my special type");
+        return null;
     }
 }
