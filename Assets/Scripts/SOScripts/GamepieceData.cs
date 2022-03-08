@@ -317,41 +317,6 @@ public class GamepieceData : ScriptableObject
         } while (!routineIsFinished);
 
     }
-
-    public List<Gamepiece> FindGamepieceInRow (int yIndex)
-    {
-        List<Gamepiece> matches = new List<Gamepiece>();
-
-        for (int i = 0; i < width; i++)
-        {
-            var piece = allGamepieces[i, yIndex];
-
-            if (!matches.Contains(piece) && piece != null)
-            {
-                matches.Add(piece);
-            }            
-        }
-
-        return matches;
-    }
-
-    public List<Gamepiece> FindGamepieceInColumn(int xIndex)
-    {
-        List<Gamepiece> matches = new List<Gamepiece>();
-
-        for (int i = 0; i < height; i++)
-        {
-            var piece = allGamepieces[xIndex, i];
-
-            if (!matches.Contains(piece) && piece != null)
-            {
-                matches.Add(piece);
-            }
-        }
-
-        return matches;
-    }
-
 }
 
 [System.Serializable]

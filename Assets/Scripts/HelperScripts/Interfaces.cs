@@ -4,5 +4,5 @@ using System.Collections;
 
 public interface IBombRule
 {
-    List<Gamepiece> PerformRule(Gamepiece gamepiece);
+    List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board);
 }

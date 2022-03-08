@@ -5,8 +5,8 @@ using System.Linq;
 
 public class Board : MonoBehaviour
 {
-    int width;
-    int height;
+    [HideInInspector] public int width;
+    [HideInInspector] public int height;
 
     public int borderSize;
     [Range(0, 1)]

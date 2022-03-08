@@ -10,7 +10,6 @@ public static class RuleChoser
     {
         List<Gamepiece> gamepiecesWillClear = new List<Gamepiece>();
 
-
         #region There is a bomb in Swap
         if (clicked.gamepieceType == GamepieceType.Bomb || target.gamepieceType == GamepieceType.Bomb)
         {
@@ -20,7 +19,7 @@ public static class RuleChoser
                 IBombRule bombRule = clicked.GetComponent<IBombRule>();
                 if (bombRule != null)
                 {
-                    gamepiecesWillClear = bombRule.PerformRule(clicked);
+                    gamepiecesWillClear = bombRule.PerformRule(clicked,board);
                 }
 
                 List<Gamepiece> matchesAtTargetGamepiece = board.gamepieceData.FindMatchesAt(target.xIndex, target.yIndex);
@@ -34,7 +33,7 @@ public static class RuleChoser
                 IBombRule bombRule = target.GetComponent<IBombRule>();
                 if (bombRule != null)
                 {
-                    gamepiecesWillClear = bombRule.PerformRule(target);
+                    gamepiecesWillClear = bombRule.PerformRule(target,board);
                 }
 
                 List<Gamepiece> matchesAtClickedGamepiece = board.gamepieceData.FindMatchesAt(clicked.xIndex, clicked.yIndex);
@@ -51,14 +50,14 @@ public static class RuleChoser
         }
         #endregion
 
-        // Not finished
+        // Not done
         if (clicked.gamepieceType == GamepieceType.Changeable || target.gamepieceType == GamepieceType.Changeable)
         {
 
             // changable var, 
         }
 
-        // Not finished
+        // Not done
         if (clicked.gamepieceType == GamepieceType.Collectible || target.gamepieceType == GamepieceType.Collectible)
         {
             // collectible var
