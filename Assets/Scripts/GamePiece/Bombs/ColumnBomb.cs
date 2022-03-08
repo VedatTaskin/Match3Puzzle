@@ -7,7 +7,7 @@ public class ColumnBomb : Bombs
 {
     public override BombType bombType => BombType.ColumnBomb;
 
-    public override List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board)
+    public override List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece=null)
     {
         return FindGamepieceInColumn(gamepiece.xIndex);
     }

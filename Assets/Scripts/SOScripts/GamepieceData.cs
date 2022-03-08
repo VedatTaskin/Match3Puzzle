@@ -17,7 +17,7 @@ public class GamepieceData : ScriptableObject
     float collapseTime=0.1f;
     Board board;
 
-    public GameObject bomb;
+    [HideInInspector] public GameObject bomb;
     private void OnEnable()
     {
         width = tileData.width;

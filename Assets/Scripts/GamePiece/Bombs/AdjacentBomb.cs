@@ -7,7 +7,7 @@ public class AdjacentBomb : Bombs
     public int neighborMultiplier = 1;
     public override BombType bombType => BombType.Adjacent;
 
-    public override List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board)
+    public override List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece = null)
     {
         return FindGamepieceInAdjacent(gamepiece);
     }
