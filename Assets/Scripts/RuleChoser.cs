@@ -8,7 +8,7 @@ public static class RuleChoser
 
     public static List<Gamepiece> Rule(Gamepiece clicked, Gamepiece target, Board board)
     {
-        List<Gamepiece> gamepiecesWillClear = new List<Gamepiece>();
+        List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
         #region There is a bomb in Swap
         if (clicked.gamepieceType == GamepieceType.Bomb || target.gamepieceType == GamepieceType.Bomb)
@@ -16,29 +16,16 @@ public static class RuleChoser
             // bomb var, 
             if (clicked.gamepieceType == GamepieceType.Bomb && target.gamepieceType != GamepieceType.Bomb)
             {
-                IBombRule bombRule = clicked.GetComponent<IBombRule>();
-                if (bombRule != null)
-                {
-                    gamepiecesWillClear = bombRule.PerformRule(clicked,board);
-                }
-
+                bombedPieces = ApplyOneBombRule(clicked, board);
                 List<Gamepiece> matchesAtTargetGamepiece = board.gamepieceData.FindMatchesAt(target.xIndex, target.yIndex);
-
-                return gamepiecesWillClear.Union(matchesAtTargetGamepiece).ToList();
-
+                return bombedPieces.Union(matchesAtTargetGamepiece).ToList();
             }
 
             if (clicked.gamepieceType!= GamepieceType.Bomb && target.gamepieceType == GamepieceType.Bomb  )
             {
-                IBombRule bombRule = target.GetComponent<IBombRule>();
-                if (bombRule != null)
-                {
-                    gamepiecesWillClear = bombRule.PerformRule(target,board);
-                }
-
+                bombedPieces = ApplyOneBombRule(target, board);
                 List<Gamepiece> matchesAtClickedGamepiece = board.gamepieceData.FindMatchesAt(clicked.xIndex, clicked.yIndex);
-
-                return gamepiecesWillClear.Union(matchesAtClickedGamepiece).ToList();
+                return bombedPieces.Union(matchesAtClickedGamepiece).ToList();
             }
 
             if (clicked.gamepieceType == GamepieceType.Bomb && target.gamepieceType == GamepieceType.Bomb )
@@ -73,10 +60,46 @@ public static class RuleChoser
         }
         #endregion
 
-
-
         return null;
+    }
+
+    private static List<Gamepiece> ApplyOneBombRule(Gamepiece gamepiece, Board board)
+    {
+        List<Gamepiece> bombedPieces = new List<Gamepiece>();
+
+        IBombRule bombRule = gamepiece.GetComponent<IBombRule>();
+        if (bombRule != null)
+        {
+            bombedPieces = bombRule.PerformRule(gamepiece, board);
+        }
+
+        foreach (var piece in bombedPieces)
+        {
+            if (piece.gamepieceType == GamepieceType.Bomb && piece != gamepiece)
+            {
+                bombedPieces = bombedPieces.Union(ApplyOneBombRule(piece, board)).ToList();
+            }
+        }
+
+        return bombedPieces;
+    }
+
+    public static List<Gamepiece> CheckForAnotherBomb(Gamepiece piece, Board board)
+    {
+        List<Gamepiece> otherGamepieces = new List<Gamepiece>();
 
 
+        if (piece.gamepieceType == GamepieceType.Bomb)
+        {
+            IBombRule bombRule = piece.GetComponent<IBombRule>();
+
+            if (bombRule != null)
+            {
+                Debug.Log("there is another bomb");
+                otherGamepieces =bombRule.PerformRule(piece, board); 
+
+            }
+        }
+        return otherGamepieces;
     }
 }

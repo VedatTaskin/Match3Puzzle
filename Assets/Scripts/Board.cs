@@ -187,7 +187,7 @@ public class Board : MonoBehaviour
 
             StartCoroutine(ApplyGamepieceRule(clickedGamepiece, targetGamepiece));            
         }
-        gameState = GameState.CanSwap;
+        
     }
 
     IEnumerator RefillBoard()
@@ -214,7 +214,6 @@ public class Board : MonoBehaviour
 
     IEnumerator ApplyGamepieceRule(Gamepiece clicked, Gamepiece target)
     {
-
         List<Gamepiece> gamepiecesWillClear = RuleChoser.Rule(clicked, target,this);
 
         if (gamepiecesWillClear == null || gamepiecesWillClear.Count == 0)
@@ -222,7 +221,6 @@ public class Board : MonoBehaviour
             clicked.Move(target.xIndex, target.yIndex, swapTime);
             target.Move(clicked.xIndex, clicked.yIndex, swapTime);
             yield return new WaitForSeconds(swapTime);
-
         }
 
         else
@@ -232,7 +230,7 @@ public class Board : MonoBehaviour
         }
 
 
-
+        gameState = GameState.CanSwap;
         yield return null;
     }
 }
