@@ -324,10 +324,29 @@ public class GamepieceData : ScriptableObject
 
         for (int i = 0; i < width; i++)
         {
-            if (!matches.Contains(allGamepieces[i, yIndex]) && allGamepieces[i,yIndex] != null)
+            var piece = allGamepieces[i, yIndex];
+
+            if (!matches.Contains(piece) && piece != null)
             {
-                matches.Add(allGamepieces[i, yIndex]);
+                matches.Add(piece);
             }            
+        }
+
+        return matches;
+    }
+
+    public List<Gamepiece> FindGamepieceInColumn(int xIndex)
+    {
+        List<Gamepiece> matches = new List<Gamepiece>();
+
+        for (int i = 0; i < height; i++)
+        {
+            var piece = allGamepieces[xIndex, i];
+
+            if (!matches.Contains(piece) && piece != null)
+            {
+                matches.Add(piece);
+            }
         }
 
         return matches;

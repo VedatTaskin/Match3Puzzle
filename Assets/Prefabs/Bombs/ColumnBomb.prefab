@@ -71,7 +71,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: cf47c0b5e2c7be241973a7de3d4b44fb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: df28cf8057057dc45880c067b6f4f7fe, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -96,7 +96,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xIndex: 0
   yIndex: 0
-  gamepieceType: 1
   normalGamepieceType: 0
-  specialGamepieceType: 1
   easeType: 12
+  board: {fileID: 0}
