@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3331765375303411335}
   - component: {fileID: 3331765375303411332}
-  - component: {fileID: 3331765375303411334}
+  - component: {fileID: -3904965863764154780}
   m_Layer: 0
-  m_Name: WrappedtBomb
+  m_Name: WrappedBomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,7 +71,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: cf47c0b5e2c7be241973a7de3d4b44fb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b20f727de395ff144aa419560705de09, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -82,7 +82,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3331765375303411334
+--- !u!114 &-3904965863764154780
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,12 +91,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3331765375303411333}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ad5ad71124b7fc4a83d62788daf5f8d, type: 3}
+  m_Script: {fileID: 11500000, guid: 084ddde8eb70a2f45bd5f8f5364919f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   xIndex: 0
   yIndex: 0
-  gamepieceType: 1
   normalGamepieceType: 0
-  specialGamepieceType: 2
-  easeType: 6
+  easeType: 12
+  board: {fileID: 0}
+  neighborMultiplier: 2
