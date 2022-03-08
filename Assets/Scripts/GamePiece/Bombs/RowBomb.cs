@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RowBomb : SpecialGamepiece
+public class RowBomb : Bombs
 {
-    public override SpecialGamepieceType specialGamepieceType => SpecialGamepieceType.RowBomb;
+    public override BombType bombType => BombType.RowBomb;
     public override List<Gamepiece> PerformRule(Gamepiece gamepiece)
     {
         return board.gamepieceData.FindGamepieceInRow(gamepiece.yIndex);

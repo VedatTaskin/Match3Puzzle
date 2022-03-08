@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections;
 
-public interface ISpecialGamepieceRule
+public interface IBombRule
 {
     List<Gamepiece> PerformRule(Gamepiece gamepiece);
 }

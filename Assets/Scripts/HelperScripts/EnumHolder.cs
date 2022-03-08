@@ -7,7 +7,10 @@
 public enum GamepieceType
 {
     Normal,
-    Special
+    Collectible,
+    Changeable,
+    Bomb,
+    NotMoveable
 }
 
 public enum TileType
@@ -18,7 +21,7 @@ public enum TileType
     Obstacle
 }
 
-public enum SpecialGamepieceType
+public enum BombType
 {
     RowBomb,
     ColumnBomb,

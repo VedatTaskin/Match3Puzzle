@@ -175,45 +175,17 @@ public class Board : MonoBehaviour
         Gamepiece clickedGamepiece = gamepieceData.allGamepieces[_clickedTile.xIndex, _clickedTile.yIndex];
         Gamepiece targetGamepiece = gamepieceData.allGamepieces[_targetTile.xIndex, _targetTile.yIndex];
 
-        if (targetGamepiece!= null && clickedGamepiece != null)
+        if (targetGamepiece!= null && clickedGamepiece != null 
+            && clickedGamepiece.gamepieceType != GamepieceType.NotMoveable && targetGamepiece.gamepieceType != GamepieceType.NotMoveable)
         {
+
             clickedGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime);
             targetGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
 
             // we wait until end of the switch movement
             yield return new WaitForSeconds(swapTime);
 
-            // we check both clicked and target to find out they are Normal or not
-            if (clickedGamepiece.gamepieceType==GamepieceType.Normal && targetGamepiece.gamepieceType==GamepieceType.Normal)
-            {
-                List<Gamepiece> matchesAtClickedGamepiece = gamepieceData.FindMatchesAt(_clickedTile.xIndex, _clickedTile.yIndex);
-                List<Gamepiece> matchesAtTargetGamepiece = gamepieceData.FindMatchesAt(_targetTile.xIndex, _targetTile.yIndex);
-                List<Gamepiece> allMatches = matchesAtClickedGamepiece.Union(matchesAtTargetGamepiece).ToList();
-
-                // we check for the match count, if there are not any match we swap back again
-                if (allMatches.Count == 0)
-                {
-                    clickedGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
-                    targetGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime);
-                    yield return new WaitForSeconds(swapTime);
-
-                }
-
-                //if there is a match we start to clear and collapse routine
-                else
-                {
-                    yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(allMatches));
-                    yield return StartCoroutine(RefillBoard());
-                }
-            }
-
-            // if one of the clicked and target is special we will apply special rule
-            else
-            {
-                StartCoroutine( ApplySpecialGamepieceRule(clickedGamepiece,targetGamepiece));
-            }
-
-            
+            StartCoroutine(ApplyGamepieceRule(clickedGamepiece, targetGamepiece));            
         }
         gameState = GameState.CanSwap;
     }
@@ -240,33 +212,25 @@ public class Board : MonoBehaviour
         return (x >= 0 && x < width && y >= 0 && y < height);
     }
 
-    IEnumerator ApplySpecialGamepieceRule(Gamepiece clicked, Gamepiece target)
+    IEnumerator ApplyGamepieceRule(Gamepiece clicked, Gamepiece target)
     {
-        List<Gamepiece> gamepiecesWillClear  = new List<Gamepiece>();
 
-        if (clicked.gamepieceType==GamepieceType.Special)
+        List<Gamepiece> gamepiecesWillClear = RuleChoser.Rule(clicked, target,this);
+
+        if (gamepiecesWillClear == null || gamepiecesWillClear.Count == 0)
         {
-
-            ISpecialGamepieceRule specialGamepieceRule = clicked.GetComponent<ISpecialGamepieceRule>();
-            if (specialGamepieceRule != null)
-            {
-                gamepiecesWillClear=specialGamepieceRule.PerformRule(clicked);
-            }
-
+            clicked.Move(target.xIndex, target.yIndex, swapTime);
+            target.Move(clicked.xIndex, clicked.yIndex, swapTime);
+            yield return new WaitForSeconds(swapTime);
 
         }
 
-        if (target.gamepieceType == GamepieceType.Special)
+        else
         {
-            ISpecialGamepieceRule specialGamepieceRule = target.GetComponent<ISpecialGamepieceRule>();
-            if (specialGamepieceRule != null)
-            {
-                gamepiecesWillClear = specialGamepieceRule.PerformRule(target);
-            }
+            yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(gamepiecesWillClear));
+            yield return StartCoroutine(RefillBoard());
         }
 
-        yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(gamepiecesWillClear));
-        yield return StartCoroutine(RefillBoard());
 
 
         yield return null;

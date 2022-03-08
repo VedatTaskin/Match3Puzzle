@@ -11,7 +11,7 @@ public class Gamepiece : MonoBehaviour
     public virtual GamepieceType gamepieceType { get; }
 
     public NormalGamepieceType normalGamepieceType;
-    public virtual SpecialGamepieceType specialGamepieceType { get; }
+    public virtual BombType bombType { get; }
 
     public Ease easeType;
     [HideInInspector] public Board board;
