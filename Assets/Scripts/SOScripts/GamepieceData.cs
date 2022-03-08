@@ -221,7 +221,7 @@ public class GamepieceData : ScriptableObject
 
         foreach (var piece in gamepieces)
         {
-            if (!columns.Contains(piece.xIndex))
+            if (!columns.Contains(piece.xIndex) )
             {
                 columns.Add(piece.xIndex);
             }
@@ -324,7 +324,7 @@ public class GamepieceData : ScriptableObject
 
         for (int i = 0; i < width; i++)
         {
-            if (!matches.Contains(allGamepieces[i, yIndex]))
+            if (!matches.Contains(allGamepieces[i, yIndex]) && allGamepieces[i,yIndex] != null)
             {
                 matches.Add(allGamepieces[i, yIndex]);
             }            
