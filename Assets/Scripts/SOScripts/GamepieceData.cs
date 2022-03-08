@@ -10,17 +10,20 @@ public class GamepieceData : ScriptableObject
     public GameObject[] gamePiecePrefabs;
     public TileData tileData;
 
-
     public OrderedGamepieces [] orderedGamepieces;
 
     int width;
     int height;
     float collapseTime=0.1f;
+    Board board;
+
+    public GameObject bomb;
     private void OnEnable()
     {
         width = tileData.width;
         height = tileData.height;
         allGamepieces = new Gamepiece[width,height];
+        board = FindObjectOfType<Board>();
     }
 
     public GameObject GetRandomGamePiece()
@@ -281,6 +284,9 @@ public class GamepieceData : ScriptableObject
             yield return new WaitForSeconds(0.2f);
             ClearGamepieces(matches);
 
+            //instantiate bomb here
+            CheckBombCreation();
+
             yield return new WaitForSeconds(0.2f);
             var movingPieces = CollapseColumn(matches);
 
@@ -294,10 +300,10 @@ public class GamepieceData : ScriptableObject
 
             foreach (var piece in movingPieces)
             {
-                newMatches =newMatches.Union(FindMatchesAt(piece.xIndex,piece.yIndex)).ToList();
+                newMatches = newMatches.Union(FindMatchesAt(piece.xIndex, piece.yIndex)).ToList();
             }
 
-            if (newMatches.Count==0)
+            if (newMatches.Count == 0)
             {
                 routineIsFinished = true;
             }
@@ -309,7 +315,7 @@ public class GamepieceData : ScriptableObject
 
             // check point to prevent infinite loop
             iterations++;
-            if (iterations>maxIterations)
+            if (iterations > maxIterations)
             {
                 break;
             }
@@ -317,6 +323,49 @@ public class GamepieceData : ScriptableObject
         } while (!routineIsFinished);
 
     }
+
+    private void CheckBombCreation()
+    {
+        if (bomb != null)
+        {
+            int x = bomb.GetComponent<Bombs>().xIndex;
+            int y = bomb.GetComponent<Bombs>().yIndex;
+            allGamepieces[x, y] = bomb.GetComponent<Gamepiece>();
+            bomb = null;
+        }
+    }
+
+    public bool IsCornerMatch(List<Gamepiece> gamepieces)
+    {
+        bool vertical = false;
+        bool horizontal = false;
+
+        int xStart = -1;
+        int yStart = -1;
+
+        foreach (var piece in gamepieces)
+        {
+            if (xStart == -1 || yStart ==-1)
+            {
+                xStart = piece.xIndex;
+                yStart = piece.yIndex;
+                continue;
+            }
+
+            if (piece.xIndex != xStart && piece.yIndex == yStart)
+            {
+                horizontal = true;
+            }
+
+            if (piece.xIndex == xStart && piece.yIndex != yStart)
+            {
+                vertical = true;
+            }
+        }
+
+        return (horizontal && vertical);
+    }        
+
 }
 
 [System.Serializable]

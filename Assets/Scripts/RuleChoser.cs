@@ -5,15 +5,14 @@ using UnityEngine;
 
 public static class RuleChoser 
 {
-
-    public static List<Gamepiece> Rule(Gamepiece clicked, Gamepiece target, Board board)
+    public static List<Gamepiece> ChooseRule(Gamepiece clicked, Gamepiece target, Board board)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
         #region There is a bomb in Swap
         if (clicked.gamepieceType == GamepieceType.Bomb || target.gamepieceType == GamepieceType.Bomb)
         {
-            // bomb var, 
+            // there is bomb 
             if (clicked.gamepieceType == GamepieceType.Bomb && target.gamepieceType != GamepieceType.Bomb)
             {
                 bombedPieces = ApplyOneBombRule(clicked, board);
@@ -55,6 +54,20 @@ public static class RuleChoser
         {
             List<Gamepiece> matchesAtClickedGamepiece = board.gamepieceData.FindMatchesAt(clicked.xIndex, clicked.yIndex);
             List<Gamepiece> matchesAtTargetGamepiece = board.gamepieceData.FindMatchesAt(target.xIndex, target.yIndex);
+
+            // if number of matches greater than 4 we create bomb
+            if (matchesAtClickedGamepiece.Count >=4 )
+            {
+                Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
+                board.DropBomb(clicked.xIndex, clicked.yIndex, swapDirection, matchesAtClickedGamepiece);                
+            }
+            if ( matchesAtTargetGamepiece.Count >= 4)
+            {
+                Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
+                board.DropBomb(target.xIndex, target.yIndex, swapDirection, matchesAtTargetGamepiece);
+            }
+            
+
             List<Gamepiece> allMatches = matchesAtClickedGamepiece.Union(matchesAtTargetGamepiece).ToList();
             return allMatches;
         }

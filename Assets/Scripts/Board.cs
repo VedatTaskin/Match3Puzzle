@@ -16,11 +16,16 @@ public class Board : MonoBehaviour
     public GamepieceData gamepieceData;
     public TileData tileData;
 
+    [Header("Bomb prefabs")]
+    public GameObject rowBomb;
+    public GameObject columnBomb;
+    public GameObject adjacentBomb;
+
     GameState gameState;
     Tile clickedTile;
     Tile targetTile;
-    int offset=10;
-    int firstFill=0; 
+    int offset = 10;
+    int firstFill = 0;
 
     private void Start()
     {
@@ -34,33 +39,33 @@ public class Board : MonoBehaviour
 
     void SetupCamera()
     {
-        Camera.main.transform.position = new Vector3( (float)(width-1) / 2, (float)(height-1) / 2, -10f);
+        Camera.main.transform.position = new Vector3((float)(width - 1) / 2, (float)(height - 1) / 2, -10f);
 
-        float aspectRatio = (float) Screen.width / (float) Screen.height;
+        float aspectRatio = (float)Screen.width / (float)Screen.height;
 
-        float verticalSize = (float) height / 2f + (float) borderSize;
+        float verticalSize = (float)height / 2f + (float)borderSize;
 
         float horizontalSize = ((float)width / 2f + (float)borderSize) / aspectRatio;
 
         Camera.main.orthographicSize = (verticalSize > horizontalSize) ? verticalSize : horizontalSize;
-    
+
     }
 
-    public void PlaceGamePiece(Gamepiece gamePiece,int x, int y)
+    public void PlaceGamePiece(Gamepiece gamePiece, int x, int y)
     {
         if (gamePiece == null)
         {
             Debug.LogWarning("BOARD: invalid gamepiece");
             return;
         }
-        gamePiece.transform.position = new Vector3(x, y , 0);
+        gamePiece.transform.position = new Vector3(x, y, 0);
         gamePiece.transform.rotation = Quaternion.identity;
-        if (IsWithInBounds(x,y))
+        if (IsWithInBounds(x, y))
         {
             gamepieceData.allGamepieces[x, y] = gamePiece;
         }
         gamePiece.SetCoordinate(x, y);
-    }     
+    }
 
     void FillBoard()
     {
@@ -115,9 +120,22 @@ public class Board : MonoBehaviour
     {
         gamepieceGO.GetComponent<Gamepiece>().Init(this);
         PlaceGamePiece(gamepieceGO.GetComponent<Gamepiece>(), x, y);
-        gamepieceGO.transform.position = new Vector3(x, y+ offset, 0);
+        gamepieceGO.transform.position = new Vector3(x, y + offset, 0);
         gamepieceGO.GetComponent<Gamepiece>().Move(x, y, fallTime);
         transform.parent = transform;
+    }
+
+    private GameObject CreateBomb(GameObject prefab, int x, int y)
+    {
+        if (prefab != null && IsWithInBounds(x, y))
+        {
+            GameObject bomb = Instantiate(prefab, new Vector3(x, y, 0), Quaternion.identity) as GameObject;
+            bomb.GetComponent<Bombs>().Init(this);
+            bomb.GetComponent<Bombs>().SetCoordinate(x, y);
+            bomb.transform.parent = transform;
+            return bomb;
+        }
+        return null;
     }
 
     Gamepiece FillRandomAt(int x, int y)
@@ -134,18 +152,18 @@ public class Board : MonoBehaviour
 
     public void ClickTile(Tile _tile)
     {
-        if (gameState==GameState.CanSwap)
+        if (gameState == GameState.CanSwap)
         {
             if (_tile.tileType != TileType.Obstacle)
             {
                 clickedTile = _tile;
             }
-        }     
+        }
     }
 
     public void DragToTile(Tile _tile)
     {
-        if (clickedTile !=null && _tile.tileType != TileType.Obstacle && gameState==GameState.CanSwap)
+        if (clickedTile != null && _tile.tileType != TileType.Obstacle && gameState == GameState.CanSwap)
         {
             targetTile = _tile;
 
@@ -162,7 +180,7 @@ public class Board : MonoBehaviour
         targetTile = null;
     }
 
-    void SwitchTiles( Tile _clickedTile, Tile _targetTile)
+    void SwitchTiles(Tile _clickedTile, Tile _targetTile)
     {
         StartCoroutine(SwitchTileRoutine(_clickedTile, _targetTile));
         gameState = GameState.Busy;
@@ -175,7 +193,7 @@ public class Board : MonoBehaviour
         Gamepiece clickedGamepiece = gamepieceData.allGamepieces[_clickedTile.xIndex, _clickedTile.yIndex];
         Gamepiece targetGamepiece = gamepieceData.allGamepieces[_targetTile.xIndex, _targetTile.yIndex];
 
-        if (targetGamepiece!= null && clickedGamepiece != null 
+        if (targetGamepiece != null && clickedGamepiece != null
             && clickedGamepiece.gamepieceType != GamepieceType.NotMoveable && targetGamepiece.gamepieceType != GamepieceType.NotMoveable)
         {
 
@@ -185,18 +203,18 @@ public class Board : MonoBehaviour
             // we wait until end of the switch movement
             yield return new WaitForSeconds(swapTime);
 
-            StartCoroutine(ApplyGamepieceRule(clickedGamepiece, targetGamepiece));            
+            StartCoroutine(ApplyGamepieceRule(clickedGamepiece, targetGamepiece));
         }
-        
+
     }
 
     IEnumerator RefillBoard()
     {
-        FillBoard();        
+        FillBoard();
         yield return new WaitForSeconds(fallTime);
-        var newMatches= gamepieceData.FindAllMatches();
+        var newMatches = gamepieceData.FindAllMatches();
 
-        if (newMatches !=null)
+        if (newMatches != null)
         {
             gameState = GameState.Busy;
             yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(newMatches));
@@ -214,7 +232,7 @@ public class Board : MonoBehaviour
 
     IEnumerator ApplyGamepieceRule(Gamepiece clicked, Gamepiece target)
     {
-        List<Gamepiece> gamepiecesWillClear = RuleChoser.Rule(clicked, target,this);
+        List<Gamepiece> gamepiecesWillClear = RuleChoser.ChooseRule(clicked, target, this);
 
         if (gamepiecesWillClear == null || gamepiecesWillClear.Count == 0)
         {
@@ -229,9 +247,37 @@ public class Board : MonoBehaviour
             yield return StartCoroutine(RefillBoard());
         }
 
-
         gameState = GameState.CanSwap;
         yield return null;
+    }
+
+    public void DropBomb(int x, int y, Vector2 swapDirection, List<Gamepiece> gamepieces)
+    {
+        GameObject bombGO = null;
+        // Decide bomb type
+        if (gamepieces.Count >= 4)
+        {
+            if (gamepieceData.IsCornerMatch(gamepieces))
+            {
+                //wrapped bomb
+                bombGO = CreateBomb(adjacentBomb, x, y);
+            }
+
+            else
+            {
+                //row bomb
+                if (swapDirection.x != 0)
+                {
+                    bombGO = CreateBomb(rowBomb, x, y);
+                }
+                //column bomb
+                else
+                {
+                    bombGO = CreateBomb(columnBomb, x, y);
+                }
+            }
+        }
+        gamepieceData.bomb = bombGO;          
     }
 }
 

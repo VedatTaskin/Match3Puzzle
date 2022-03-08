@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WrappedBomb : Bombs
+public class AdjacentBomb : Bombs
 {
     public int neighborMultiplier = 1;
-    public override BombType bombType => BombType.Wrapped;
+    public override BombType bombType => BombType.Adjacent;
 
     public override List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board)
     {

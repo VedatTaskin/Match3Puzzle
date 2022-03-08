@@ -25,7 +25,7 @@ public enum BombType
 {
     RowBomb,
     ColumnBomb,
-    Wrapped,
+    Adjacent,
     Coloured
 }
 
