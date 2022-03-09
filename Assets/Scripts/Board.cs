@@ -20,6 +20,7 @@ public class Board : MonoBehaviour
     public GameObject rowBomb;
     public GameObject columnBomb;
     public GameObject adjacentBomb;
+    public GameObject colorBomb;
 
     GameState gameState;
     Tile clickedTile;
@@ -257,24 +258,35 @@ public class Board : MonoBehaviour
         // Decide bomb type
         if (gamepieces.Count >= 4)
         {
-            if (gamepieceData.IsCornerMatch(gamepieces))
+
+            if (!gamepieceData.IsCornerMatch(gamepieces) || (gamepieceData.IsCornerMatch(gamepieces) && gamepieces.Count>=5) )
             {
-                //wrapped bomb
-                bombGO = CreateBomb(adjacentBomb, x, y);
+                //color bomb
+                if (gamepieces.Count >= 5)
+                {
+                    bombGO = CreateBomb(colorBomb, x, y);
+                }
+                else
+                {
+                    //row bomb
+                    if (swapDirection.x != 0)
+                    {
+                        bombGO = CreateBomb(rowBomb, x, y);
+                    }
+                    //column bomb
+                    else
+                    {
+                        bombGO = CreateBomb(columnBomb, x, y);
+                    }
+
+                }
+
             }
 
             else
             {
-                //row bomb
-                if (swapDirection.x != 0)
-                {
-                    bombGO = CreateBomb(rowBomb, x, y);
-                }
-                //column bomb
-                else
-                {
-                    bombGO = CreateBomb(columnBomb, x, y);
-                }
+                //adjacent bomb
+                bombGO = CreateBomb(adjacentBomb, x, y);
             }
         }
         gamepieceData.bomb = bombGO;          

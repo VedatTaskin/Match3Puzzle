@@ -19,16 +19,24 @@ MonoBehaviour:
   - {fileID: 6370274208849203935, guid: 7f8b018b82126be4e9f1ba455875bef7, type: 3}
   tileData: {fileID: 11400000, guid: 4773f26f0b85f15499b21afcde027a39, type: 2}
   orderedGamepieces:
-  - prefab: {fileID: 8654269431416678672, guid: c64887a4633ca884b8e2729519901e66,
+  - prefab: {fileID: 4228407111365599603, guid: 3124e7319b9cd894a91b3722c109a747,
+      type: 3}
+    xCoord: 1
+    yCoord: 6
+  - prefab: {fileID: 4228407111365599603, guid: 3124e7319b9cd894a91b3722c109a747,
       type: 3}
     xCoord: 2
     yCoord: 6
-  - prefab: {fileID: 2081567949804697022, guid: 36c9b9c0794c8854694885e84d28d892,
+  - prefab: {fileID: 4228407111365599603, guid: 3124e7319b9cd894a91b3722c109a747,
       type: 3}
-    xCoord: 3
+    xCoord: 4
     yCoord: 6
-  - prefab: {fileID: 6190596001897580889, guid: 450c9996b6392f348a9ddc7669a0e47d,
+  - prefab: {fileID: 4228407111365599603, guid: 3124e7319b9cd894a91b3722c109a747,
+      type: 3}
+    xCoord: 5
+    yCoord: 6
+  - prefab: {fileID: 4228407111365599603, guid: 3124e7319b9cd894a91b3722c109a747,
       type: 3}
     xCoord: 3
-    yCoord: 4
+    yCoord: 5
   bomb: {fileID: 0}
