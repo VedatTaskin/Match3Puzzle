@@ -27,7 +27,7 @@ public class GamepieceData : ScriptableObject
 
     [Space(10)]
     [Header("Collectibles")]
-    [HideInInspector] public int collectiblesCount;
+    public int collectiblesCount;
     public int maxCollectibles;
     public GameObject collectiblePrefab;
     [Range(0,1)]
@@ -383,19 +383,6 @@ public class GamepieceData : ScriptableObject
             }
         }
         return collectibles;
-    }
-
-    //This function can't find the collectibles count at the begining because of timing 
-    public List<Gamepiece> FindAllCollectibles()
-    {
-        List<Gamepiece> foundCollectibles = new List<Gamepiece>();
-
-        for (int i = 0; i < board.height; i++)
-        {
-            List<Gamepiece> collectibleInRow = FindCollectiblesAtRow(i);
-            foundCollectibles=foundCollectibles.Union(collectibleInRow).ToList();
-        }
-        return foundCollectibles;
     }
 
     private void CheckBombCreation()
