@@ -27,6 +27,7 @@ public class Board : MonoBehaviour
         width = tileData.width;
         height = tileData.height;
         tileData.SetupTiles(this);
+        gamepieceData.Init(this);
         SetupCamera();
         FillBoard();
         gameState = GameState.CanSwap;

@@ -6,7 +6,6 @@ using UnityEngine;
 public static class RuleChoser 
 {
 
-
     public static List<Gamepiece> ChooseRule(Gamepiece clicked, Gamepiece target, Board board)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
@@ -14,7 +13,7 @@ public static class RuleChoser
         // Bomb- Bomb
         if (clicked.gamepieceType == GamepieceType.Bomb && target.gamepieceType == GamepieceType.Bomb)
         {
-            return bombedPieces = ApplyTwoBombRule(clicked, board, target);
+            return bombedPieces = BombVsBomb(clicked, board, target);
         }
 
         // Bomb-Normal
@@ -120,7 +119,27 @@ public static class RuleChoser
         return bombedPieces;
     }
 
-    public static List<Gamepiece> ApplyTwoBombRule(Gamepiece bomb, Board board, Gamepiece otherBomb)
+    public static List<Gamepiece> BombVsCollectible(Gamepiece bomb, Board board, Gamepiece collectible)
+    {
+        List<Gamepiece> bombedPieces = new List<Gamepiece>();
+
+        IBombRule bombRule = bomb.GetComponent<IBombRule>();
+        if (bombRule != null)
+        {
+            bombedPieces = bombRule.PerformRule(bomb, board, collectible);
+        }
+
+        foreach (var piece in bombedPieces)
+        {
+            if (piece.gamepieceType == GamepieceType.Bomb && piece != bomb)
+            {
+                bombedPieces = bombedPieces.Union(BombVsNormal(piece, board, collectible)).ToList();
+            }
+        }
+        return bombedPieces;
+    }
+
+    public static List<Gamepiece> BombVsBomb(Gamepiece bomb, Board board, Gamepiece otherBomb)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
@@ -154,26 +173,6 @@ public static class RuleChoser
                 {
                     bombedPieces.Add(piece);
                 }
-            }
-        }
-        return bombedPieces;
-    }
-
-    public static List<Gamepiece> BombVsCollectible(Gamepiece bomb, Board board, Gamepiece collectible)
-    {
-        List<Gamepiece> bombedPieces = new List<Gamepiece>();
-
-        IBombRule bombRule = bomb.GetComponent<IBombRule>();
-        if (bombRule != null)
-        {
-            bombedPieces = bombRule.PerformRule(bomb, board, collectible);
-        }
-
-        foreach (var piece in bombedPieces)
-        {
-            if (piece.gamepieceType == GamepieceType.Bomb && piece != bomb)
-            {
-                bombedPieces = bombedPieces.Union(BombVsNormal(piece, board, collectible)).ToList();
             }
         }
         return bombedPieces;

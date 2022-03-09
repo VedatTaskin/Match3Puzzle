@@ -32,7 +32,7 @@ public class GamepieceData : ScriptableObject
     int width;
     int height;
     float collapseTime=0.1f;
-    Board board;
+    [HideInInspector] public Board board;
 
 
     private void OnEnable()
@@ -40,7 +40,11 @@ public class GamepieceData : ScriptableObject
         width = tileData.width;
         height = tileData.height;
         allGamepieces = new Gamepiece[width,height];
-        board = FindObjectOfType<Board>();
+    }
+
+    public void Init( Board _board)
+    {
+        board = _board;
     }
 
     public GameObject GetRandomGamePiece()
@@ -312,6 +316,7 @@ public class GamepieceData : ScriptableObject
                 yield return null;
             }
 
+            //check if there are another matches after collapsing column
             yield return new WaitForSeconds(0.2f);
             var newMatches = new List<Gamepiece>();
 
@@ -320,6 +325,15 @@ public class GamepieceData : ScriptableObject
                 newMatches = newMatches.Union(FindMatchesAt(piece.xIndex, piece.yIndex)).ToList();
             }
 
+            //check Collectibles if reached the bottom of the board
+            var collectiblesFound = FindCollectiblesAtRow(0);
+            if (collectiblesFound.Count != 0)
+            {
+                newMatches = newMatches.Union(collectiblesFound).ToList();
+                Debug.Log("we found");
+            }
+
+            
             if (newMatches.Count == 0)
             {
                 routineIsFinished = true;
@@ -339,6 +353,43 @@ public class GamepieceData : ScriptableObject
 
         } while (!routineIsFinished);
 
+    }
+
+    private void CheckCollectibles()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    //To find collectible in a specific row
+    private List<Gamepiece> FindCollectiblesAtRow(int row)
+    {
+
+        List<Gamepiece> collectibles = new List<Gamepiece>();
+
+        for (int i = 0; i < board.width; i++)
+        {
+            var piece = board.gamepieceData.allGamepieces[i, row];
+            if (piece != null)
+            {                
+                if (piece.gamepieceType == GamepieceType.Collectible && !collectibles.Contains(piece))
+                {
+                    Debug.Log("hi");
+                    collectibles.Add(piece);
+                }
+            }
+        }
+        return collectibles;
+    }
+
+    private List<Gamepiece> FindAllCollectibles()
+    {
+        List<Gamepiece> allCollectibles = new List<Gamepiece>();
+
+        for (int i = 0; i < board.height; i++)
+        {
+           allCollectibles=allCollectibles.Union(FindCollectiblesAtRow(i)).ToList();
+        }
+        return allCollectibles;
     }
 
     private void CheckBombCreation()
