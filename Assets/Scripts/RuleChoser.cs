@@ -128,7 +128,7 @@ public static class RuleChoser
         //Color - color
         if (bomb.bombType == BombType.Coloured && otherBomb.bombType == BombType.Coloured)
         {
-            bombedPieces = ColorBombVsColorBomb(bomb, board, otherBomb);
+            bombedPieces = ColorVsColor(bomb, board, otherBomb);
         }
 
         //Color - row
@@ -141,7 +141,7 @@ public static class RuleChoser
 
     }
 
-    public static List<Gamepiece> ColorBombVsColorBomb(Gamepiece bomb, Board board, Gamepiece otherBomb)
+    public static List<Gamepiece> ColorVsColor(Gamepiece bomb, Board board, Gamepiece otherBomb)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
@@ -162,7 +162,20 @@ public static class RuleChoser
     public static List<Gamepiece> BombVsCollectible(Gamepiece bomb, Board board, Gamepiece collectible)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
-        //we are doing nothing
+
+        IBombRule bombRule = bomb.GetComponent<IBombRule>();
+        if (bombRule != null)
+        {
+            bombedPieces = bombRule.PerformRule(bomb, board, collectible);
+        }
+
+        foreach (var piece in bombedPieces)
+        {
+            if (piece.gamepieceType == GamepieceType.Bomb && piece != bomb)
+            {
+                bombedPieces = bombedPieces.Union(BombVsNormal(piece, board, collectible)).ToList();
+            }
+        }
         return bombedPieces;
     }
 
