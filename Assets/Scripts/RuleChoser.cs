@@ -29,7 +29,7 @@ public static class RuleChoser
 
             if (clicked.gamepieceType == GamepieceType.Bomb && target.gamepieceType == GamepieceType.Bomb )
             {
-                Debug.Log("ikisi de bomb");
+                return bombedPieces = ApplyTwoBombRule(clicked, board, target);
             }
 
 
@@ -76,19 +76,19 @@ public static class RuleChoser
         return null;
     }
 
-    private static List<Gamepiece> ApplyOneBombRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
+    private static List<Gamepiece> ApplyOneBombRule(Gamepiece bomb, Board board, Gamepiece otherGamepiece)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        IBombRule bombRule = gamepiece.GetComponent<IBombRule>();
+        IBombRule bombRule = bomb.GetComponent<IBombRule>();
         if (bombRule != null)
         {
-            bombedPieces = bombRule.PerformRule(gamepiece, board,otherGamepiece);
+            bombedPieces = bombRule.PerformRule(bomb, board,otherGamepiece);
         }
 
         foreach (var piece in bombedPieces)
         {
-            if (piece.gamepieceType == GamepieceType.Bomb && piece != gamepiece)
+            if (piece.gamepieceType == GamepieceType.Bomb && piece != bomb)
             {
                 bombedPieces = bombedPieces.Union(ApplyOneBombRule(piece, board,otherGamepiece)).ToList();
             }
@@ -115,4 +115,44 @@ public static class RuleChoser
         }
         return otherGamepieces;
     }
+
+    public static List<Gamepiece> ApplyTwoBombRule(Gamepiece bomb, Board board, Gamepiece otherBomb)
+    {
+        List<Gamepiece> bombedPieces = new List<Gamepiece>();
+
+        // we should check each bomb blast seperately
+
+        //Color - color
+        if (bomb.bombType == BombType.Coloured && otherBomb.bombType == BombType.Coloured)
+        {
+            bombedPieces = ColorVsColorBombState(bomb, board, otherBomb);
+        }
+
+        //Color - row
+        //Color - column
+        //Color - adjacent
+        //Color - 
+
+        return bombedPieces;
+
+    }
+
+    public static List<Gamepiece> ColorVsColorBombState(Gamepiece bomb, Board board, Gamepiece otherBomb)
+    {
+        List<Gamepiece> bombedPieces = new List<Gamepiece>();
+
+        for (int i = 0; i < board.width; i++)
+        {
+            for (int j = 0; j < board.height; j++)
+            {
+                var piece = board.gamepieceData.allGamepieces[i, j];
+                if (piece != null && !bombedPieces.Contains(piece))
+                {
+                    bombedPieces.Add(piece);
+                }
+            }
+        }
+        return bombedPieces;
+    }
+
 }
