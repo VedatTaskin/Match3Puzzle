@@ -328,13 +328,6 @@ MonoBehaviour:
   fallTime: 0.5
   gamepieceData: {fileID: 11400000, guid: 8b65cc04ecad75c409414682e8757105, type: 2}
   tileData: {fileID: 11400000, guid: 4773f26f0b85f15499b21afcde027a39, type: 2}
-  rowBomb: {fileID: 8654269431416678672, guid: c64887a4633ca884b8e2729519901e66, type: 3}
-  columnBomb: {fileID: 2081567949804697022, guid: 36c9b9c0794c8854694885e84d28d892,
-    type: 3}
-  adjacentBomb: {fileID: 3331765375303411333, guid: 0d3d3fd8a88c77d4c9ed1906cd71e082,
-    type: 3}
-  colorBomb: {fileID: 6190596001897580889, guid: 450c9996b6392f348a9ddc7669a0e47d,
-    type: 3}
 --- !u!1 &1739543347
 GameObject:
   m_ObjectHideFlags: 0

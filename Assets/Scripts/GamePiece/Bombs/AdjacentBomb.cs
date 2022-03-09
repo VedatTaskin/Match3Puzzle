@@ -24,7 +24,7 @@ public class AdjacentBomb : Bombs
                 {
                     var piece = board.gamepieceData.allGamepieces[i, j];
 
-                    if (!matches.Contains(piece) && piece != null)
+                    if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
                     {
                         matches.Add(piece);
                     }

@@ -19,7 +19,7 @@ public class RowBomb : Bombs
         {
             var piece =board.gamepieceData.allGamepieces[i, yIndex];
 
-            if (!matches.Contains(piece) && piece != null)
+            if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
             {
                 matches.Add(piece);
             }

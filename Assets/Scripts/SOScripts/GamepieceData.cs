@@ -6,18 +6,35 @@ using System.Collections;
 [CreateAssetMenu(fileName ="Gamepieces Data", menuName ="Create/Gamepiece Data Holder")]
 public class GamepieceData : ScriptableObject
 {
-    public Gamepiece[,] allGamepieces;
+    [HideInInspector] public Gamepiece[,] allGamepieces;
+    [HideInInspector] public GameObject bomb;
+
+    [Space(10)]
+    [Tooltip("Normal gamepieces will be in the game")]
     public GameObject[] gamePiecePrefabs;
+
+    [Space(10)]
+    [Tooltip("Bombs in the Game")]
+    public GameObject rowBomb;
+    public GameObject columnBomb;
+    public GameObject adjacentBomb;
+    public GameObject colorBomb;
+
+    [Space(10)]
+    [Tooltip("Tile will be in the game - Scripatble Object")]
     public TileData tileData;
 
+    [Space(10)]
+    [Tooltip("Some gamepieces can be define before starting")]
     public OrderedGamepieces [] orderedGamepieces;
+
 
     int width;
     int height;
     float collapseTime=0.1f;
     Board board;
 
-    [HideInInspector] public GameObject bomb;
+
     private void OnEnable()
     {
         width = tileData.width;

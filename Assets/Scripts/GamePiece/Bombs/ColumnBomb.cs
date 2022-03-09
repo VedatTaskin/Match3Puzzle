@@ -21,7 +21,7 @@ public class ColumnBomb : Bombs
         {
             var piece = board.gamepieceData.allGamepieces[xIndex, i];
 
-            if (!matches.Contains(piece) && piece != null)
+            if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
             {
                 matches.Add(piece);
             }

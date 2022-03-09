@@ -5,78 +5,102 @@ using UnityEngine;
 
 public static class RuleChoser 
 {
+
+
     public static List<Gamepiece> ChooseRule(Gamepiece clicked, Gamepiece target, Board board)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        #region There is a bomb in Swap
-        if (clicked.gamepieceType == GamepieceType.Bomb || target.gamepieceType == GamepieceType.Bomb)
+        // Bomb- Bomb
+        if (clicked.gamepieceType == GamepieceType.Bomb && target.gamepieceType == GamepieceType.Bomb)
         {
-            // there is bomb 
-            if (clicked.gamepieceType == GamepieceType.Bomb && target.gamepieceType != GamepieceType.Bomb)
-            {
-                bombedPieces = ApplyOneBombRule(clicked, board,target);
-                List<Gamepiece> matchesAtTargetGamepiece = board.gamepieceData.FindMatchesAt(target.xIndex, target.yIndex);
-                return bombedPieces.Union(matchesAtTargetGamepiece).ToList();
-            }
-
-            if (clicked.gamepieceType!= GamepieceType.Bomb && target.gamepieceType == GamepieceType.Bomb  )
-            {
-                bombedPieces = ApplyOneBombRule(target, board, clicked);
-                List<Gamepiece> matchesAtClickedGamepiece = board.gamepieceData.FindMatchesAt(clicked.xIndex, clicked.yIndex);
-                return bombedPieces.Union(matchesAtClickedGamepiece).ToList();
-            }
-
-            if (clicked.gamepieceType == GamepieceType.Bomb && target.gamepieceType == GamepieceType.Bomb )
-            {
-                return bombedPieces = ApplyTwoBombRule(clicked, board, target);
-            }
-
-
+            return bombedPieces = ApplyTwoBombRule(clicked, board, target);
         }
-        #endregion
 
-        // Not done
+        // Bomb-Normal
+        if (clicked.gamepieceType == GamepieceType.Bomb && target.gamepieceType == GamepieceType.Normal)
+        {
+            bombedPieces = BombVsNormal(clicked, board, target);
+            List<Gamepiece> matchesAtTargetGamepiece = board.gamepieceData.FindMatchesAt(target.xIndex, target.yIndex);
+            return bombedPieces.Union(matchesAtTargetGamepiece).ToList();
+        }
+
+        // Normal-Bomb
+        if (clicked.gamepieceType == GamepieceType.Normal && target.gamepieceType == GamepieceType.Bomb)
+        {
+            bombedPieces = BombVsNormal(target, board, clicked);
+            List<Gamepiece> matchesAtClickedGamepiece = board.gamepieceData.FindMatchesAt(clicked.xIndex, clicked.yIndex);
+            return bombedPieces.Union(matchesAtClickedGamepiece).ToList();
+        }
+
+        // Bomb- Collectible 
+        if (clicked.gamepieceType == GamepieceType.Bomb && target.gamepieceType == GamepieceType.Collectible)
+        {
+            return bombedPieces = BombVsCollectible(clicked, board, target);
+        }
+
+        // Collectible-Bomb 
+        if (clicked.gamepieceType == GamepieceType.Collectible && target.gamepieceType == GamepieceType.Bomb)
+        {
+            return bombedPieces = BombVsCollectible(target, board, clicked);
+        }
+
+        // Changeable- changeable
         if (clicked.gamepieceType == GamepieceType.Changeable || target.gamepieceType == GamepieceType.Changeable)
         {
 
             // changable var, 
         }
 
-        // Not done
+        // collectible-collectible
         if (clicked.gamepieceType == GamepieceType.Collectible || target.gamepieceType == GamepieceType.Collectible)
         {
             // collectible var
         }
 
-        #region Both pieces are Normal
+        // Normal- Collectible 
+        if (clicked.gamepieceType == GamepieceType.Normal && target.gamepieceType == GamepieceType.Collectible)
+        {
+            return bombedPieces = NormalVsCollectible(clicked, board, target);
+        }
+
+        // Collectible-Normal 
+        if (clicked.gamepieceType == GamepieceType.Collectible && target.gamepieceType == GamepieceType.Normal)
+        {
+            return bombedPieces = NormalVsCollectible(target, board, clicked);
+        }
+
+        //Normal- Normal
         if (clicked.gamepieceType == GamepieceType.Normal && target.gamepieceType == GamepieceType.Normal)
         {
-            List<Gamepiece> matchesAtClickedGamepiece = board.gamepieceData.FindMatchesAt(clicked.xIndex, clicked.yIndex);
-            List<Gamepiece> matchesAtTargetGamepiece = board.gamepieceData.FindMatchesAt(target.xIndex, target.yIndex);
-
-            // if number of matches greater than 4 we create bomb
-            if (matchesAtClickedGamepiece.Count >=4 )
-            {
-                Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
-                board.DropBomb(clicked.xIndex, clicked.yIndex, swapDirection, matchesAtClickedGamepiece);                
-            }
-            if ( matchesAtTargetGamepiece.Count >= 4)
-            {
-                Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
-                board.DropBomb(target.xIndex, target.yIndex, swapDirection, matchesAtTargetGamepiece);
-            }
-            
-
-            List<Gamepiece> allMatches = matchesAtClickedGamepiece.Union(matchesAtTargetGamepiece).ToList();
-            return allMatches;
+            return NormalVsNormal(clicked, target, board);
         }
-        #endregion
 
         return null;
     }
 
-    private static List<Gamepiece> ApplyOneBombRule(Gamepiece bomb, Board board, Gamepiece otherGamepiece)
+    private static List<Gamepiece> NormalVsNormal(Gamepiece clicked, Gamepiece target, Board board)
+    {
+        List<Gamepiece> matchesAtClickedGamepiece = board.gamepieceData.FindMatchesAt(clicked.xIndex, clicked.yIndex);
+        List<Gamepiece> matchesAtTargetGamepiece = board.gamepieceData.FindMatchesAt(target.xIndex, target.yIndex);
+
+        // if number of matches greater than 4 we create bomb
+        if (matchesAtClickedGamepiece.Count >= 4)
+        {
+            Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
+            board.DropBomb(clicked.xIndex, clicked.yIndex, swapDirection, matchesAtClickedGamepiece);
+        }
+        if (matchesAtTargetGamepiece.Count >= 4)
+        {
+            Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
+            board.DropBomb(target.xIndex, target.yIndex, swapDirection, matchesAtTargetGamepiece);
+        }
+
+        List<Gamepiece> allMatches = matchesAtClickedGamepiece.Union(matchesAtTargetGamepiece).ToList();
+        return allMatches;
+    }
+
+    private static List<Gamepiece> BombVsNormal(Gamepiece bomb, Board board, Gamepiece otherGamepiece)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
@@ -90,30 +114,10 @@ public static class RuleChoser
         {
             if (piece.gamepieceType == GamepieceType.Bomb && piece != bomb)
             {
-                bombedPieces = bombedPieces.Union(ApplyOneBombRule(piece, board,otherGamepiece)).ToList();
+                bombedPieces = bombedPieces.Union(BombVsNormal(piece, board,otherGamepiece)).ToList();
             }
         }
-
         return bombedPieces;
-    }
-
-    public static List<Gamepiece> CheckForAnotherBomb(Gamepiece piece, Board board, Gamepiece otherGamepiece)
-    {
-        List<Gamepiece> otherGamepieces = new List<Gamepiece>();
-
-
-        if (piece.gamepieceType == GamepieceType.Bomb)
-        {
-            IBombRule bombRule = piece.GetComponent<IBombRule>();
-
-            if (bombRule != null)
-            {
-                Debug.Log("there is another bomb");
-                otherGamepieces =bombRule.PerformRule(piece, board,otherGamepiece); 
-
-            }
-        }
-        return otherGamepieces;
     }
 
     public static List<Gamepiece> ApplyTwoBombRule(Gamepiece bomb, Board board, Gamepiece otherBomb)
@@ -121,23 +125,23 @@ public static class RuleChoser
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
         // we should check each bomb blast seperately
-
         //Color - color
         if (bomb.bombType == BombType.Coloured && otherBomb.bombType == BombType.Coloured)
         {
-            bombedPieces = ColorVsColorBombState(bomb, board, otherBomb);
+            bombedPieces = ColorBombVsColorBomb(bomb, board, otherBomb);
         }
 
         //Color - row
         //Color - column
         //Color - adjacent
         //Color - 
+        //....
 
         return bombedPieces;
 
     }
 
-    public static List<Gamepiece> ColorVsColorBombState(Gamepiece bomb, Board board, Gamepiece otherBomb)
+    public static List<Gamepiece> ColorBombVsColorBomb(Gamepiece bomb, Board board, Gamepiece otherBomb)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
@@ -154,5 +158,28 @@ public static class RuleChoser
         }
         return bombedPieces;
     }
+
+    public static List<Gamepiece> BombVsCollectible(Gamepiece bomb, Board board, Gamepiece collectible)
+    {
+        List<Gamepiece> bombedPieces = new List<Gamepiece>();
+        //we are doing nothing
+        return bombedPieces;
+    }
+
+    public static List<Gamepiece> NormalVsCollectible(Gamepiece normal, Board board, Gamepiece collectible)
+    {
+        List<Gamepiece> matches = board.gamepieceData.FindMatchesAt(normal.xIndex, normal.yIndex);
+        // if number of matches greater than 4 we create bomb
+        if (matches.Count >= 4)
+        {
+            Vector2 swapDirection = new Vector2(normal.xIndex - collectible.xIndex, normal.yIndex - collectible.yIndex);
+            board.DropBomb(normal.xIndex, normal.yIndex, swapDirection, matches);
+        }
+
+        return matches;
+
+
+    }
+
 
 }

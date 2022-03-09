@@ -16,12 +16,6 @@ public class Board : MonoBehaviour
     public GamepieceData gamepieceData;
     public TileData tileData;
 
-    [Header("Bomb prefabs")]
-    public GameObject rowBomb;
-    public GameObject columnBomb;
-    public GameObject adjacentBomb;
-    public GameObject colorBomb;
-
     GameState gameState;
     Tile clickedTile;
     Tile targetTile;
@@ -259,24 +253,24 @@ public class Board : MonoBehaviour
         if (gamepieces.Count >= 4)
         {
 
-            if (!gamepieceData.IsCornerMatch(gamepieces) || (gamepieceData.IsCornerMatch(gamepieces) && gamepieces.Count>=5) )
+            if (!gamepieceData.IsCornerMatch(gamepieces))
             {
                 //color bomb
                 if (gamepieces.Count >= 5)
                 {
-                    bombGO = CreateBomb(colorBomb, x, y);
+                    bombGO = CreateBomb(gamepieceData.colorBomb, x, y);
                 }
                 else
                 {
                     //row bomb
                     if (swapDirection.x != 0)
                     {
-                        bombGO = CreateBomb(rowBomb, x, y);
+                        bombGO = CreateBomb(gamepieceData.rowBomb, x, y);
                     }
                     //column bomb
                     else
                     {
-                        bombGO = CreateBomb(columnBomb, x, y);
+                        bombGO = CreateBomb(gamepieceData.columnBomb, x, y);
                     }
 
                 }
@@ -285,8 +279,18 @@ public class Board : MonoBehaviour
 
             else
             {
+                //color bomb
+                if (gamepieces.Count >= 7)
+                {
+                    bombGO = CreateBomb(gamepieceData.colorBomb, x, y);
+                }
+
                 //adjacent bomb
-                bombGO = CreateBomb(adjacentBomb, x, y);
+                else
+                {                    
+                    bombGO = CreateBomb(gamepieceData.adjacentBomb, x, y);
+                }
+
             }
         }
         gamepieceData.bomb = bombGO;          

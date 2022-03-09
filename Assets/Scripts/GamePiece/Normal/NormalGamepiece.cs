@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class NormalGamepiece : Gamepiece
 {
+    public override GamepieceType gamepieceType => GamepieceType.Normal;
 
 }

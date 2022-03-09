@@ -24,7 +24,7 @@ public class ColorBomb :Bombs
                 var piece = board.gamepieceData.allGamepieces[i, j];
                 if ( piece != null)
                 {
-                    if (piece.normalGamepieceType == normalType && !matches.Contains(piece))
+                    if (piece.normalGamepieceType == normalType && !matches.Contains(piece) && piece.gamepieceType != GamepieceType.Collectible)
                     {
                         matches.Add(piece);
                     }
