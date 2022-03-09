@@ -15,31 +15,39 @@ public class GamepieceData : ScriptableObject
 
     [Space(10)]
     [Tooltip("Bombs in the Game")]
+    [Header("Bombs")]
     public GameObject rowBomb;
     public GameObject columnBomb;
     public GameObject adjacentBomb;
     public GameObject colorBomb;
 
     [Space(10)]
-    [Tooltip("Tile will be in the game - Scripatble Object")]
+    [Tooltip("Tile will be in the game - Scriptable Object")]
     public TileData tileData;
 
     [Space(10)]
-    [Tooltip("Some gamepieces can be define before starting")]
-    public OrderedGamepieces [] orderedGamepieces;
+    [Header("Collectibles")]
+    [HideInInspector] public int collectiblesCount;
+    public int maxCollectibles;
+    public GameObject collectiblePrefab;
+    [Range(0,1)]
+    public float chanceForCollectible;
 
+    [Space(10)]
+    [Tooltip("Some gamepieces can be define before starting")]
+    public OrderedGamepieces[] orderedGamepieces;
 
     int width;
     int height;
     float collapseTime=0.1f;
     [HideInInspector] public Board board;
 
-
     private void OnEnable()
     {
         width = tileData.width;
         height = tileData.height;
         allGamepieces = new Gamepiece[width,height];
+        collectiblesCount = 0;
     }
 
     public void Init( Board _board)
@@ -325,19 +333,21 @@ public class GamepieceData : ScriptableObject
                 newMatches = newMatches.Union(FindMatchesAt(piece.xIndex, piece.yIndex)).ToList();
             }
 
-            //check Collectibles if reached the bottom of the board
+            //check if Collectibles are reached to the bottom of the board
             var collectiblesFound = FindCollectiblesAtRow(0);
             if (collectiblesFound.Count != 0)
             {
                 newMatches = newMatches.Union(collectiblesFound).ToList();
-                Debug.Log("we found");
+                collectiblesCount -= collectiblesFound.Count;
             }
 
-            
+            // if there are not any pieces to clear we end up the loop
             if (newMatches.Count == 0)
             {
                 routineIsFinished = true;
             }
+
+            // if there is a gamepiece to clear we restart the loop
             else
             {
                 routineIsFinished = false;
@@ -355,15 +365,9 @@ public class GamepieceData : ScriptableObject
 
     }
 
-    private void CheckCollectibles()
-    {
-        throw new System.NotImplementedException();
-    }
-
     //To find collectible in a specific row
     private List<Gamepiece> FindCollectiblesAtRow(int row)
     {
-
         List<Gamepiece> collectibles = new List<Gamepiece>();
 
         for (int i = 0; i < board.width; i++)
@@ -373,23 +377,25 @@ public class GamepieceData : ScriptableObject
             {                
                 if (piece.gamepieceType == GamepieceType.Collectible && !collectibles.Contains(piece))
                 {
-                    Debug.Log("hi");
                     collectibles.Add(piece);
+                    //Debug.Log(piece.xIndex + " " + piece.yIndex);
                 }
             }
         }
         return collectibles;
     }
 
-    private List<Gamepiece> FindAllCollectibles()
+    //This function can't find the collectibles count at the begining because of timing 
+    public List<Gamepiece> FindAllCollectibles()
     {
-        List<Gamepiece> allCollectibles = new List<Gamepiece>();
+        List<Gamepiece> foundCollectibles = new List<Gamepiece>();
 
         for (int i = 0; i < board.height; i++)
         {
-           allCollectibles=allCollectibles.Union(FindCollectiblesAtRow(i)).ToList();
+            List<Gamepiece> collectibleInRow = FindCollectiblesAtRow(i);
+            foundCollectibles=foundCollectibles.Union(collectibleInRow).ToList();
         }
-        return allCollectibles;
+        return foundCollectibles;
     }
 
     private void CheckBombCreation()
@@ -432,8 +438,12 @@ public class GamepieceData : ScriptableObject
         }
 
         return (horizontal && vertical);
-    }        
+    }
 
+    public bool CanAddCollectible()
+    {
+        return (Random.Range(0f, 1f) <= chanceForCollectible && collectiblesCount < maxCollectibles);
+    }
 }
 
 [System.Serializable]

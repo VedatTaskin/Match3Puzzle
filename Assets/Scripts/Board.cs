@@ -79,21 +79,32 @@ public class Board : MonoBehaviour
 
                 if (gamepieceData.allGamepieces[i, j] == null && tileData.allTiles[i, j].tileType != TileType.Obstacle)
                 {
-                    Gamepiece piece = FillRandomAt(i, j);
-                    iterations = 0;
+                    Gamepiece piece = null;
 
-                    while (gamepieceData.HasMatchOnFill(i, j))
+                    if (j==height-1 && gamepieceData.CanAddCollectible())
                     {
-                        gamepieceData.ClearGamepieceAt(i, j);
-                        piece = FillRandomAt(i, j);
-                        iterations++;
+                        piece = FillRandomCollectibleAt(i, j);
+                        gamepieceData.collectiblesCount++;
+                    }
+                    else
+                    {
+                        piece = FillRandomGamepieceAt(i, j);
+                        iterations = 0;
 
-                        if (iterations >= maxIterations)
+                        while (gamepieceData.HasMatchOnFill(i, j))
                         {
-                            Debug.Log("********************");
-                            break;
+                            gamepieceData.ClearGamepieceAt(i, j);
+                            piece = FillRandomGamepieceAt(i, j);
+                            iterations++;
+
+                            if (iterations >= maxIterations)
+                            {
+                                Debug.Log("********************");
+                                break;
+                            }
                         }
                     }
+
                 }
             }
         }
@@ -134,7 +145,7 @@ public class Board : MonoBehaviour
         return null;
     }
 
-    Gamepiece FillRandomAt(int x, int y)
+    Gamepiece FillRandomGamepieceAt(int x, int y)
     {
         GameObject randomPiece = Instantiate(gamepieceData.GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
 
@@ -144,6 +155,17 @@ public class Board : MonoBehaviour
             return randomPiece.GetComponent<Gamepiece>();
         }
         return null;
+    }
+
+    Gamepiece FillRandomCollectibleAt(int x, int y)
+    {
+        GameObject randomCollectible = Instantiate(gamepieceData.collectiblePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        if (randomCollectible != null)
+        {
+            CraeateGamepiece(randomCollectible, x, y);
+            return randomCollectible.GetComponent<Gamepiece>();
+        }
+        return null;    
     }
 
     public void ClickTile(Tile _tile)
@@ -296,6 +318,7 @@ public class Board : MonoBehaviour
         }
         gamepieceData.bomb = bombGO;          
     }
+
 }
 
 

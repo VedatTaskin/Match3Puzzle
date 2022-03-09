@@ -44,14 +44,14 @@ public static class RuleChoser
             return bombedPieces = BombVsCollectible(target, board, clicked);
         }
 
-        // Changeable- changeable
+        // changeable- changeable
         if (clicked.gamepieceType == GamepieceType.Changeable || target.gamepieceType == GamepieceType.Changeable)
         {
 
             // changable var, 
         }
 
-        // collectible-collectible
+        // Collectible-Collectible
         if (clicked.gamepieceType == GamepieceType.Collectible || target.gamepieceType == GamepieceType.Collectible)
         {
             // collectible var
