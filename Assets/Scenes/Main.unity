@@ -288,6 +288,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1005000125}
   - component: {fileID: 1005000126}
+  - component: {fileID: 1005000127}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -328,6 +329,18 @@ MonoBehaviour:
   fallTime: 0.5
   gamepieceData: {fileID: 11400000, guid: 8b65cc04ecad75c409414682e8757105, type: 2}
   tileData: {fileID: 11400000, guid: 4773f26f0b85f15499b21afcde027a39, type: 2}
+--- !u!114 &1005000127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1005000124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e9169394cd15de4da5183c1e941f878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1739543347
 GameObject:
   m_ObjectHideFlags: 0
