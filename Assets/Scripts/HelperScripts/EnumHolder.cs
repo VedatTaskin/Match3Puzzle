@@ -18,7 +18,8 @@ public enum TileType
     Normal,
     Breakable,
     Nonbreakable,
-    Obstacle
+    Obstacle,
+    None
 }
 
 public enum BombType
@@ -26,7 +27,8 @@ public enum BombType
     RowBomb,
     ColumnBomb,
     Adjacent,
-    Coloured
+    Color,
+    None
 }
 
 public enum NormalGamepieceType

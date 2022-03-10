@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Collections;
 
-public interface IBombRule
+public interface IGamepieceRule
 {
     List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece);
 }
 
-public interface ICollectibleRule
-{
-    void CollectibleRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece);
-}
+

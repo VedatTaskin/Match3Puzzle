@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bombs : Gamepiece, IBombRule
+public class Bombs : Gamepiece, IGamepieceRule
 {
     public override GamepieceType gamepieceType => GamepieceType.Bomb;
 
