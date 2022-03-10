@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class BoardDeadlock : MonoBehaviour
+public static class CheckBoardDeadlock
 {
+    public static Gamepiece[,] allPieces;
+    public static int width;
+    public static int height;
+    public static int listLength;
+            
+
     // Gives a column or a row list with three elements at a specific point
     // We check if we can make a match with 3 element 
-    List<Gamepiece> GetRowOrColumnList(Gamepiece[,] allPieces, int x, int y, int listLength = 3, bool checkRow = true)
+    static List<Gamepiece> GetRowOrColumnList(int x, int y, bool checkRow = true)
     {
-        int width = allPieces.GetLength(0);
-        int height = allPieces.GetLength(1);
-
         List<Gamepiece> piecesList = new List<Gamepiece>();
 
         for (int i = 0; i < listLength; i++)
@@ -37,7 +40,7 @@ public class BoardDeadlock : MonoBehaviour
     }
 
     //We check if there are two element with same normalGamepieceType in the list
-    List<Gamepiece> GetMinimumMatches(List<Gamepiece> gamePieces, int minForMatches = 2)
+    static List<Gamepiece> GetMinimumMatches(List<Gamepiece> gamePieces, int minForMatches = 2)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
 
@@ -53,10 +56,8 @@ public class BoardDeadlock : MonoBehaviour
     }
 
     // we take neighbors of a specific Gamepiece
-    List<Gamepiece> GetNeighbors(Gamepiece[,] allPieces, int x, int y)
+    static List<Gamepiece> GetNeighbors(Gamepiece[,] allPieces, int x, int y)
     {
-        int width = allPieces.GetLength(0);
-        int height = allPieces.GetLength(1);
 
         List<Gamepiece> neighbors = new List<Gamepiece>();
 
@@ -83,9 +84,9 @@ public class BoardDeadlock : MonoBehaviour
         return neighbors;
     }
 
-    bool HasMoveAt(Gamepiece [,] allPieces, int x, int y, int listLength = 3, bool checkRow = true)
+    static bool HasMoveAt(int x, int y, bool checkRow = true)
     {
-        List<Gamepiece> pieces = GetRowOrColumnList(allPieces, x, y, listLength, checkRow);
+        List<Gamepiece> pieces = GetRowOrColumnList( x, y, checkRow);
 
         List<Gamepiece> matches = GetMinimumMatches(pieces, listLength - 1);
 
@@ -119,17 +120,19 @@ public class BoardDeadlock : MonoBehaviour
         return false;
     }
 
-    public bool IsDeadLock(Gamepiece [,] allPieces, int listLength=3)
+    static public bool IsDeadLock(Gamepiece [,] _allPieces, int _listLength=3)
     {
-        int width = allPieces.GetLength(0);
-        int height = allPieces.GetLength(1);
+        allPieces = _allPieces;
+        width = allPieces.GetLength(0);
+        height = allPieces.GetLength(1);
+        listLength = _listLength;
 
         bool isDeadLock = true;
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                if (HasMoveAt(allPieces,i,j,listLength,true) || HasMoveAt(allPieces,i,j,listLength,false))
+                if (HasMoveAt(i,j,true) || HasMoveAt(i,j,false))
                 {
                     isDeadLock = false;
                     // we may want to return immediately when we find a match

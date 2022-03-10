@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-[RequireComponent(typeof(BoardDeadlock))]
+
 public class Board : MonoBehaviour
 {
     [HideInInspector] public int width;
@@ -23,15 +23,12 @@ public class Board : MonoBehaviour
     int offset = 10;
     int firstFill = 0;
 
-    BoardDeadlock boardDeadlock;
-
     private void Start()
     {
         width = tileData.width;
         height = tileData.height;
         tileData.SetupTiles(this);
         gamepieceData.Init(this);
-        boardDeadlock = GetComponent<BoardDeadlock>();
         SetupCamera();
         FillBoard();
         gameState = GameState.CanSwap;
@@ -115,7 +112,7 @@ public class Board : MonoBehaviour
         }
 
         //check for deadlock
-        boardDeadlock.IsDeadLock(gamepieceData.allGamepieces, 3);
+        CheckBoardDeadlock.IsDeadLock(gamepieceData.allGamepieces, 3);
     }
 
     private void FirstFillCheck()
