@@ -6,7 +6,7 @@ public class Tile : MonoBehaviour
 {
     public int xIndex;
     public int yIndex;
-    [HideInInspector] public TileType tileType;
+    public virtual TileType tileType { get; set; }
 
     Board board;
 

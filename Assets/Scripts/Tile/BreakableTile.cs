@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class BreakableTile : Tile
 {
+    public override TileType tileType => TileType.Breakable;
+
     public Sprite[] spriteList;
     public Color normalColor;
+
 
     [HideInInspector] public int breakableValue;
 
@@ -13,7 +16,6 @@ public class BreakableTile : Tile
 
     private void OnEnable()
     {
-        tileType = TileType.Breakable;
         SetupBreakables();
     }
 

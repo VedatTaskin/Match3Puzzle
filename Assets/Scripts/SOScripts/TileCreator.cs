@@ -13,7 +13,6 @@ public class TileCreator : ScriptableObject
 public class TilePrefab
 {
     public GameObject prefab;
-    public TileType tileType;
     public int x;
     public int y;
     public int z;

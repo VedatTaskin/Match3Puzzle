@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class NormalTile : Tile
 {
-    private void Awake()
-    {
-        tileType = TileType.Normal;
-    }
+    public override TileType tileType => TileType.Normal;
+
 }

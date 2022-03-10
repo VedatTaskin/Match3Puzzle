@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class ObstacleTile : Tile
 {
-    private void Awake()
-    {
-        tileType = TileType.Obstacle;
-    }
+    public override TileType tileType => TileType.Obstacle;
+
 }

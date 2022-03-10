@@ -22,7 +22,7 @@ public class TileData : ScriptableObject
         // We first instantiate obstacle tiles accoring to their specific position
         foreach (var item in tilePrefabs.tiles)
         {
-            if (item.tileType==TileType.Obstacle)
+            if (item.prefab.GetComponent<Tile>().tileType==TileType.Obstacle)
             {
                 MakeTile(board, item, item.x, item.y, 1);
             }
@@ -31,7 +31,7 @@ public class TileData : ScriptableObject
         // Than we instatiate breakable Tiles
         foreach (var item in tilePrefabs.tiles)
         {
-            if (item.tileType == TileType.Breakable)
+            if (item.prefab.GetComponent<Tile>().tileType == TileType.Breakable)
             {
                 MakeTile(board, item, item.x, item.y);
             }
@@ -41,7 +41,7 @@ public class TileData : ScriptableObject
         // Lastly we instantiate normal tiles in the empty slots
         foreach (var item in tilePrefabs.tiles)
         {
-            if (item.tileType==TileType.Normal)
+            if (item.prefab.GetComponent<Tile>().tileType == TileType.Normal)
             {
                 for (int i = 0; i < width; i++)
                 {

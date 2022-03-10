@@ -31,10 +31,11 @@ public class Board : MonoBehaviour
         height = tileData.height;
         tileData.SetupTiles(this);
         gamepieceData.Init(this);
+        boardDeadlock = GetComponent<BoardDeadlock>();
         SetupCamera();
         FillBoard();
         gameState = GameState.CanSwap;
-        boardDeadlock = GetComponent<BoardDeadlock>();
+
     }
 
     void SetupCamera()
@@ -112,6 +113,9 @@ public class Board : MonoBehaviour
                 }
             }
         }
+
+        //check for deadlock
+        boardDeadlock.IsDeadLock(gamepieceData.allGamepieces, 3);
     }
 
     private void FirstFillCheck()
@@ -244,7 +248,6 @@ public class Board : MonoBehaviour
             yield return new WaitForSeconds(fallTime);
         }
         gameState = GameState.CanSwap;
-
     }
 
     public bool IsWithInBounds(int x, int y)
@@ -323,12 +326,6 @@ public class Board : MonoBehaviour
         gamepieceData.bomb = bombGO;          
     }
 
-
-    [ContextMenu("TestDeadLock")]
-    void TestDeadLock()
-    {
-        boardDeadlock.IsDeadLock(gamepieceData.allGamepieces, 3);
-    }
 }
 
 
