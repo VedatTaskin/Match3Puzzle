@@ -26,8 +26,8 @@ MonoBehaviour:
   colorBomb: {fileID: 6190596001897580889, guid: 450c9996b6392f348a9ddc7669a0e47d,
     type: 3}
   tileData: {fileID: 11400000, guid: 4773f26f0b85f15499b21afcde027a39, type: 2}
-  collectiblesCount: 0
-  maxCollectibles: 0
+  collectiblesCount: 3
+  maxCollectibles: 3
   collectiblePrefab: {fileID: 7824845330932977092, guid: 6fb0c152493719f45a7a3ff5a56bd8ed,
     type: 3}
   chanceForCollectible: 0.52
@@ -44,7 +44,7 @@ MonoBehaviour:
       type: 3}
     xCoord: 4
     yCoord: 3
-  - prefab: {fileID: 3331765375303411333, guid: 0d3d3fd8a88c77d4c9ed1906cd71e082,
+  - prefab: {fileID: 6190596001897580889, guid: 450c9996b6392f348a9ddc7669a0e47d,
       type: 3}
     xCoord: 2
     yCoord: 3

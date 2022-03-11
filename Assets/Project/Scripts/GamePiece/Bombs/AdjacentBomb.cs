@@ -110,7 +110,7 @@ public class AdjacentBomb : Bombs
         return matches;
 
     }
-    public override List<Gamepiece> SelfDestroy(Board board, Gamepiece otherGamepiece)
+    public override List<Gamepiece> SelfDestroy(Board board, Gamepiece otherGamepiece=null)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
         matches.Add(this);

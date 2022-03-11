@@ -201,8 +201,32 @@ public class Board : MonoBehaviour
 
     public void ReleaseTile()
     {
+        // WE can activate a bomb only one tap as in Royal Match
+        if (clickedTile != null && targetTile == null)
+        {
+            StartCoroutine(CheckForBombActivation(clickedTile));
+        }
+
         clickedTile = null;
         targetTile = null;
+    }
+
+    IEnumerator CheckForBombActivation(Tile clickedTile)
+    {
+        var piece = gamepieceData.allGamepieces[clickedTile.xIndex, clickedTile.yIndex];
+        if (piece != null && piece.gamepieceType == GamepieceType.Bomb)
+        {
+            gameState = GameState.Busy;
+            List<Gamepiece> gamepiecesWillClear = new List<Gamepiece>();
+            gamepiecesWillClear = piece.GetComponent<ISelfDestroy>().SelfDestroy(this);
+            if (gamepiecesWillClear != null)
+            {
+                yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(gamepiecesWillClear));
+                yield return StartCoroutine(RefillBoard());
+            }
+            gameState = GameState.CanSwap;
+        }
+        yield return null;        
     }
 
     void SwitchTiles(Tile _clickedTile, Tile _targetTile)

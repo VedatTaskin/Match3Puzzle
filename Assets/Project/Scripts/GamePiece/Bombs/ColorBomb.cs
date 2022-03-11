@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ColorBomb :Bombs
+public class ColorBomb :Bombs,ISelfDestroy
 {
     public override BombType bombType => BombType.Color;
 
@@ -119,5 +119,11 @@ public class ColorBomb :Bombs
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
         return bombedPieces;
+    }
+
+    public override List<Gamepiece> SelfDestroy(Board board, Gamepiece otherGamepiece = null)
+    {
+        List<Gamepiece> matches = new List<Gamepiece>();
+        return matches;
     }
 }
