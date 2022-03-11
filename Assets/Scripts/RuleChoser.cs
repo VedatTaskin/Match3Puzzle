@@ -7,27 +7,27 @@ public static class RuleChoser
 {
     public static List<Gamepiece> ChooseRule(Gamepiece clicked, Gamepiece target, Board board)
     {
-        List<Gamepiece> bombedPieces = new List<Gamepiece>();
+        List<Gamepiece> piecesToClear = new List<Gamepiece>();
 
         //Bomb 
         if (clicked.gamepieceType == GamepieceType.Bomb || target.gamepieceType == GamepieceType.Bomb)
         {
             if (clicked.bombType == BombType.Color || target.bombType == BombType.Color)             // we assign the job to the color bomb
             {
-                return bombedPieces= ChoosePriorityBomb(clicked, target, board, BombType.Color);
+                return piecesToClear= ChoosePriorityBomb(clicked, target, board, BombType.Color);
             }
             else if (clicked.bombType == BombType.Adjacent || target.bombType == BombType.Adjacent)
             {
-                return bombedPieces = ChoosePriorityBomb(clicked, target, board, BombType.Adjacent);
+                return piecesToClear = ChoosePriorityBomb(clicked, target, board, BombType.Adjacent);
             }
             else if (clicked.bombType == BombType.ColumnBomb || target.bombType == BombType.ColumnBomb)
             {
-                return bombedPieces = ChoosePriorityBomb(clicked, target, board, BombType.ColumnBomb);
+                return piecesToClear = ChoosePriorityBomb(clicked, target, board, BombType.ColumnBomb);
 
             }
             else if (clicked.bombType == BombType.RowBomb || target.bombType == BombType.RowBomb)
             {
-                return bombedPieces = ChoosePriorityBomb(clicked, target, board, BombType.RowBomb);
+                return piecesToClear = ChoosePriorityBomb(clicked, target, board, BombType.RowBomb);
             }
         }
 
@@ -49,7 +49,7 @@ public static class RuleChoser
             IGamepieceRule rule = clicked.GetComponent<IGamepieceRule>();
             if (rule != null)
             {
-                return bombedPieces = rule.PerformRule(clicked, board, target);
+                return piecesToClear = rule.PerformRule(clicked, board, target);
             }
 
         }

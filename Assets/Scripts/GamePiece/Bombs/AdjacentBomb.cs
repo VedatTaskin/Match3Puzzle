@@ -105,6 +105,9 @@ public class AdjacentBomb : Bombs
                 }
             }
         }
+
+        // check if other Normal gamepiece makes a match3
+        matches = matches.Union(CheckNormalMatches(bomb, board, other)).ToList();
         return matches;
 
     }
@@ -146,5 +149,16 @@ public class AdjacentBomb : Bombs
         return matches;
 
     }
+    private List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)
+    {
+        List<Gamepiece> normalMatches = board.gamepieceData.FindMatchesAt(other.xIndex, other.yIndex);
 
+        // if number of matches greater than 4 we create bomb
+        if (normalMatches.Count >= 4)
+        {
+            Vector2 swapDirection = new Vector2(other.xIndex - bomb.xIndex, other.yIndex - bomb.yIndex);
+            board.DropBomb(other.xIndex, other.yIndex, swapDirection, normalMatches);
+        }
+        return normalMatches;
+    }
 }
