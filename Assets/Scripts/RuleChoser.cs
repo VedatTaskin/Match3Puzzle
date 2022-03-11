@@ -35,6 +35,25 @@ public static class RuleChoser
         else if(clicked.gamepieceType == GamepieceType.Collectible || target.gamepieceType == GamepieceType.Collectible)
         {
 
+            if (clicked.gamepieceType == GamepieceType.Collectible)
+            {
+                Debug.Log("Hi");
+                IGamepieceRule rule = clicked.GetComponent<IGamepieceRule>();
+                if (rule != null)
+                {
+                    return piecesToClear = rule.PerformRule(clicked, board, target);
+                }
+            }
+            else
+            {
+                IGamepieceRule rule = target.GetComponent<IGamepieceRule>();
+                if (rule != null)
+                {
+                    return piecesToClear = rule.PerformRule(target, board, clicked);
+                }
+
+            }
+
         }
 
         // Changeable not done

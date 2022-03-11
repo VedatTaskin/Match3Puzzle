@@ -96,6 +96,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xIndex: 0
   yIndex: 0
-  normalGamepieceType: 0
-  easeType: 0
+  normalGamepieceType: 9
+  easeType: 12
   board: {fileID: 0}
