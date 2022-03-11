@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public static class CheckBoardDeadlock
+public static class BoardDeadlockControl
 {
     public static Gamepiece[,] allPieces;
     public static int width;

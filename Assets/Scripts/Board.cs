@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-
+using System;
 
 public class Board : MonoBehaviour
 {
@@ -17,22 +17,27 @@ public class Board : MonoBehaviour
     public GamepieceData gamepieceData;
     public TileData tileData;
 
+    WaitForSeconds waitForFallTime;
     GameState gameState;
     Tile clickedTile;
     Tile targetTile;
     int offset = 10;
     int firstFill = 0;
 
-    private void Start()
+    private void Awake()
     {
+        waitForFallTime = new WaitForSeconds(fallTime);
         width = tileData.width;
         height = tileData.height;
+    }
+
+    private void Start()
+    {
         tileData.SetupTiles(this);
         gamepieceData.Init(this);
         SetupCamera();
         FillBoard();
         gameState = GameState.CanSwap;
-
     }
 
     void SetupCamera()
@@ -106,13 +111,10 @@ public class Board : MonoBehaviour
                             }
                         }
                     }
-
                 }
             }
         }
-
-        //check for deadlock
-        CheckBoardDeadlock.IsDeadLock(gamepieceData.allGamepieces, 3);
+        StartCoroutine(CheckForDeadlock());        
     }
 
     private void FirstFillCheck()
@@ -234,7 +236,12 @@ public class Board : MonoBehaviour
     IEnumerator RefillBoard()
     {
         FillBoard();
-        yield return new WaitForSeconds(fallTime);
+        yield return waitForFallTime;
+        StartCoroutine(FindNewMatches());
+    }
+
+    IEnumerator FindNewMatches()
+    {
         var newMatches = gamepieceData.FindAllMatches();
 
         if (newMatches != null)
@@ -321,6 +328,48 @@ public class Board : MonoBehaviour
             }
         }
         gamepieceData.bomb = bombGO;          
+    }
+
+    IEnumerator CheckForDeadlock()
+    {
+        yield return waitForFallTime;
+        if (BoardDeadlockControl.IsDeadLock(gamepieceData.allGamepieces, 3))
+        {
+            gameState = GameState.Busy;
+            StartCoroutine(ShuffleBoard());
+        }
+    }
+
+    IEnumerator ShuffleBoard()
+    {
+        var normalPieceList = BoardShuffleControl.RemoveNormalPieces(gamepieceData.allGamepieces);
+        var shuffledList = BoardShuffleControl.ShuffleList(normalPieceList);
+        StartCoroutine(PlaceShuffledList(shuffledList));
+        yield return null;
+    }
+
+    IEnumerator PlaceShuffledList(List<Gamepiece> gamepieces)
+    {
+        Queue<Gamepiece> normalPieces = new Queue<Gamepiece>(gamepieces);
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                var piece = gamepieceData.allGamepieces[i, j];
+                if (piece == null && tileData.allTiles[i, j].tileType != TileType.Obstacle)
+                {
+                    piece = normalPieces.Dequeue();
+                    piece.SetCoordinate(i, j);
+                    piece.Move(i, j, fallTime);
+                }
+            }
+        }
+
+        yield return waitForFallTime;
+
+        yield return FindNewMatches();
+        yield return StartCoroutine(CheckForDeadlock());
+        gameState = GameState.CanSwap;
     }
 
 }

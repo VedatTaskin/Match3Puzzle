@@ -33,5 +33,13 @@ MonoBehaviour:
   collectiblePrefab: {fileID: 7824845330932977092, guid: 6fb0c152493719f45a7a3ff5a56bd8ed,
     type: 3}
   chanceForCollectible: 0.52
-  orderedGamepieces: []
+  orderedGamepieces:
+  - prefab: {fileID: 3331765375303411333, guid: 0d3d3fd8a88c77d4c9ed1906cd71e082,
+      type: 3}
+    xCoord: 1
+    yCoord: 1
+  - prefab: {fileID: 2081567949804697022, guid: 36c9b9c0794c8854694885e84d28d892,
+      type: 3}
+    xCoord: 3
+    yCoord: 3
   board: {fileID: 0}
