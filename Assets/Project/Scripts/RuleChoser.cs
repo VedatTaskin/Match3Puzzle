@@ -31,13 +31,12 @@ public static class RuleChoser
             }
         }
 
-        //Collectible not done
+        //Collectible
         else if(clicked.gamepieceType == GamepieceType.Collectible || target.gamepieceType == GamepieceType.Collectible)
         {
 
             if (clicked.gamepieceType == GamepieceType.Collectible)
             {
-                Debug.Log("Hi");
                 IGamepieceRule rule = clicked.GetComponent<IGamepieceRule>();
                 if (rule != null)
                 {

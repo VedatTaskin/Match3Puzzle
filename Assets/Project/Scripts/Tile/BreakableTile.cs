@@ -42,7 +42,7 @@ public class BreakableTile : Tile
             spriteRenderer.sprite = spriteList[breakableValue];
         }
 
-        else if (breakableValue==0)
+        if (breakableValue==0)
         {
             tileType = TileType.Normal;
             spriteRenderer.color = normalColor;

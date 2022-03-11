@@ -10,10 +10,12 @@ public class Board : MonoBehaviour
     [HideInInspector] public int height;
 
     public int borderSize;
+
     [Range(0, 1)]
     public float swapTime = 0.5f;
     public float fallTime = 0.5f;
 
+    [Header("Gamepieces & Tiles SO")]
     public GamepieceData gamepieceData;
     public TileData tileData;
 

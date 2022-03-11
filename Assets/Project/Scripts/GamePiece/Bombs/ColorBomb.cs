@@ -89,7 +89,7 @@ public class ColorBomb :Bombs,ISelfDestroy
             for (int j = 0; j < board.height; j++)
             {
                 var piece = board.gamepieceData.allGamepieces[i, j];
-                if (piece != null && !bombedPieces.Contains(piece))
+                if (piece != null && !bombedPieces.Contains(piece) && piece.gamepieceType != GamepieceType.Collectible)
                 {
                     bombedPieces.Add(piece);
                 }
