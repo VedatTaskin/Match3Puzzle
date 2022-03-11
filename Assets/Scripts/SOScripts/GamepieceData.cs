@@ -319,6 +319,7 @@ public class GamepieceData : ScriptableObject
             yield return new WaitForSeconds(0.2f);
             var movingPieces = CollapseColumn(matches);
 
+            // sanki bu çalışmıyor :(
             while (!Utility.GamepiecesAreCollapsed(movingPieces))
             {
                 yield return null;
@@ -326,12 +327,17 @@ public class GamepieceData : ScriptableObject
 
             //check if there are another matches after collapsing column
             yield return new WaitForSeconds(0.2f);
-            var newMatches = new List<Gamepiece>();
 
+            var newMatches = new List<Gamepiece>();
             foreach (var piece in movingPieces)
             {
                 newMatches = newMatches.Union(FindMatchesAt(piece.xIndex, piece.yIndex)).ToList();
             }
+
+            if (NewMatchesCanMakeBomb(newMatches))
+            {
+                yield return new WaitForSeconds(0.2f);
+            } 
 
             //check if Collectibles are reached to the bottom of the board
             var collectiblesFound = FindCollectiblesAtRow(0);
@@ -430,6 +436,18 @@ public class GamepieceData : ScriptableObject
     public bool CanAddCollectible()
     {
         return (Random.Range(0f, 1f) <= chanceForCollectible && collectiblesCount < maxCollectibles);
+    }
+
+    //we didn't detailed this method, WE drop a bomb if new matches greater than 4,
+    // we should check their color, and match type 
+    bool NewMatchesCanMakeBomb(List<Gamepiece> newMatches)
+    {
+        if (newMatches.Count >= 4)
+        {
+            board.DropBomb(newMatches[1].xIndex, newMatches[1].yIndex, new Vector2(0, 1), newMatches);
+            return true;
+        }
+        return false;
     }
 }
 

@@ -7,7 +7,6 @@ public class AdjacentBomb : Bombs
 {
     public int neighborMultiplier = 1;
     public override BombType bombType => BombType.Adjacent;
-
     public override List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
     {
         List<Gamepiece> piecesToClear = new List<Gamepiece>();
