@@ -10,7 +10,7 @@ public class Bombs : Gamepiece, IGamepieceRule,ISelfDestroy
     {
         return null;
     }
-    public virtual List<Gamepiece> SelfDestroy(Board board)
+    public virtual List<Gamepiece> SelfDestroy(Board board, Gamepiece otherGamepiece)
     {
         return null;
     }

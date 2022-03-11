@@ -52,29 +52,27 @@ public class AdjacentBomb : Bombs
 
         return piecesToClear;
     }
+    public List<Gamepiece> AdjacentVsColumn(Gamepiece bomb, Board board, Gamepiece other)
+    {
+        List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-    //public List<Gamepiece> FindGamepieceInAdjacent(Gamepiece gamepiece)
-    //{
-    //    List<Gamepiece> matches = new List<Gamepiece>();
+        return bombedPieces;
 
-    //    for (int i = gamepiece.xIndex-neighborMultiplier; i <= gamepiece.xIndex+neighborMultiplier; i++)
-    //    {
-    //        for (int j = gamepiece.yIndex-neighborMultiplier; j <= gamepiece.yIndex+neighborMultiplier; j++)
-    //        {
-    //            if (board.IsWithInBounds(i,j))
-    //            {
-    //                var piece = board.gamepieceData.allGamepieces[i, j];
+    }
+    public List<Gamepiece> AdjacentVsRow(Gamepiece bomb, Board board, Gamepiece other)
+    {
+        List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-    //                if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
-    //                {
-    //                    matches.Add(piece);
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return matches;
-    //}
+        return bombedPieces;
 
+    }
+    public List<Gamepiece> AdjacentVsAdjacent(Gamepiece bomb, Board board, Gamepiece other)
+    {
+        List<Gamepiece> bombedPieces = new List<Gamepiece>();
+
+        return bombedPieces;
+
+    }
     public List<Gamepiece> AdjacentVsNormal(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
@@ -93,7 +91,7 @@ public class AdjacentBomb : Bombs
 
                         if (piece.gamepieceType == GamepieceType.Bomb)
                         {
-                            var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board).ToList();
+                            var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board, this).ToList();
                             if (effectedGamepieces != null)
                             {
                                 matches = matches.Union(effectedGamepieces).ToList();
@@ -110,35 +108,14 @@ public class AdjacentBomb : Bombs
         return matches;
 
     }
-
-    public List<Gamepiece> AdjacentVsColumn(Gamepiece bomb, Board board, Gamepiece other)
-    {
-        List<Gamepiece> bombedPieces = new List<Gamepiece>();
-
-        return bombedPieces;
-
-    }
-
-    public List<Gamepiece> AdjacentVsRow(Gamepiece bomb, Board board, Gamepiece other)
-    {
-        List<Gamepiece> bombedPieces = new List<Gamepiece>();
-
-        return bombedPieces;
-
-    }
-
-    public List<Gamepiece> AdjacentVsAdjacent(Gamepiece bomb, Board board, Gamepiece other)
-    {
-        List<Gamepiece> bombedPieces = new List<Gamepiece>();
-
-        return bombedPieces;
-
-    }
-
-    public override List<Gamepiece> SelfDestroy(Board board)
+    public override List<Gamepiece> SelfDestroy(Board board, Gamepiece otherGamepiece)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
         matches.Add(this);
+        if (otherGamepiece != null)
+        {
+            matches.Add(otherGamepiece);
+        }
 
         for (int i = xIndex - neighborMultiplier; i <= xIndex + neighborMultiplier; i++)
         {
@@ -152,7 +129,7 @@ public class AdjacentBomb : Bombs
                     {
                         if (piece.gamepieceType == GamepieceType.Bomb)
                         {
-                            var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board).ToList();
+                            var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board,this).ToList();
                             if (effectedGamepieces != null)
                             {
                                 matches = matches.Union(effectedGamepieces).ToList();
@@ -169,4 +146,5 @@ public class AdjacentBomb : Bombs
         return matches;
 
     }
+
 }

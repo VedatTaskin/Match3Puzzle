@@ -75,7 +75,7 @@ public class ColumnBomb : Bombs
             {
                 if (piece.gamepieceType == GamepieceType.Bomb)
                 {
-                    var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board).ToList();
+                    var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board,this).ToList();
                     if (effectedGamepieces != null)
                     {
                         matches = matches.Union(effectedGamepieces).ToList();
@@ -89,10 +89,14 @@ public class ColumnBomb : Bombs
         }
         return matches;
     }
-    public override List<Gamepiece> SelfDestroy(Board board)
+    public override List<Gamepiece> SelfDestroy(Board board,Gamepiece otherGamepiece)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
         matches.Add(this);
+        if (otherGamepiece != null)
+        {
+            matches.Add(otherGamepiece);
+        }
 
         for (int i = 0; i < board.height; i++)
         {
@@ -102,7 +106,7 @@ public class ColumnBomb : Bombs
             {
                 if (piece.gamepieceType == GamepieceType.Bomb)
                 {
-                    var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board).ToList();
+                    var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board,this).ToList();
                     if (effectedGamepieces != null)
                     {
                         matches = matches.Union(effectedGamepieces).ToList();

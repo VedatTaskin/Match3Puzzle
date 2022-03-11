@@ -35,9 +35,17 @@ MonoBehaviour:
   - prefab: {fileID: 3331765375303411333, guid: 0d3d3fd8a88c77d4c9ed1906cd71e082,
       type: 3}
     xCoord: 1
-    yCoord: 1
+    yCoord: 4
   - prefab: {fileID: 2081567949804697022, guid: 36c9b9c0794c8854694885e84d28d892,
       type: 3}
     xCoord: 3
+    yCoord: 3
+  - prefab: {fileID: 8654269431416678672, guid: c64887a4633ca884b8e2729519901e66,
+      type: 3}
+    xCoord: 4
+    yCoord: 3
+  - prefab: {fileID: 3331765375303411333, guid: 0d3d3fd8a88c77d4c9ed1906cd71e082,
+      type: 3}
+    xCoord: 2
     yCoord: 3
   board: {fileID: 0}
