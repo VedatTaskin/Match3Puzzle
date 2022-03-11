@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class AdjacentBomb : Bombs
 {
@@ -77,6 +78,7 @@ public class AdjacentBomb : Bombs
     public List<Gamepiece> AdjacentVsNormal(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
+        matches.Add(this);
 
         for (int i = bomb.xIndex - neighborMultiplier; i <= bomb.xIndex + neighborMultiplier; i++)
         {
@@ -88,7 +90,19 @@ public class AdjacentBomb : Bombs
 
                     if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
                     {
-                        matches.Add(piece);
+
+                        if (piece.gamepieceType == GamepieceType.Bomb)
+                        {
+                            var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board).ToList();
+                            if (effectedGamepieces != null)
+                            {
+                                matches = matches.Union(effectedGamepieces).ToList();
+                            }
+                        }
+                        else
+                        {
+                            matches.Add(piece);
+                        }
                     }
                 }
             }
@@ -118,6 +132,41 @@ public class AdjacentBomb : Bombs
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
         return bombedPieces;
+
+    }
+
+    public override List<Gamepiece> SelfDestroy(Board board)
+    {
+        List<Gamepiece> matches = new List<Gamepiece>();
+        matches.Add(this);
+
+        for (int i = xIndex - neighborMultiplier; i <= xIndex + neighborMultiplier; i++)
+        {
+            for (int j = yIndex - neighborMultiplier; j <=yIndex + neighborMultiplier; j++)
+            {
+                if (board.IsWithInBounds(i, j))
+                {
+                    var piece = board.gamepieceData.allGamepieces[i, j];
+
+                    if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
+                    {
+                        if (piece.gamepieceType == GamepieceType.Bomb)
+                        {
+                            var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board).ToList();
+                            if (effectedGamepieces != null)
+                            {
+                                matches = matches.Union(effectedGamepieces).ToList();
+                            }
+                        }
+                        else
+                        {
+                            matches.Add(piece);
+                        }
+                    }
+                }
+            }
+        }
+        return matches;
 
     }
 }

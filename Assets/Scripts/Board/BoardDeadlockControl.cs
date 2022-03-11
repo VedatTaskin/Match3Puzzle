@@ -110,10 +110,10 @@ public static class BoardDeadlockControl
 
             if (matches.Count >=listLength)
             {
-                string rowColStr = (checkRow) ? "row" : "column";
-                Debug.Log("*************AvailableMove**********");
-                Debug.Log("Move" + matches[0].normalGamepieceType + "piece to" + unmatchedPiece.xIndex + ", " +
-                    unmatchedPiece.yIndex + "to form matching" + rowColStr);
+                //string rowColStr = (checkRow) ? "row" : "column";
+                //Debug.Log("*************AvailableMove**********");
+                //Debug.Log("Move" + matches[0].normalGamepieceType + "piece to" + unmatchedPiece.xIndex + ", " +
+                //    unmatchedPiece.yIndex + "to form matching" + rowColStr);
                 return true;
             }
         }                

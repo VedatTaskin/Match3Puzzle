@@ -23,3 +23,8 @@ MonoBehaviour:
     x: 2
     y: 2
     z: 0
+  - prefab: {fileID: 4620684841432577337, guid: 78e69536f2b5f354d9b63695f6c7837a,
+      type: 3}
+    x: 3
+    y: 2
+    z: 0

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class ColumnBomb : Bombs
 {
+
     public override BombType bombType => BombType.ColumnBomb;
     public override List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
     {
@@ -47,21 +48,6 @@ public class ColumnBomb : Bombs
 
         return piecesToClear;
     }
-    public List<Gamepiece> ColumnVsNormal(Gamepiece bomb, Board board, Gamepiece other)
-    {
-        List<Gamepiece> matches = new List<Gamepiece>();
-
-        for (int i = 0; i < board.height; i++)
-        {
-            var piece = board.gamepieceData.allGamepieces[xIndex, i];
-
-            if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
-            {
-                matches.Add(piece);
-            }
-        }
-        return matches;
-    }
     public List<Gamepiece> ColumnVsColumn(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
@@ -76,5 +62,58 @@ public class ColumnBomb : Bombs
         return bombedPieces;
 
     }
+    public List<Gamepiece> ColumnVsNormal(Gamepiece bomb, Board board, Gamepiece other)
+    {
+        List<Gamepiece> matches = new List<Gamepiece>();
+        matches.Add(this);
 
+        for (int i = 0; i < board.height; i++)
+        {
+            var piece = board.gamepieceData.allGamepieces[xIndex, i];
+
+            if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
+            {
+                if (piece.gamepieceType == GamepieceType.Bomb)
+                {
+                    var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board).ToList();
+                    if (effectedGamepieces != null)
+                    {
+                        matches = matches.Union(effectedGamepieces).ToList();
+                    }
+                }
+                else
+                {
+                    matches.Add(piece);
+                }
+            }
+        }
+        return matches;
+    }
+    public override List<Gamepiece> SelfDestroy(Board board)
+    {
+        List<Gamepiece> matches = new List<Gamepiece>();
+        matches.Add(this);
+
+        for (int i = 0; i < board.height; i++)
+        {
+            var piece = board.gamepieceData.allGamepieces[xIndex, i];
+
+            if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
+            {
+                if (piece.gamepieceType == GamepieceType.Bomb)
+                {
+                    var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board).ToList();
+                    if (effectedGamepieces != null)
+                    {
+                        matches = matches.Union(effectedGamepieces).ToList();
+                    }
+                }
+                else
+                {
+                    matches.Add(piece);
+                }
+            }
+        }
+        return matches;
+    }
 }

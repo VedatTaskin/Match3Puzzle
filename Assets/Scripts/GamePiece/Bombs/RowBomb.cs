@@ -56,6 +56,7 @@ public class RowBomb : Bombs
     private List<Gamepiece> RowVsNormal(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
+        matches.Add(this);
 
         for (int i = 0; i < board.width; i++)
         {
@@ -63,7 +64,19 @@ public class RowBomb : Bombs
 
             if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
             {
-                matches.Add(piece);
+                if (piece.gamepieceType == GamepieceType.Bomb)
+                {
+                    var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board).ToList();
+                    if (effectedGamepieces != null)
+                    {
+                        matches = matches.Union(effectedGamepieces).ToList();
+                    }
+                }
+                else
+                {
+                    matches.Add(piece);
+                }
+
             }
         }
         return matches;
@@ -71,4 +84,31 @@ public class RowBomb : Bombs
     }
 
 
+    public override List<Gamepiece> SelfDestroy(Board board)
+    {
+        List<Gamepiece> matches = new List<Gamepiece>();
+        matches.Add(this);
+
+        for (int i = 0; i < board.width; i++)
+        {
+            var piece = board.gamepieceData.allGamepieces[i, yIndex];
+
+            if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
+            {
+                if (piece.gamepieceType == GamepieceType.Bomb)
+                {
+                    var effectedGamepieces= piece.GetComponent<ISelfDestroy>().SelfDestroy(board).ToList();
+                    if (effectedGamepieces!= null)
+                    {
+                        matches = matches.Union(effectedGamepieces).ToList();
+                    }                    
+                }
+                else
+                {
+                    matches.Add(piece);
+                }
+            }
+        }
+        return matches;
+    }
 }
