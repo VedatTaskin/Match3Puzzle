@@ -36,10 +36,13 @@ public class BreakableTile : Tile
 
     public void SetBreakableValue()
     {
-        breakableValue--;
-        spriteRenderer.sprite = spriteList[breakableValue];
+        if (breakableValue > 0)
+        {
+            breakableValue--;
+            spriteRenderer.sprite = spriteList[breakableValue];
+        }
 
-        if (breakableValue==0)
+        else if (breakableValue==0)
         {
             tileType = TileType.Normal;
             spriteRenderer.color = normalColor;

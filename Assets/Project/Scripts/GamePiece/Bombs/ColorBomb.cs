@@ -58,8 +58,6 @@ public class ColorBomb :Bombs,ISelfDestroy
 
     private List<Gamepiece> ColorVsNormal(Gamepiece bomb, Board board, Gamepiece other)
     {
-
-        Debug.Log("Hi");
         List<Gamepiece> matches = new List<Gamepiece>();
 
         matches.Add(bomb); // our coloured bomb is added
