@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ColorBomb :Bombs,ISelfDestroy
+public class ColorBomb :Bombs, ISelfDestroy
 {
     public override BombType bombType => BombType.Color;
 

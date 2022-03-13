@@ -241,19 +241,21 @@ public class Board : MonoBehaviour
 
     IEnumerator SwitchTileRoutine(Tile _clickedTile, Tile _targetTile)
     {
+        // clicked and target tiles are stored temporarly
         Gamepiece clickedGamepiece = gamepieceData.allGamepieces[_clickedTile.xIndex, _clickedTile.yIndex];
         Gamepiece targetGamepiece = gamepieceData.allGamepieces[_targetTile.xIndex, _targetTile.yIndex];
 
         if (targetGamepiece != null && clickedGamepiece != null
             && clickedGamepiece.gamepieceType != GamepieceType.NotMoveable && targetGamepiece.gamepieceType != GamepieceType.NotMoveable)
         {
-
+            // if clicked and target Gamepieces are exist and moveable we swap this two objects
             clickedGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime);
             targetGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
 
             // we wait until end of the switch movement
             yield return new WaitForSeconds(swapTime);
 
+            //clicked and target Gamepieces now checking
             StartCoroutine(ApplyGamepieceRule(clickedGamepiece, targetGamepiece));
         }
 
@@ -287,8 +289,10 @@ public class Board : MonoBehaviour
 
     IEnumerator ApplyGamepieceRule(Gamepiece clicked, Gamepiece target)
     {
+        // Rule choser return with gamepieces to be cleared
         List<Gamepiece> gamepiecesWillClear = RuleChoser.ChooseRule(clicked, target, this);
 
+        // If there isn't any gamepieces to clear we swap back again
         if (gamepiecesWillClear == null || gamepiecesWillClear.Count == 0)
         {
             clicked.Move(target.xIndex, target.yIndex, swapTime);
@@ -296,6 +300,7 @@ public class Board : MonoBehaviour
             yield return new WaitForSeconds(swapTime);
         }
 
+        //If there is any gamepieces to clear we make this job;
         else
         {
             yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(gamepiecesWillClear));
