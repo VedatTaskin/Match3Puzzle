@@ -8,6 +8,7 @@ public class Gamepiece : MonoBehaviour
 {
     public int xIndex;
     public int yIndex;
+    public float fallTime = 0.3f;
     public PieceState pieceState;
     public virtual GamepieceType gamepieceType { get; }
 
