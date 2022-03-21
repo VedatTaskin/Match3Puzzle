@@ -44,3 +44,9 @@ public enum NormalGamepieceType
     Wild,
     None
 }
+
+public enum MoveType
+{
+    Swap,
+    Fall
+}

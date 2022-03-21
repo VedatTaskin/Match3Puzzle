@@ -288,7 +288,7 @@ public class GamepieceData : ScriptableObject
                                 movingPieces.Add(piece);
                             }                            
 
-                            piece.Move(columns[c], i, collapseTime * (j-i));
+                            piece.Move(columns[c], i, collapseTime * (j-i), MoveType.Fall);
                             piece.SetCoordinate(columns[c], i);
                             
                             allGamepieces[columns[c], j] = null;

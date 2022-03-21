@@ -137,7 +137,7 @@ public class Board : MonoBehaviour
         gamepieceGO.GetComponent<Gamepiece>().Init(this);
         PlaceGamePiece(gamepieceGO.GetComponent<Gamepiece>(), x, y);
         gamepieceGO.transform.position = new Vector3(x, y + offset, 0);
-        gamepieceGO.GetComponent<Gamepiece>().Move(x, y, fallTime);
+        gamepieceGO.GetComponent<Gamepiece>().Move(x, y, fallTime,MoveType.Fall);
         transform.parent = transform;
     }
 
@@ -249,8 +249,8 @@ public class Board : MonoBehaviour
             && clickedGamepiece.gamepieceType != GamepieceType.NotMoveable && targetGamepiece.gamepieceType != GamepieceType.NotMoveable)
         {
             // if clicked and target Gamepieces are exist and moveable we swap this two objects
-            clickedGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime);
-            targetGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime);
+            clickedGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime, MoveType.Swap);
+            targetGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime, MoveType.Swap);
 
             // we wait until end of the switch movement
             yield return new WaitForSeconds(swapTime);
@@ -295,8 +295,8 @@ public class Board : MonoBehaviour
         // If there isn't any gamepieces to clear we swap back again
         if (gamepiecesWillClear == null || gamepiecesWillClear.Count == 0)
         {
-            clicked.Move(target.xIndex, target.yIndex, swapTime);
-            target.Move(clicked.xIndex, clicked.yIndex, swapTime);
+            clicked.Move(target.xIndex, target.yIndex, swapTime, MoveType.Swap);
+            target.Move(clicked.xIndex, clicked.yIndex, swapTime, MoveType.Swap);
             yield return new WaitForSeconds(swapTime);
         }
 
@@ -391,7 +391,7 @@ public class Board : MonoBehaviour
                 {
                     piece = normalPieces.Dequeue();
                     piece.SetCoordinate(i, j);
-                    piece.Move(i, j, fallTime);
+                    piece.Move(i, j, fallTime, MoveType.Swap);
                 }
             }
         }

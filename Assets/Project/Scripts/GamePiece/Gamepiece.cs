@@ -8,12 +8,16 @@ public class Gamepiece : MonoBehaviour
 {
     public int xIndex;
     public int yIndex;
+    public bool isMoving;
     public virtual GamepieceType gamepieceType { get; }
 
     public NormalGamepieceType normalGamepieceType;
     public virtual BombType bombType { get; }
 
     public Ease easeType;
+    [Space(10)]
+    [SerializeField] AnimationCurve animationCurve;
+
     [HideInInspector] public Board board;
 
     public void Init( Board _board)
@@ -27,10 +31,29 @@ public class Gamepiece : MonoBehaviour
         yIndex = y;
     }
 
-    public void Move(int destX,int destY, float timeToMove)
+    public void Move(int destX,int destY, float timeToMove, MoveType movetype)
     {
-        transform.DOMove(new Vector3(destX, destY, transform.position.z), timeToMove).SetEase(easeType).
-            OnComplete(()=>board.PlaceGamePiece(this, destX, destY));
+        isMoving = true;
+
+        if (movetype == MoveType.Swap)
+        {
+            transform.DOMove(new Vector3(destX, destY, transform.position.z), timeToMove).SetEase(Ease.OutQuart).
+                OnComplete(() =>
+                {
+                    board.PlaceGamePiece(this, destX, destY);
+                    isMoving = false;
+                });
+        }
+        else if (movetype == MoveType.Fall)
+        {
+            timeToMove = Mathf.Clamp(timeToMove, 0.25f, 0.6f);
+            transform.DOMove(new Vector3(destX, destY, transform.position.z), timeToMove).SetEase(animationCurve).
+                OnComplete(() =>
+                {
+                    board.PlaceGamePiece(this, destX, destY);
+                    isMoving = false;
+                });
+        }
     } 
 }
 
