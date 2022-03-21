@@ -5,30 +5,31 @@ using UnityEngine;
 
 public static class RuleChoser 
 {
-    public static List<Gamepiece> ChooseRule(Gamepiece clicked, Gamepiece target, Board board)
+    
+
+    public static bool ChooseRule(Gamepiece clicked, Gamepiece target, Board board)
     {
-        List<Gamepiece> piecesToClear = new List<Gamepiece>();
 
         //Bomb 
         if (clicked.gamepieceType == GamepieceType.Bomb || target.gamepieceType == GamepieceType.Bomb)
         {
             if (clicked.bombType == BombType.Color || target.bombType == BombType.Color)             // we assign the job to the color bomb
             {
-                return piecesToClear= ChoosePriorityBomb(clicked, target, board, BombType.Color);
+                return ChooseOneOfTheBombs(clicked, target, board, BombType.Color);
             }
             else if (clicked.bombType == BombType.Adjacent || target.bombType == BombType.Adjacent)
             {
-                return piecesToClear = ChoosePriorityBomb(clicked, target, board, BombType.Adjacent);
+                return ChooseOneOfTheBombs(clicked, target, board, BombType.Adjacent);
             }
             else if (clicked.bombType == BombType.ColumnBomb || target.bombType == BombType.ColumnBomb)
             {
-                return piecesToClear = ChoosePriorityBomb(clicked, target, board, BombType.ColumnBomb);
-
+                return ChooseOneOfTheBombs(clicked, target, board, BombType.ColumnBomb);
             }
             else if (clicked.bombType == BombType.RowBomb || target.bombType == BombType.RowBomb)
             {
-                return piecesToClear = ChoosePriorityBomb(clicked, target, board, BombType.RowBomb);
+                return ChooseOneOfTheBombs(clicked, target, board, BombType.RowBomb);
             }
+            return false;
         }
 
         //Collectible
@@ -40,7 +41,7 @@ public static class RuleChoser
                 IGamepieceRule rule = clicked.GetComponent<IGamepieceRule>();
                 if (rule != null)
                 {
-                    return piecesToClear = rule.PerformRule(clicked, board, target);
+                    return rule.PerformRule(clicked, board, target);
                 }
             }
             else
@@ -48,11 +49,10 @@ public static class RuleChoser
                 IGamepieceRule rule = target.GetComponent<IGamepieceRule>();
                 if (rule != null)
                 {
-                    return piecesToClear = rule.PerformRule(target, board, clicked);
+                    return rule.PerformRule(target, board, clicked);
                 }
-
             }
-
+            return false;
         }
 
         // Changeable not done
@@ -67,24 +67,23 @@ public static class RuleChoser
             IGamepieceRule rule = clicked.GetComponent<IGamepieceRule>();
             if (rule != null)
             {
-                return piecesToClear = rule.PerformRule(clicked, board, target);
+                return rule.PerformRule(clicked, board, target);
             }
 
         }
 
-        return null;
+        return false;
     }
 
-    public static List<Gamepiece> ChoosePriorityBomb(Gamepiece clicked, Gamepiece target, Board board, BombType bombType)
+    public static bool ChooseOneOfTheBombs(Gamepiece clicked, Gamepiece target, Board board, BombType bombType)
     {
-        List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
         if (clicked.bombType == bombType)
         {
             IGamepieceRule rule = clicked.GetComponent<IGamepieceRule>();
             if (rule != null)
             {
-                return bombedPieces = rule.PerformRule(clicked, board, target);
+                return rule.PerformRule(clicked, board, target);
             }
         }
         else
@@ -92,9 +91,10 @@ public static class RuleChoser
             IGamepieceRule bombRule = target.GetComponent<IGamepieceRule>();
             if (bombRule != null)
             {
-                return bombedPieces = bombRule.PerformRule(target, board, clicked);
+                return bombRule.PerformRule(target, board, clicked);
             }
         }
-        return null;
+
+        return false;
     }
 }

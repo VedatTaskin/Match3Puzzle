@@ -7,14 +7,13 @@ public class AdjacentBomb : Bombs
 {
     public int neighborMultiplier = 1;
     public override BombType bombType => BombType.Adjacent;
-    public override List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
+    public override bool PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
     {
-        List<Gamepiece> piecesToClear = new List<Gamepiece>();
 
         switch (otherGamepiece.gamepieceType)
         {
             case GamepieceType.Normal:
-                piecesToClear = AdjacentVsNormal(gamepiece, board, otherGamepiece);
+                anyMatches = AdjacentVsNormal(gamepiece, board, otherGamepiece);
                 break;
 
             case GamepieceType.Collectible:
@@ -28,13 +27,13 @@ public class AdjacentBomb : Bombs
                 switch (otherGamepiece.bombType)
                 {
                     case BombType.RowBomb:
-                        piecesToClear = AdjacentVsRow(gamepiece, board, otherGamepiece);
+                        anyMatches = AdjacentVsRow(gamepiece, board, otherGamepiece);
                         break;
                     case BombType.ColumnBomb:
-                        piecesToClear = AdjacentVsColumn(gamepiece, board, otherGamepiece);
+                        anyMatches = AdjacentVsColumn(gamepiece, board, otherGamepiece);
                         break;
                     case BombType.Adjacent:
-                        piecesToClear = AdjacentVsAdjacent(gamepiece, board, otherGamepiece);
+                        anyMatches = AdjacentVsAdjacent(gamepiece, board, otherGamepiece);
                         break;
                     default:
                         break;
@@ -49,30 +48,30 @@ public class AdjacentBomb : Bombs
                 break;
         }
 
-        return piecesToClear;
+        return anyMatches;
     }
-    public List<Gamepiece> AdjacentVsColumn(Gamepiece bomb, Board board, Gamepiece other)
+    public bool AdjacentVsColumn(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        return bombedPieces;
+        return anyMatches;
 
     }
-    public List<Gamepiece> AdjacentVsRow(Gamepiece bomb, Board board, Gamepiece other)
+    public bool AdjacentVsRow(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        return bombedPieces;
+        return anyMatches;
 
     }
-    public List<Gamepiece> AdjacentVsAdjacent(Gamepiece bomb, Board board, Gamepiece other)
+    public bool AdjacentVsAdjacent(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        return bombedPieces;
+        return anyMatches;
 
     }
-    public List<Gamepiece> AdjacentVsNormal(Gamepiece bomb, Board board, Gamepiece other)
+    public bool AdjacentVsNormal(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
         matches.Add(this);
@@ -107,7 +106,15 @@ public class AdjacentBomb : Bombs
 
         // check if other Normal gamepiece makes a match3
         matches = matches.Union(CheckNormalMatches(bomb, board, other)).ToList();
-        return matches;
+
+        if (matches.Count != 0 || matches != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
 
     }
     public override List<Gamepiece> SelfDestroy(Board board, Gamepiece otherGamepiece=null)

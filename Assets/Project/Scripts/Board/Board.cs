@@ -149,6 +149,9 @@ public class Board : MonoBehaviour
             bomb.GetComponent<Bombs>().Init(this);
             bomb.GetComponent<Bombs>().SetCoordinate(x, y);
             bomb.transform.parent = transform;
+            bomb.transform.position = new Vector3(x, y, 0);
+            bomb.transform.rotation = Quaternion.identity;
+            gamepieceData.allGamepieces[x, y] = bomb.GetComponent<Gamepiece>();
             return bomb;
         }
         return null;
@@ -289,24 +292,18 @@ public class Board : MonoBehaviour
 
     IEnumerator ApplyGamepieceRule(Gamepiece clicked, Gamepiece target)
     {
-        // Rule choser return with gamepieces to be cleared
-        List<Gamepiece> gamepiecesWillClear = RuleChoser.ChooseRule(clicked, target, this);
 
+        // Rule choser returns a bool if swap is valise 
         // If there isn't any gamepieces to clear we swap back again
-        if (gamepiecesWillClear == null || gamepiecesWillClear.Count == 0)
+        if (!RuleChoser.ChooseRule(clicked, target, this))
         {
             clicked.Move(target.xIndex, target.yIndex, swapTime, MoveType.Swap);
             target.Move(clicked.xIndex, clicked.yIndex, swapTime, MoveType.Swap);
             yield return new WaitForSeconds(swapTime);
         }
 
-        //If there is any gamepieces to clear we make this job;
-        else
-        {
-            yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(gamepiecesWillClear));
-            yield return StartCoroutine(RefillBoard());
-        }
-
+        //BUNUNLA İLGİLENMELİSİN
+        //????????????????????????????
         gameState = GameState.CanSwap;
         yield return null;
     }

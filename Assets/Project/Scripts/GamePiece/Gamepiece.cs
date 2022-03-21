@@ -8,7 +8,7 @@ public class Gamepiece : MonoBehaviour
 {
     public int xIndex;
     public int yIndex;
-    public bool isMoving;
+    public PieceState pieceState;
     public virtual GamepieceType gamepieceType { get; }
 
     public NormalGamepieceType normalGamepieceType;
@@ -23,6 +23,7 @@ public class Gamepiece : MonoBehaviour
     public void Init( Board _board)
     {
         board = _board;
+        pieceState = PieceState.CanSwap;
     }
 
     public void SetCoordinate( int x, int y)
@@ -33,7 +34,7 @@ public class Gamepiece : MonoBehaviour
 
     public void Move(int destX,int destY, float timeToMove, MoveType movetype)
     {
-        isMoving = true;
+        pieceState = PieceState.Moving;
 
         if (movetype == MoveType.Swap)
         {
@@ -41,7 +42,7 @@ public class Gamepiece : MonoBehaviour
                 OnComplete(() =>
                 {
                     board.PlaceGamePiece(this, destX, destY);
-                    isMoving = false;
+                    pieceState = PieceState.CanSwap;
                 });
         }
         else if (movetype == MoveType.Fall)
@@ -51,7 +52,7 @@ public class Gamepiece : MonoBehaviour
                 OnComplete(() =>
                 {
                     board.PlaceGamePiece(this, destX, destY);
-                    isMoving = false;
+                    pieceState = PieceState.CanSwap;
                 });
         }
     } 

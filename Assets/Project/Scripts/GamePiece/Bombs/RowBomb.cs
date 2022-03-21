@@ -8,14 +8,13 @@ public class RowBomb : Bombs
 {
     public override BombType bombType => BombType.RowBomb;
 
-    public override List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
+    public override bool PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
     {
-        List<Gamepiece> piecesToClear = new List<Gamepiece>();
 
         switch (otherGamepiece.gamepieceType)
         {
             case GamepieceType.Normal:
-                piecesToClear = RowVsNormal(gamepiece, board, otherGamepiece);
+                anyMatches = RowVsNormal(gamepiece, board, otherGamepiece);
                 break;
 
             case GamepieceType.Collectible:
@@ -29,7 +28,7 @@ public class RowBomb : Bombs
                 switch (otherGamepiece.bombType)
                 {
                     case BombType.RowBomb:
-                        piecesToClear = RowVsRow(gamepiece, board, otherGamepiece);
+                        anyMatches = RowVsRow(gamepiece, board, otherGamepiece);
                         break;
                     default:
                         break;
@@ -44,16 +43,16 @@ public class RowBomb : Bombs
                 break;
         }
 
-        return piecesToClear;
+        return anyMatches;
     }
 
-    private List<Gamepiece> RowVsRow(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
+    private bool RowVsRow(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
-        return matches;
+        return anyMatches;
     }
 
-    private List<Gamepiece> RowVsNormal(Gamepiece bomb, Board board, Gamepiece otherGamepiece)
+    private bool RowVsNormal(Gamepiece bomb, Board board, Gamepiece otherGamepiece)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
         matches.Add(this);
@@ -76,13 +75,21 @@ public class RowBomb : Bombs
                 {
                     matches.Add(piece);
                 }
-
             }
         }
 
         // check if other Normal gamepiece makes a match3
         matches = matches.Union(CheckNormalMatches(bomb, board, otherGamepiece)).ToList();
-        return matches;
+
+
+        if (matches.Count != 0 || matches != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public override List<Gamepiece> SelfDestroy(Board board,Gamepiece otherGamepiece=null)

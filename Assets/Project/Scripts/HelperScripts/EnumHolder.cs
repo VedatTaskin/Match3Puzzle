@@ -4,6 +4,14 @@
     Busy
 }
 
+public enum PieceState
+{
+    CanSwap,
+    Moving,
+    Busy
+}
+
+
 public enum GamepieceType
 {
     Normal,
@@ -50,3 +58,5 @@ public enum MoveType
     Swap,
     Fall
 }
+
+

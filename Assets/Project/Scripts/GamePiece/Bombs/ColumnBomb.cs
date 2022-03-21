@@ -7,14 +7,13 @@ public class ColumnBomb : Bombs
 {
 
     public override BombType bombType => BombType.ColumnBomb;
-    public override List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
+    public override bool PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
     {
-        List<Gamepiece> piecesToClear = new List<Gamepiece>();
 
         switch (otherGamepiece.gamepieceType)
         {
             case GamepieceType.Normal:
-                piecesToClear = ColumnVsNormal(gamepiece, board, otherGamepiece);
+                anyMatches = ColumnVsNormal(gamepiece, board, otherGamepiece);
                 break;
 
             case GamepieceType.Collectible:
@@ -28,10 +27,10 @@ public class ColumnBomb : Bombs
                 switch (otherGamepiece.bombType)
                 {
                     case BombType.RowBomb:
-                        piecesToClear = ColumnVsRow(gamepiece, board, otherGamepiece);
+                        anyMatches = ColumnVsRow(gamepiece, board, otherGamepiece);
                         break;
                     case BombType.ColumnBomb:
-                        piecesToClear = ColumnVsColumn(gamepiece, board, otherGamepiece);
+                        anyMatches = ColumnVsColumn(gamepiece, board, otherGamepiece);
                         break;
                     default:
                         break;
@@ -46,23 +45,23 @@ public class ColumnBomb : Bombs
                 break;
         }
 
-        return piecesToClear;
+        return anyMatches;
     }
-    public List<Gamepiece> ColumnVsColumn(Gamepiece bomb, Board board, Gamepiece other)
+    public bool ColumnVsColumn(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        return bombedPieces;
+        return anyMatches;
 
     }
-    public List<Gamepiece> ColumnVsRow(Gamepiece bomb, Board board, Gamepiece other)
+    public bool ColumnVsRow(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        return bombedPieces;
+        return anyMatches;
 
     }
-    public List<Gamepiece> ColumnVsNormal(Gamepiece bomb, Board board, Gamepiece other)
+    public bool ColumnVsNormal(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
         matches.Add(this);
@@ -90,19 +89,29 @@ public class ColumnBomb : Bombs
 
         // check if other Normal gamepiece makes a match3
         matches = matches.Union(CheckNormalMatches(bomb, board, other)).ToList();
-        return matches;
+
+        if (matches.Count != 0 || matches != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
     }
     private List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)
     {
-        List<Gamepiece> normalMatches = board.gamepieceData.FindMatchesAt(other.xIndex, other.yIndex);
+        List<Gamepiece> matches = board.gamepieceData.FindMatchesAt(other.xIndex, other.yIndex);
 
         // if number of matches greater than 4 we create bomb
-        if (normalMatches.Count >= 4)
+        if (matches.Count >= 4)
         {
             Vector2 swapDirection = new Vector2(other.xIndex - bomb.xIndex, other.yIndex - bomb.yIndex);
-            board.DropBomb(other.xIndex, other.yIndex, swapDirection, normalMatches);
+            board.DropBomb(other.xIndex, other.yIndex, swapDirection, matches);
         }
-        return normalMatches;
+
+        return matches;
     }
     public override List<Gamepiece> SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {

@@ -5,16 +5,15 @@ using UnityEngine;
 
 public class ColorBomb :Bombs, ISelfDestroy
 {
+
     public override BombType bombType => BombType.Color;
 
-    public override List<Gamepiece> PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece )
+    public override bool PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece )
     {
-        List<Gamepiece> piecesToClear = new List<Gamepiece>();
-
         switch (otherGamepiece.gamepieceType)
         {
             case GamepieceType.Normal:
-                piecesToClear= ColorVsNormal(gamepiece, board, otherGamepiece);
+                anyMatches= ColorVsNormal(gamepiece, board, otherGamepiece);
                 break;
 
             case GamepieceType.Collectible:
@@ -28,16 +27,16 @@ public class ColorBomb :Bombs, ISelfDestroy
                 switch (otherGamepiece.bombType)
                 {
                     case BombType.RowBomb:
-                        piecesToClear= ColorVsRow(gamepiece, board, otherGamepiece);
+                        anyMatches= ColorVsRow(gamepiece, board, otherGamepiece);
                         break;
                     case BombType.ColumnBomb:
-                        piecesToClear = ColorVsColumn (gamepiece, board, otherGamepiece);
+                        anyMatches = ColorVsColumn (gamepiece, board, otherGamepiece);
                         break;
                     case BombType.Adjacent:
-                        piecesToClear = ColorVsAdjacent(gamepiece, board, otherGamepiece);
+                        anyMatches = ColorVsAdjacent(gamepiece, board, otherGamepiece);
                         break;
                     case BombType.Color:
-                        piecesToClear = ColorVsColor(gamepiece, board, otherGamepiece);
+                        anyMatches = ColorVsColor(gamepiece, board, otherGamepiece);
                         break;
                     default:
                         break;
@@ -52,11 +51,11 @@ public class ColorBomb :Bombs, ISelfDestroy
                 break;
         }
 
-        return piecesToClear;
+        return anyMatches;
 
     }
 
-    private List<Gamepiece> ColorVsNormal(Gamepiece bomb, Board board, Gamepiece other)
+    private bool ColorVsNormal(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
 
@@ -77,46 +76,60 @@ public class ColorBomb :Bombs, ISelfDestroy
             }
         }
 
-        return matches;
+        if (matches.Count != 0 || matches != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
-    public List<Gamepiece> ColorVsColor(Gamepiece bomb, Board board, Gamepiece other)
+    public bool ColorVsColor(Gamepiece bomb, Board board, Gamepiece other)
     {
-        List<Gamepiece> bombedPieces = new List<Gamepiece>();
+        List<Gamepiece> matches = new List<Gamepiece>();
 
         for (int i = 0; i < board.width; i++)
         {
             for (int j = 0; j < board.height; j++)
             {
                 var piece = board.gamepieceData.allGamepieces[i, j];
-                if (piece != null && !bombedPieces.Contains(piece) && piece.gamepieceType != GamepieceType.Collectible)
+                if (piece != null && !matches.Contains(piece) && piece.gamepieceType != GamepieceType.Collectible)
                 {
-                    bombedPieces.Add(piece);
+                    matches.Add(piece);
                 }
             }
         }
-        return bombedPieces;
+        if (matches.Count != 0 || matches != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
-    public List<Gamepiece> ColorVsRow(Gamepiece bomb, Board board, Gamepiece other)
+    public bool ColorVsRow(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        return bombedPieces;
+        return anyMatches;
     }
 
-    public List<Gamepiece> ColorVsColumn(Gamepiece bomb, Board board, Gamepiece other)
+    public bool ColorVsColumn(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        return bombedPieces;
+        return anyMatches;
     }
 
-    public List<Gamepiece> ColorVsAdjacent(Gamepiece bomb, Board board, Gamepiece other)
+    public bool ColorVsAdjacent(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        return bombedPieces;
+        return anyMatches;
     }
 
     public override List<Gamepiece> SelfDestroy(Board board, Gamepiece otherGamepiece = null)
