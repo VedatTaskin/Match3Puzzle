@@ -29,37 +29,52 @@ public class NormalGamepiece : Gamepiece,IGamepieceRule
 
         List<Gamepiece> allMatches = matchesAtClickedGamepiece.Union(matchesAtTargetGamepiece).ToList();
 
-
+        // We can make this better, Refactoring can be done
         if (allMatches.Count != 0 )
         {
-            //first we will check if the matches count greater than 4 or not
-            // if number of matches greater than 4 we will create a bomb
-            if (matchesAtClickedGamepiece.Count >= 4)
+            switch (matchesAtClickedGamepiece.Count)
             {
-                board.gamepieceData.ClearGamepieces(matchesAtClickedGamepiece);
-                Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
-                board.DropBomb(clicked.xIndex, clicked.yIndex, swapDirection, matchesAtClickedGamepiece);
-            }
-            if (matchesAtTargetGamepiece.Count >= 4)
-            {
-                board.gamepieceData.ClearGamepieces(matchesAtTargetGamepiece);
-                Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
-                board.DropBomb(target.xIndex, target.yIndex, swapDirection, matchesAtTargetGamepiece);
+                case 3:
+                    StartCoroutine(ClearRoutine(board, matchesAtClickedGamepiece));
+                    break;
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                    StartCoroutine(ClearRoutine(board, matchesAtClickedGamepiece));
+                    // if number of matches greater than 4 we will create a bomb
+                    Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
+                    board.DropBomb(clicked.xIndex, clicked.yIndex, swapDirection, matchesAtClickedGamepiece);
+                    break;
+                default:
+                    break;
             }
 
-            if (matchesAtClickedGamepiece.Count==3)
+            switch (matchesAtTargetGamepiece.Count)
             {
-                board.gamepieceData.ClearGamepieces(matchesAtClickedGamepiece);
-            }
-            if (matchesAtTargetGamepiece.Count == 3)
-            {
-                board.gamepieceData.ClearGamepieces(matchesAtTargetGamepiece);
+                case 3:
+                    StartCoroutine(ClearRoutine(board, matchesAtTargetGamepiece));
+                    break;
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                    StartCoroutine(ClearRoutine(board, matchesAtTargetGamepiece));
+                    // if number of matches greater than 4 we will create a bomb
+                    Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
+                    board.DropBomb(clicked.xIndex, clicked.yIndex, swapDirection, matchesAtClickedGamepiece);
+                    break;
+                default:
+                    break;
             }
             return true;
         }
-
         return false;
-
     }
 
+    IEnumerator ClearRoutine(Board board, List<Gamepiece> matches)
+    {
+        board.gamepieceData.ClearGamepieces(matches);
+        yield return null;
+    }
 }
