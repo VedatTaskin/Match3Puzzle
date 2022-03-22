@@ -69,6 +69,7 @@ public class Board : MonoBehaviour
             gamepieceData.allGamepieces[x, y] = gamePiece;
         }
         gamePiece.SetCoordinate(x, y);
+        gamePiece.pieceState = PieceState.CanMove;
     }
 
     void FillBoard()
@@ -180,7 +181,8 @@ public class Board : MonoBehaviour
 
     public void ClickTile(Tile _tile)
     {
-        if (_tile.tileType != TileType.Obstacle)
+        if (_tile.tileType != TileType.Obstacle 
+            && gamepieceData.allGamepieces[_tile.xIndex,_tile.yIndex].pieceState==PieceState.CanMove )
         {
             clickedTile = _tile;
         }
@@ -188,7 +190,8 @@ public class Board : MonoBehaviour
 
     public void DragToTile(Tile _tile)
     {
-        if (clickedTile != null && _tile.tileType != TileType.Obstacle)
+        if (clickedTile != null && _tile.tileType != TileType.Obstacle
+            && gamepieceData.allGamepieces[_tile.xIndex, _tile.yIndex].pieceState == PieceState.CanMove)
         {
             targetTile = _tile;
 

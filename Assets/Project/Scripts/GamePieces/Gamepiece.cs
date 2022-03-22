@@ -36,6 +36,7 @@ public class Gamepiece : MonoBehaviour
 
     public virtual void Move(int destX,int destY, float timeToMove, MoveType movetype)
     {
+        //burada Busy yapıyoruz, işi bittiğinde diğer fonksiyonlar CanMove yapıyor.
         pieceState = PieceState.Busy;
 
         if (movetype == MoveType.Swap)
@@ -44,7 +45,6 @@ public class Gamepiece : MonoBehaviour
                 OnComplete(() =>
                 {
                     board.PlaceGamePiece(this, destX, destY);
-                    pieceState = PieceState.CanMove;
                 });
         }
         else if (movetype == MoveType.Fall)
