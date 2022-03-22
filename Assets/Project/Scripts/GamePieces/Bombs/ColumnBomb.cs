@@ -115,34 +115,75 @@ public class ColumnBomb : Bombs
     }
     public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
-
         List<Gamepiece> matches = new List<Gamepiece>();
-        matches.Add(this);
 
+        int upDirection = xIndex;
+        int downDirection = xIndex;
+
+        HideMySelf();
+
+        //Clearin objects in right and left direction synchronously
         for (int i = 0; i < board.height; i++)
         {
-            var piece = board.gamepieceData.allGamepieces[xIndex, i];
-
-            if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
+            Gamepiece deletedPiece;
+            
+            if (upDirection < board.height)
             {
-                if (piece.gamepieceType == GamepieceType.Bomb)
+                deletedPiece= ClearThisGamepiece(upDirection);
+                if (!matches.Contains(deletedPiece) && deletedPiece != null)
                 {
-                    piece.GetComponent<ISelfDestroy>().SelfDestroy(board, this);
+                    matches.Add(deletedPiece);
+                }
+                upDirection++;
+            }
+
+            if (downDirection >= 0)
+            {
+                deletedPiece= ClearThisGamepiece(downDirection);
+                if (!matches.Contains(deletedPiece) && deletedPiece != null)
+                {
+                    matches.Add(deletedPiece);
+                }
+                downDirection--;
+            }
+
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        StartCoroutine(board.CollapseRoutine(matches));
+        yield return null;
+    }
+
+    Gamepiece ClearThisGamepiece(int row)
+    {
+
+        var tempPiece = board.gamepieceData.allGamepieces[xIndex, row];
+
+        if (tempPiece != null)
+        {
+            if ( tempPiece.pieceState == PieceState.CanMove)
+            {
+                if (tempPiece.gamepieceType == GamepieceType.Bomb)
+                {
+                    tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this);
                 }
                 else
-                {
-                    matches.Add(piece);
+                {                    
+                    board.gamepieceData.ClearGamepieceAt(xIndex, row);
+                    board.gamepieceData.BreakTilesAt(xIndex, row);
+                    return tempPiece;
                 }
             }
         }
+        return null;
+    }
 
-        if (matches.Count != 0)
-        {
-            Debug.Log("Self Destroying");
-            //board.gamepieceData.ClearGamepieces(matches);
-            //StartCoroutine(board.CollapseRoutine(matches));
-            //return true;
-        }
-        yield return null;
+    void HideMySelf()
+    {
+        board.gamepieceData.allGamepieces[xIndex, yIndex] = null;
+        board.gamepieceData.BreakTilesAt(xIndex, yIndex);
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        transform.position = new Vector3(100, 100);
+        Destroy(gameObject, 5f);
     }
 }

@@ -99,7 +99,8 @@ public class RowBomb : Bombs
 
         HideMySelf();
 
-        for (int i = 0; i < board.height; i++)
+        //Clearin objects in right and left direction synchronously
+        for (int i = 0; i < board.width; i++)
         {
             if (rightDirection < board.width)
             {
@@ -118,7 +119,7 @@ public class RowBomb : Bombs
         yield return null;
     }
 
-    private void ClearThisGamepiece(Board board, int column)
+    void ClearThisGamepiece(Board board, int column)
     {
         var tempPiece = board.gamepieceData.allGamepieces[column, yIndex];
 
@@ -138,7 +139,7 @@ public class RowBomb : Bombs
         }
     }
 
-    private List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)
+    List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> normalMatches = board.gamepieceData.FindMatchesAt(other.xIndex, other.yIndex);
 
