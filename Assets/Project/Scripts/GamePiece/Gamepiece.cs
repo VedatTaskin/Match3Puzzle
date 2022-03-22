@@ -33,8 +33,9 @@ public class Gamepiece : MonoBehaviour
         yIndex = y;
     }
 
-    public void Move(int destX,int destY, float timeToMove, MoveType movetype)
+    public virtual void Move(int destX,int destY, float timeToMove, MoveType movetype)
     {
+
         pieceState = PieceState.Moving;
 
         if (movetype == MoveType.Swap)

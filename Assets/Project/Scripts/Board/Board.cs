@@ -148,7 +148,6 @@ public class Board : MonoBehaviour
             GameObject bomb = Instantiate(prefab, new Vector3(x, y, 0), Quaternion.identity) as GameObject;
             bomb.GetComponent<Bombs>().Init(this);
             bomb.GetComponent<Bombs>().SetCoordinate(x, y);
-            bomb.transform.parent = transform;
             bomb.transform.position = new Vector3(x, y, 0);
             bomb.transform.rotation = Quaternion.identity;
             gamepieceData.allGamepieces[x, y] = bomb.GetComponent<Gamepiece>();
@@ -308,7 +307,7 @@ public class Board : MonoBehaviour
         yield return null;
     }
 
-    public void DropBomb(int x, int y, Vector2 swapDirection, List<Gamepiece> gamepieces)
+    public GameObject DropBomb(int x, int y, Vector2 swapDirection, List<Gamepiece> gamepieces)
     {
         GameObject bombGO = null;
         // Decide bomb type
@@ -355,7 +354,8 @@ public class Board : MonoBehaviour
 
             }
         }
-        gamepieceData.bomb = bombGO;          
+        gamepieceData.bomb = bombGO;
+        return bombGO;
     }
 
     IEnumerator CheckForDeadlock()

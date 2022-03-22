@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bombs : Gamepiece, IGamepieceRule,ISelfDestroy
 {
-    public bool anyMatches = false;
+    [HideInInspector] public bool anyMatches = false;
 
     public override GamepieceType gamepieceType => GamepieceType.Bomb;
     private void OnEnable() => normalGamepieceType = NormalGamepieceType.None;

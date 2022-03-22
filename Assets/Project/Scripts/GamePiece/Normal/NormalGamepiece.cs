@@ -56,7 +56,7 @@ public class NormalGamepiece : Gamepiece,IGamepieceRule
     void BombCreation(Gamepiece clicked, Board board, Gamepiece target, List<Gamepiece> matches)
     {
         Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
-        board.DropBomb(clicked.xIndex, clicked.yIndex, swapDirection, matches);
+        var bombGO= board.DropBomb(clicked.xIndex, clicked.yIndex, swapDirection, matches);
     }
 
     IEnumerator CollapseRoutine(Board board, List<Gamepiece> matches)
@@ -84,29 +84,30 @@ public class NormalGamepiece : Gamepiece,IGamepieceRule
         yield return null;
     }
 
-    private void CollapseGamepieces(Gamepiece piece)
+    void CollapseGamepieces(Gamepiece piece)
     {
         var allGamepieces = board.gamepieceData.allGamepieces;
-
+        int column = piece.xIndex;
 
         for (int i = piece.yIndex; i < board.height-1 ; i++)
         {
-            if (allGamepieces[piece.xIndex, i] == null 
-                && board.tileData.allTiles[piece.xIndex,i].tileType != TileType.Obstacle)
+            if (allGamepieces[column, i] == null
+                && board.tileData.allTiles[column, i].tileType != TileType.Obstacle)
             {
+                Debug.Log(column + ", " + i +" null");
+
                 for (int j = i+1; j < board.height; j++)
                 {
-                    if (allGamepieces[piece.xIndex, j] != null)
+                    if (allGamepieces[column, j] != null)
                     {
-                        var tempPiece = allGamepieces[piece.xIndex, j];
-                        allGamepieces[piece.xIndex, i] = tempPiece;
-                        allGamepieces[tempPiece.xIndex, j] = null;
-                        tempPiece.SetCoordinate(piece.xIndex, i);
-                        tempPiece.Move(piece.xIndex, i, fallTime, MoveType.Fall);
+                        allGamepieces[column, i] = allGamepieces[column, j];
+                        allGamepieces[column, j] = null;
+                        allGamepieces[column, i].SetCoordinate(column, i);
+                        allGamepieces[column, i].Move(column, i, fallTime*(j-i), MoveType.Fall);
                         break;
                     }
                 }
             }
-        }        
+        }
     }
 }

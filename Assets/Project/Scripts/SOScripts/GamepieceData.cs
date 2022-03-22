@@ -206,7 +206,7 @@ public class GamepieceData : ScriptableObject
         if (gamepieceToClear != null)
         {
             allGamepieces[x, y] = null;
-            Destroy(gamepieceToClear.gameObject);
+            Destroy(gamepieceToClear.gameObject,0.1f);
         }
     }
 
