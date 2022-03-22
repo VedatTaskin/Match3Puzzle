@@ -117,8 +117,8 @@ public class ColumnBomb : Bombs
     {
         List<Gamepiece> matches = new List<Gamepiece>();
 
-        int upDirection = xIndex;
-        int downDirection = xIndex;
+        int upDirection = yIndex;
+        int downDirection = yIndex;
 
         HideMySelf();
 
@@ -130,7 +130,7 @@ public class ColumnBomb : Bombs
             if (upDirection < board.height)
             {
                 deletedPiece= ClearThisGamepiece(upDirection);
-                if (!matches.Contains(deletedPiece) && deletedPiece != null)
+                if (!matches.Contains(deletedPiece) )
                 {
                     matches.Add(deletedPiece);
                 }
@@ -140,7 +140,7 @@ public class ColumnBomb : Bombs
             if (downDirection >= 0)
             {
                 deletedPiece= ClearThisGamepiece(downDirection);
-                if (!matches.Contains(deletedPiece) && deletedPiece != null)
+                if (!matches.Contains(deletedPiece) )
                 {
                     matches.Add(deletedPiece);
                 }
@@ -150,7 +150,8 @@ public class ColumnBomb : Bombs
             yield return new WaitForSeconds(0.1f);
         }
 
-        StartCoroutine(board.CollapseRoutine(matches));
+
+        board.CollapseThisColumn(xIndex);
         yield return null;
     }
 
