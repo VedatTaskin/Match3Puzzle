@@ -155,7 +155,7 @@ public class Board : MonoBehaviour
         return null;
     }
 
-    Gamepiece FillRandomGamepieceAt(int x, int y)
+    public Gamepiece FillRandomGamepieceAt(int x, int y)
     {
         GameObject randomPiece = Instantiate(gamepieceData.GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
 
@@ -225,7 +225,7 @@ public class Board : MonoBehaviour
             if (gamepiecesWillClear != null)
             {
                 yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(gamepiecesWillClear));
-                yield return StartCoroutine(RefillBoard());
+                //yield return StartCoroutine(RefillBoard());
             }
         }
         yield return null;        
@@ -260,12 +260,12 @@ public class Board : MonoBehaviour
 
     }
 
-    IEnumerator RefillBoard()
-    {
-        FillBoard();
-        yield return waitForFallTime;
-        StartCoroutine(FindNewMatches());
-    }
+    //IEnumerator RefillBoard()
+    //{
+    //    FillBoard();
+    //    yield return waitForFallTime;
+    //    StartCoroutine(FindNewMatches());
+    //}
 
     IEnumerator FindNewMatches()
     {
@@ -274,7 +274,7 @@ public class Board : MonoBehaviour
         if (newMatches != null)
         {
             yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(newMatches));
-            yield return StartCoroutine(RefillBoard());
+            //yield return StartCoroutine(RefillBoard());
             yield return new WaitForSeconds(fallTime);
         }
     }
@@ -390,6 +390,87 @@ public class Board : MonoBehaviour
         yield return StartCoroutine(CheckForDeadlock());
 
     }
+
+
+
+    public IEnumerator CollapseRoutine(Board board, List<Gamepiece> matches)
+    {
+        List<Gamepiece> PiecesAtTheBottomOfMatches = new List<Gamepiece>();
+
+        //önce ilgili kolonlar gruplandırılıyor kendi içerisinde
+        var groupByColumn = matches.GroupBy(n => n.xIndex);
+
+        //bir silinme esnasında en üstteki elemanlar hangisi ise bulunuyor
+        foreach (var grp in groupByColumn)
+        {
+            var bottomPiece = grp.OrderByDescending(i => (i.yIndex)).Last();
+            if (!PiecesAtTheBottomOfMatches.Contains(bottomPiece))
+            {
+                PiecesAtTheBottomOfMatches.Add(bottomPiece);
+            }
+        }
+
+        //now we collapse each column that we have cleared an object
+        foreach (var piece in PiecesAtTheBottomOfMatches)
+        {
+            _ = CollapseGamepieces(piece);
+        }
+        yield return null;
+    }
+
+    //we return which gamepieces are collapsing
+    List<Gamepiece> CollapseGamepieces(Gamepiece piece)
+    {
+        var allGamepieces = gamepieceData.allGamepieces;
+        int column = piece.xIndex;
+
+        //we want to know which pieces are moving, we will check if they make another match after collapsing
+        List<Gamepiece> movingPieces = new List<Gamepiece>();
+
+        for (int i = piece.yIndex; i < height - 1; i++)
+        {
+            if (allGamepieces[column, i] == null
+                && tileData.allTiles[column, i].tileType != TileType.Obstacle)
+            {
+                //Debug.Log(column + ", " + i +" null");
+
+                for (int j = i + 1; j < height; j++)
+                {
+                    if (allGamepieces[column, j] != null)
+                    {
+                        allGamepieces[column, i] = allGamepieces[column, j];
+                        allGamepieces[column, j] = null;
+                        allGamepieces[column, i].SetCoordinate(column, i);
+                        allGamepieces[column, i].Move(column, i, fallTime * (j - i), MoveType.Fall);
+
+                        if (!movingPieces.Contains(allGamepieces[column, i]))
+                        {
+                            movingPieces.Add(allGamepieces[column, i]);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        FillColumn(allGamepieces, column);
+        return movingPieces;
+    }
+
+    private void FillColumn(Gamepiece[,] allGamepieces, int column)
+    {
+        for (int i = 0; i < height; i++)
+        {
+            if (allGamepieces[column, i] == null
+                && tileData.allTiles[column, i].tileType != TileType.Obstacle)
+            {
+                Debug.Log(column + ", " + i + " null");
+                FillRandomGamepieceAt(column, i);
+            }
+        }
+    }
+
+
 
 }
 

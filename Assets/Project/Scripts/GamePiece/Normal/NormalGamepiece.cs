@@ -47,7 +47,7 @@ public class NormalGamepiece : Gamepiece,IGamepieceRule
             // silinmiş olan gamepiecelerin yerine üssten yenisi düşecek
             // Silinecek elemanların içinden en alttaki elemanları
             // farklı şekilde uyarıyorum ki onlar üstlerini uyarsın,
-            StartCoroutine(CollapseRoutine(board,allMatches));
+            StartCoroutine(board.CollapseRoutine(board,allMatches));
             return true;
         }
         return false;
@@ -59,66 +59,4 @@ public class NormalGamepiece : Gamepiece,IGamepieceRule
         var bombGO= board.DropBomb(clicked.xIndex, clicked.yIndex, swapDirection, matches);
     }
 
-    IEnumerator CollapseRoutine(Board board, List<Gamepiece> matches)
-    {
-        List<Gamepiece> PiecesAtTheBottomOfMatches = new List<Gamepiece>();
-
-        //önce ilgili kolonlar gruplandırılıyor kendi içerisinde
-        var groupByColumn = matches.GroupBy(n => n.xIndex);
-
-        //bir silinme esnasında en üstteki elemanlar hangisi ise bulunuyor
-        foreach (var grp in groupByColumn)
-        {
-            var bottomPiece = grp.OrderByDescending(i => (i.yIndex)).Last();
-            if (!PiecesAtTheBottomOfMatches.Contains(bottomPiece))
-            {
-                PiecesAtTheBottomOfMatches.Add(bottomPiece);
-            }
-        }
-
-        //now we collapse each column that we have cleared an object
-        foreach (var piece in PiecesAtTheBottomOfMatches)
-        {
-            _ = CollapseGamepieces(piece);
-        }
-        yield return null;
-    }
-
-
-    //we return which gamepieces are collapsing
-    List<Gamepiece> CollapseGamepieces(Gamepiece piece)
-    {
-        var allGamepieces = board.gamepieceData.allGamepieces;
-        int column = piece.xIndex;
-
-        //we want to know which pieces are moving, we will check if they make another match after collapsing
-        List<Gamepiece> movingPieces = new List<Gamepiece>();
-
-        for (int i = piece.yIndex; i < board.height-1 ; i++)
-        {
-            if (allGamepieces[column, i] == null
-                && board.tileData.allTiles[column, i].tileType != TileType.Obstacle)
-            {
-                //Debug.Log(column + ", " + i +" null");
-
-                for (int j = i+1; j < board.height; j++)
-                {
-                    if (allGamepieces[column, j] != null)
-                    {
-                        allGamepieces[column, i] = allGamepieces[column, j];
-                        allGamepieces[column, j] = null;
-                        allGamepieces[column, i].SetCoordinate(column, i);
-                        allGamepieces[column, i].Move(column, i, fallTime*(j-i), MoveType.Fall);
-
-                        if (!movingPieces.Contains(allGamepieces[column, i]))
-                        {
-                            movingPieces.Add(allGamepieces[column, i]);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-        return movingPieces;
-    }
 }
