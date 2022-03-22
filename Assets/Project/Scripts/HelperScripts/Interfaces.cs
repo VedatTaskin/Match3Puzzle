@@ -9,7 +9,7 @@ public interface IGamepieceRule
 
 public interface ISelfDestroy
 {
-    List<Gamepiece> SelfDestroy(Board board, Gamepiece otherGamepiece=null);
+    bool SelfDestroy(Board board, Gamepiece otherGamepiece=null);
 }
 
 

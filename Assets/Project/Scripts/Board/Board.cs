@@ -219,13 +219,7 @@ public class Board : MonoBehaviour
         var piece = gamepieceData.allGamepieces[clickedTile.xIndex, clickedTile.yIndex];
         if (piece != null && piece.gamepieceType == GamepieceType.Bomb)
         {
-            List<Gamepiece> gamepiecesWillClear = new List<Gamepiece>();
-            gamepiecesWillClear = piece.GetComponent<ISelfDestroy>().SelfDestroy(this);
-            if (gamepiecesWillClear != null)
-            {
-                //yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(gamepiecesWillClear));
-                //yield return StartCoroutine(RefillBoard());
-            }
+            piece.GetComponent<ISelfDestroy>().SelfDestroy(this);
         }
         yield return null;        
     }
@@ -450,7 +444,7 @@ public class Board : MonoBehaviour
     IEnumerator FillColumn(int column)
     {
         yield return new WaitForSeconds(0.2f);
-        for (int i = 0; i < height; i++)
+        for (int i = height-1; i >= 0; i--)
         {
             if (gamepieceData.allGamepieces[column, i] == null
                 && tileData.allTiles[column, i].tileType != TileType.Obstacle)
@@ -463,7 +457,7 @@ public class Board : MonoBehaviour
 
     public IEnumerator CheckMatchesAfterFallDown(Gamepiece piece)
     {
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.2f);
         List<Gamepiece> newMatches = new List<Gamepiece>();
         newMatches = gamepieceData.FindMatchesAt(piece.xIndex,piece.yIndex);
 
@@ -479,6 +473,7 @@ public class Board : MonoBehaviour
             yield return StartCoroutine(CollapseRoutine(newMatches));
         }
         piece.pieceState = PieceState.CanMove;
+        yield return null; ;
     }
 
     public void BombCreation(Gamepiece clicked,  Gamepiece target, List<Gamepiece> matches)

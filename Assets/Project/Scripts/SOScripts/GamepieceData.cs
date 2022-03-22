@@ -39,10 +39,7 @@ public class GamepieceData : ScriptableObject
 
     int width;
     int height;
-    float collapseTime=0.1f;
     [HideInInspector] public Board board;
-
-
 
     private void OnEnable()
     {
@@ -212,7 +209,7 @@ public class GamepieceData : ScriptableObject
         }
     }
 
-    private void BreakTilesAt(int x, int y)
+    public void BreakTilesAt(int x, int y)
     {
         if (tileData.allTiles[x, y].tileType == TileType.Breakable)
         {
@@ -249,7 +246,7 @@ public class GamepieceData : ScriptableObject
         return (downMatches.Count > 0 || leftMatches.Count > 0);
     }
 
-
+    //obsolete Method, will be deleted soon
     public IEnumerator ClearAndCollapseRoutine(List<Gamepiece> _allMatches)
     {
         var matches = _allMatches;
@@ -260,7 +257,7 @@ public class GamepieceData : ScriptableObject
         do
         {
             yield return new WaitForSeconds(0.2f);
-            ClearGamepieces(matches);
+            //ClearGamepieces(matches);
 
             //instantiate bomb here
             //CheckBombCreation();
@@ -338,17 +335,6 @@ public class GamepieceData : ScriptableObject
             }
         }
         return collectibles;
-    }
-
-    private void CheckBombCreation()
-    {
-        if (bomb != null)
-        {
-            int x = bomb.GetComponent<Bombs>().xIndex;
-            int y = bomb.GetComponent<Bombs>().yIndex;
-            allGamepieces[x, y] = bomb.GetComponent<Gamepiece>();
-            bomb = null;
-        }
     }
 
     public bool IsCornerMatch(List<Gamepiece> gamepieces)

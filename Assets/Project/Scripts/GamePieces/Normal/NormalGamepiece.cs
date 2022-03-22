@@ -31,7 +31,16 @@ public class NormalGamepiece : Gamepiece,IGamepieceRule
         // We can make this better, Refactoring can be done
         if (allMatches.Count != 0 )
         {
-            board.gamepieceData.ClearGamepieces(allMatches);
+            //board.gamepieceData.ClearGamepieces(allMatches);
+
+            foreach (var piece in allMatches)
+            {
+                if (piece != null)
+                {
+                    board.gamepieceData.ClearGamepieceAt(piece.xIndex, piece.yIndex);
+                    board.gamepieceData.BreakTilesAt(piece.xIndex, piece.yIndex);
+                }
+            }
 
             //We add bomb immediately after cleaning list 
             if (matchesAtClickedGamepiece.Count >= 4)
