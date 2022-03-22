@@ -13,7 +13,7 @@ public class Board : MonoBehaviour
 
     [Range(0, 1)]
     public float swapTime = 0.5f;
-    public float fallTime = 0.5f;
+    public float fallTime = 0.2f;
 
     [Header("Gamepieces & Tiles SO")]
     public GamepieceData gamepieceData;
@@ -440,18 +440,16 @@ public class Board : MonoBehaviour
             }
         }
 
-        StartCoroutine( FillColumn(allGamepieces, column));
-        return movingPieces;
-
-        
+        StartCoroutine(FillColumn( column));
+        return movingPieces;        
     }
 
-    IEnumerator FillColumn(Gamepiece[,] allGamepieces, int column)
+    IEnumerator FillColumn(int column)
     {
         yield return new WaitForSeconds(0.2f);
         for (int i = 0; i < height; i++)
         {
-            if (allGamepieces[column, i] == null
+            if (gamepieceData.allGamepieces[column, i] == null
                 && tileData.allTiles[column, i].tileType != TileType.Obstacle)
             {
                 //Debug.Log(column + ", " + i + " null");
