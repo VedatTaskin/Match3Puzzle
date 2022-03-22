@@ -247,59 +247,59 @@ public class GamepieceData : ScriptableObject
         return (downMatches.Count > 0 || leftMatches.Count > 0);
     }
 
-    public List<int> FindCollapsingColumnNumbers(List<Gamepiece> gamepieces)
-    {
-        List<int> columns = new List<int>();
+    //public List<int> FindCollapsingColumnNumbers(List<Gamepiece> gamepieces)
+    //{
+    //    List<int> columns = new List<int>();
 
-        foreach (var piece in gamepieces)
-        {
-            if (!columns.Contains(piece.xIndex) )
-            {
-                columns.Add(piece.xIndex);
-            }
-        }
-        return columns;
-    }
+    //    foreach (var piece in gamepieces)
+    //    {
+    //        if (!columns.Contains(piece.xIndex) )
+    //        {
+    //            columns.Add(piece.xIndex);
+    //        }
+    //    }
+    //    return columns;
+    //}
 
-    public List<Gamepiece> CollapseColumn(List<Gamepiece> gamepieces)
-    {
-        //which pillars will be collapse
-        List<int> columns = FindCollapsingColumnNumbers(gamepieces);
+    //public List<Gamepiece> CollapseColumn(List<Gamepiece> gamepieces)
+    //{
+    //    //which pillars will be collapse
+    //    List<int> columns = FindCollapsingColumnNumbers(gamepieces);
 
-        // we want to know which pieces are moving, we will check if they make another match after collapsing
-        List<Gamepiece> movingPieces = new List<Gamepiece>();
+    //    // we want to know which pieces are moving, we will check if they make another match after collapsing
+    //    List<Gamepiece> movingPieces = new List<Gamepiece>();
 
-        for (int c = 0; c < columns.Count; c++)
-        {
-            // each pillar will check seperately
-            for (int i = 0; i < height - 1; i++)
-            {
-                if (allGamepieces[columns[c], i] == null && tileData.allTiles[columns[c], i].tileType !=TileType.Obstacle )
-                {
-                    for (int j = i + 1; j < height; j++)
-                    {
-                        if (allGamepieces[columns[c],j] !=null)
-                        {
-                            var piece = allGamepieces[columns[c], j];
-                            allGamepieces[columns[c], i] = piece;
+    //    for (int c = 0; c < columns.Count; c++)
+    //    {
+    //        // each pillar will check seperately
+    //        for (int i = 0; i < height - 1; i++)
+    //        {
+    //            if (allGamepieces[columns[c], i] == null && tileData.allTiles[columns[c], i].tileType !=TileType.Obstacle )
+    //            {
+    //                for (int j = i + 1; j < height; j++)
+    //                {
+    //                    if (allGamepieces[columns[c],j] !=null)
+    //                    {
+    //                        var piece = allGamepieces[columns[c], j];
+    //                        allGamepieces[columns[c], i] = piece;
 
-                            if (!movingPieces.Contains(piece))
-                            {
-                                movingPieces.Add(piece);
-                            }                            
+    //                        if (!movingPieces.Contains(piece))
+    //                        {
+    //                            movingPieces.Add(piece);
+    //                        }                            
 
-                            piece.Move(columns[c], i, collapseTime * (j-i), MoveType.Fall);
-                            piece.SetCoordinate(columns[c], i);
+    //                        piece.Move(columns[c], i, collapseTime * (j-i), MoveType.Fall);
+    //                        piece.SetCoordinate(columns[c], i);
                             
-                            allGamepieces[columns[c], j] = null;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return movingPieces;
-    }
+    //                        allGamepieces[columns[c], j] = null;
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return movingPieces;
+    //}
 
     public IEnumerator ClearAndCollapseRoutine(List<Gamepiece> _allMatches)
     {
@@ -317,10 +317,10 @@ public class GamepieceData : ScriptableObject
             CheckBombCreation();
 
             yield return new WaitForSeconds(0.2f);
-            var movingPieces = CollapseColumn(matches);
+            //var movingPieces = CollapseColumn(matches);
 
             // sanki bu çalışmıyor :(
-            while (!Utility.GamepiecesAreCollapsed(movingPieces))
+            //while (!Utility.GamepiecesAreCollapsed(movingPieces))
             {
                 yield return null;
             }
@@ -329,10 +329,10 @@ public class GamepieceData : ScriptableObject
             yield return new WaitForSeconds(0.2f);
 
             var newMatches = new List<Gamepiece>();
-            foreach (var piece in movingPieces)
-            {
-                newMatches = newMatches.Union(FindMatchesAt(piece.xIndex, piece.yIndex)).ToList();
-            }
+            //foreach (var piece in movingPieces)
+            //{
+            //    newMatches = newMatches.Union(FindMatchesAt(piece.xIndex, piece.yIndex)).ToList();
+            //}
 
             if (NewMatchesCanMakeBomb(newMatches))
             {

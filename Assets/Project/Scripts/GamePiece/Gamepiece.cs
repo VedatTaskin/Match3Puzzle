@@ -24,7 +24,7 @@ public class Gamepiece : MonoBehaviour
     public void Init( Board _board)
     {
         board = _board;
-        pieceState = PieceState.CanSwap;
+        pieceState = PieceState.CanMove;
     }
 
     public void SetCoordinate( int x, int y)
@@ -44,7 +44,7 @@ public class Gamepiece : MonoBehaviour
                 OnComplete(() =>
                 {
                     board.PlaceGamePiece(this, destX, destY);
-                    pieceState = PieceState.CanSwap;
+                    pieceState = PieceState.CanMove;
                 });
         }
         else if (movetype == MoveType.Fall)
@@ -54,7 +54,7 @@ public class Gamepiece : MonoBehaviour
                 OnComplete(() =>
                 {
                     board.PlaceGamePiece(this, destX, destY);
-                    pieceState = PieceState.CanSwap;
+                    pieceState = PieceState.CanMove;
                 });
         }
     } 

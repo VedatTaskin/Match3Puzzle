@@ -20,7 +20,6 @@ public class Board : MonoBehaviour
     public TileData tileData;
 
     WaitForSeconds waitForFallTime;
-    GameState gameState;
     Tile clickedTile;
     Tile targetTile;
     int offset = 10;
@@ -39,7 +38,7 @@ public class Board : MonoBehaviour
         gamepieceData.Init(this);
         SetupCamera();
         FillBoard();
-        gameState = GameState.CanSwap;
+
     }
 
     void SetupCamera()
@@ -181,7 +180,7 @@ public class Board : MonoBehaviour
 
     public void ClickTile(Tile _tile)
     {
-        if (gameState == GameState.CanSwap)
+        if (gamepieceData.allGamepieces[_tile.xIndex,_tile.yIndex].pieceState == PieceState.CanMove)
         {
             if (_tile.tileType != TileType.Obstacle)
             {
@@ -192,7 +191,8 @@ public class Board : MonoBehaviour
 
     public void DragToTile(Tile _tile)
     {
-        if (clickedTile != null && _tile.tileType != TileType.Obstacle && gameState == GameState.CanSwap)
+        if (clickedTile != null && _tile.tileType != TileType.Obstacle 
+            && gamepieceData.allGamepieces[_tile.xIndex, _tile.yIndex].pieceState == PieceState.CanMove)
         {
             targetTile = _tile;
 
@@ -220,7 +220,6 @@ public class Board : MonoBehaviour
         var piece = gamepieceData.allGamepieces[clickedTile.xIndex, clickedTile.yIndex];
         if (piece != null && piece.gamepieceType == GamepieceType.Bomb)
         {
-            gameState = GameState.Busy;
             List<Gamepiece> gamepiecesWillClear = new List<Gamepiece>();
             gamepiecesWillClear = piece.GetComponent<ISelfDestroy>().SelfDestroy(this);
             if (gamepiecesWillClear != null)
@@ -228,7 +227,6 @@ public class Board : MonoBehaviour
                 yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(gamepiecesWillClear));
                 yield return StartCoroutine(RefillBoard());
             }
-            gameState = GameState.CanSwap;
         }
         yield return null;        
     }
@@ -236,7 +234,6 @@ public class Board : MonoBehaviour
     void SwitchTiles(Tile _clickedTile, Tile _targetTile)
     {
         StartCoroutine(SwitchTileRoutine(_clickedTile, _targetTile));
-        gameState = GameState.Busy;
         clickedTile = null;
         targetTile = null;
     }
@@ -276,12 +273,10 @@ public class Board : MonoBehaviour
 
         if (newMatches != null)
         {
-            gameState = GameState.Busy;
             yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(newMatches));
             yield return StartCoroutine(RefillBoard());
             yield return new WaitForSeconds(fallTime);
         }
-        gameState = GameState.CanSwap;
     }
 
     public bool IsWithInBounds(int x, int y)
@@ -301,9 +296,6 @@ public class Board : MonoBehaviour
             yield return new WaitForSeconds(swapTime);
         }
 
-        //BUNUNLA İLGİLENMELİSİN
-        //????????????????????????????
-        gameState = GameState.CanSwap;
         yield return null;
     }
 
@@ -363,7 +355,6 @@ public class Board : MonoBehaviour
         yield return waitForFallTime;
         if (BoardDeadlockControl.IsDeadLock(gamepieceData.allGamepieces, 3))
         {
-            gameState = GameState.Busy;
             StartCoroutine(ShuffleBoard());
         }
     }
@@ -397,7 +388,7 @@ public class Board : MonoBehaviour
 
         yield return FindNewMatches();
         yield return StartCoroutine(CheckForDeadlock());
-        gameState = GameState.CanSwap;
+
     }
 
 }

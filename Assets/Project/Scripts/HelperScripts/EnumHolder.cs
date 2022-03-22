@@ -6,7 +6,7 @@
 
 public enum PieceState
 {
-    CanSwap,
+    CanMove,
     Moving,
     Busy
 }
