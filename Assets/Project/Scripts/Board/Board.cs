@@ -464,14 +464,18 @@ public class Board : MonoBehaviour
         List<Gamepiece> newMatches = new List<Gamepiece>();
         newMatches = gamepieceData.FindMatchesAt(piece.xIndex,piece.yIndex);
 
-        gamepieceData.ClearGamepieces(newMatches);
+        if (newMatches.Count != 0)
+        {
+            gamepieceData.ClearGamepieces(newMatches);
 
-        //*******************
-        //We will instantiate bomb immediately 
-        _ = NewMatchesCanMakeBomb(newMatches);
-        //*****************
+            //*******************
+            //We will instantiate bomb immediately 
+            _ = NewMatchesCanMakeBomb(newMatches);
+            //*****************
 
-        StartCoroutine(CollapseRoutine(newMatches));
+            yield return StartCoroutine(CollapseRoutine(newMatches));
+        }
+        piece.pieceState = PieceState.CanMove;
     }
 
     public void BombCreation(Gamepiece clicked,  Gamepiece target, List<Gamepiece> matches)

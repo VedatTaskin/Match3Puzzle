@@ -10,6 +10,8 @@ public class Gamepiece : MonoBehaviour
     public int yIndex;
     public float fallTime = 0.3f;
 
+    public PieceState pieceState = PieceState.CanMove;
+        
     public virtual GamepieceType gamepieceType { get; }
 
     public NormalGamepieceType normalGamepieceType;
@@ -34,6 +36,7 @@ public class Gamepiece : MonoBehaviour
 
     public virtual void Move(int destX,int destY, float timeToMove, MoveType movetype)
     {
+        pieceState = PieceState.Busy;
 
         if (movetype == MoveType.Swap)
         {
@@ -41,7 +44,7 @@ public class Gamepiece : MonoBehaviour
                 OnComplete(() =>
                 {
                     board.PlaceGamePiece(this, destX, destY);
-
+                    pieceState = PieceState.CanMove;
                 });
         }
         else if (movetype == MoveType.Fall)
