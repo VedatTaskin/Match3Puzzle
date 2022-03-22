@@ -25,14 +25,12 @@ public class NormalGamepiece : Gamepiece,IGamepieceRule
     {
         List<Gamepiece> matchesAtClickedGamepiece = board.gamepieceData.FindMatchesAt(clicked.xIndex, clicked.yIndex);
         List<Gamepiece> matchesAtTargetGamepiece = board.gamepieceData.FindMatchesAt(target.xIndex, target.yIndex);
-
         List<Gamepiece> allMatches = matchesAtClickedGamepiece.Union(matchesAtTargetGamepiece).ToList();
 
-        // We can make this better, Refactoring can be done
+
         if (allMatches.Count != 0 )
         {
-            //board.gamepieceData.ClearGamepieces(allMatches);
-
+            //Burada tüm pieceleri aynı anda yok ediyoruz, Bomba türüne göre yok edilecek pieceler farklı şekilde yok olacak
             foreach (var piece in allMatches)
             {
                 if (piece != null)

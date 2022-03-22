@@ -9,7 +9,7 @@ public interface IGamepieceRule
 
 public interface ISelfDestroy
 {
-    bool SelfDestroy(Board board, Gamepiece otherGamepiece=null);
+    IEnumerator SelfDestroy(Board board, Gamepiece otherGamepiece=null);
 }
 
 

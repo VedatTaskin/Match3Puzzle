@@ -113,7 +113,7 @@ public class ColumnBomb : Bombs
 
         return matches;
     }
-    public override bool SelfDestroy(Board board,Gamepiece otherGamepiece=null)
+    public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
 
         List<Gamepiece> matches = new List<Gamepiece>();
@@ -141,8 +141,8 @@ public class ColumnBomb : Bombs
             Debug.Log("Self Destroying");
             //board.gamepieceData.ClearGamepieces(matches);
             //StartCoroutine(board.CollapseRoutine(matches));
-            return true;
+            //return true;
         }
-        return false;
+        yield return null;
     }
 }

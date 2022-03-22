@@ -132,10 +132,10 @@ public class ColorBomb :Bombs, ISelfDestroy
         return anyMatches;
     }
 
-    public override bool SelfDestroy(Board board, Gamepiece otherGamepiece = null)
+    public override IEnumerator SelfDestroy(Board board, Gamepiece otherGamepiece = null)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
         Debug.Log("Color bomb Self Destroying do nothing");
-        return false;
+        yield return null;
     }
 }

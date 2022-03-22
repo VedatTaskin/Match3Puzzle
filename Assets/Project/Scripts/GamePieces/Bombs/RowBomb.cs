@@ -92,35 +92,50 @@ public class RowBomb : Bombs
         }
     }
 
-    public override bool SelfDestroy(Board board,Gamepiece otherGamepiece=null)
+    public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
-        List<Gamepiece> matches = new List<Gamepiece>();
-        matches.Add(this);
+        int rightDirection = xIndex;
+        int leftDirection = xIndex;
 
-        for (int i = 0; i < board.width; i++)
+        HideMySelf();
+
+        for (int i = 0; i < board.height; i++)
         {
-            var piece = board.gamepieceData.allGamepieces[i, yIndex];
-
-            if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
+            if (rightDirection < board.width)
             {
-                if (piece.gamepieceType == GamepieceType.Bomb)
-                {
-                    piece.GetComponent<ISelfDestroy>().SelfDestroy(board, this);
-                }
-                else
-                {
-                    matches.Add(piece);
-                }
+                ClearThisGamepiece(board, rightDirection);
+                rightDirection++;
+            }
+
+            if (leftDirection >= 0)
+            {
+                ClearThisGamepiece(board, leftDirection);
+                leftDirection--;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        yield return null;
+    }
+
+    private void ClearThisGamepiece(Board board, int column)
+    {
+        var tempPiece = board.gamepieceData.allGamepieces[column, yIndex];
+
+        if (tempPiece.pieceState == PieceState.CanMove
+                && tempPiece != null)
+        {
+            if (tempPiece.gamepieceType == GamepieceType.Bomb)
+            {
+                tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this);
+            }
+            else
+            {
+                board.gamepieceData.ClearGamepieceAt(column, yIndex);
+                board.gamepieceData.BreakTilesAt(column, yIndex);
+                board.CollapseGamepiece(tempPiece);
             }
         }
-        if (matches.Count != 0)
-        {
-            Debug.Log("Self Destroying");
-            //board.gamepieceData.ClearGamepieces(matches);
-            //StartCoroutine(board.CollapseRoutine(matches));
-            return true;
-        }
-        return false; 
     }
 
     private List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)
@@ -134,5 +149,15 @@ public class RowBomb : Bombs
             board.DropBomb(other.xIndex, other.yIndex, swapDirection, normalMatches);
         }
         return normalMatches;
+    }
+
+    void HideMySelf()
+    {
+        board.gamepieceData.allGamepieces[xIndex,yIndex] = null;
+        board.gamepieceData.BreakTilesAt(xIndex, yIndex);
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        board.CollapseGamepiece(this);  // boş olan objenin olduğu yerini dolduruyor bu fonksiyon
+        transform.position = new Vector3(100, 100);
+        Destroy(gameObject, 5f);
     }
 }

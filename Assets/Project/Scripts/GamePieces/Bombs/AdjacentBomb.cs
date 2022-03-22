@@ -117,7 +117,7 @@ public class AdjacentBomb : Bombs
         }
 
     }
-    public override bool SelfDestroy(Board board, Gamepiece otherGamepiece=null)
+    public override IEnumerator SelfDestroy(Board board, Gamepiece otherGamepiece=null)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
         matches.Add(this);
@@ -150,9 +150,9 @@ public class AdjacentBomb : Bombs
             Debug.Log("Self Destroying");
             //board.gamepieceData.ClearGamepieces(matches);
             //StartCoroutine(board.CollapseRoutine(matches));
-            return true;
+            //return true;
         }
-        return false;
+        yield return null;
     }
 
     private List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)

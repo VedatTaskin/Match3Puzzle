@@ -219,7 +219,7 @@ public class Board : MonoBehaviour
         var piece = gamepieceData.allGamepieces[clickedTile.xIndex, clickedTile.yIndex];
         if (piece != null && piece.gamepieceType == GamepieceType.Bomb)
         {
-            piece.GetComponent<ISelfDestroy>().SelfDestroy(this);
+            StartCoroutine(piece.GetComponent<ISelfDestroy>().SelfDestroy(this));
         }
         yield return null;        
     }
@@ -397,13 +397,13 @@ public class Board : MonoBehaviour
         //now we collapse each column that we have cleared an object
         foreach (var piece in PiecesAtTheBottomOfMatches)
         {
-            _ = CollapseGamepieces(piece);
+            _ = CollapseGamepiece(piece);
         }
         yield return null;
     }
 
     //we return which gamepieces are collapsing
-    List<Gamepiece> CollapseGamepieces(Gamepiece piece)
+    public List<Gamepiece> CollapseGamepiece(Gamepiece piece)
     {
         var allGamepieces = gamepieceData.allGamepieces;
         int column = piece.xIndex;

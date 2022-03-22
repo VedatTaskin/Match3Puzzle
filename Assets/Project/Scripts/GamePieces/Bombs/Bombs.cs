@@ -12,9 +12,9 @@ public class Bombs : Gamepiece, IGamepieceRule,ISelfDestroy
     {
         return anyMatches;
     }
-    public virtual bool SelfDestroy(Board board, Gamepiece otherGamepiece)
+    public virtual IEnumerator SelfDestroy(Board board, Gamepiece otherGamepiece)
     {
         Debug.Log("Self Destroying");
-        return false;
+        yield return null;
     }
 }
