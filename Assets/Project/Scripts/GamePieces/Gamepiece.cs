@@ -9,6 +9,7 @@ public class Gamepiece : MonoBehaviour
     public int xIndex;
     public int yIndex;
     public float fallTime = 0.3f;
+    public PieceState pieceState = PieceState.CanMove;
 
     public virtual GamepieceType gamepieceType { get; }
 
@@ -32,16 +33,17 @@ public class Gamepiece : MonoBehaviour
         yIndex = y;
     }
 
-    public virtual void Move(int destX,int destY, float timeToMove, MoveType movetype)
+    public IEnumerator Move(int destX,int destY, float timeToMove, MoveType movetype)
     {
-
+        pieceState = PieceState.Busy;
+        
         if (movetype == MoveType.Swap)
         {
             transform.DOMove(new Vector3(destX, destY, transform.position.z), timeToMove).SetEase(Ease.OutQuart).
                 OnComplete(() =>
                 {
                     board.PlaceGamePiece(this, destX, destY);
-
+                    pieceState = PieceState.CanMove;
                 });
         }
         else if (movetype == MoveType.Fall)
@@ -51,9 +53,13 @@ public class Gamepiece : MonoBehaviour
                 OnComplete(() =>
                 {
                     board.PlaceGamePiece(this, destX, destY);
+                    pieceState = PieceState.CanMove;
                     StartCoroutine(board.CheckMatchesAfterFallDown(this));
                 });
         }
+
+        yield return new WaitUntil(() => pieceState == PieceState.CanMove);
+
     }
 }
 

@@ -136,7 +136,7 @@ public class Board : MonoBehaviour
         gamepieceGO.GetComponent<Gamepiece>().Init(this);
         PlaceGamePiece(gamepieceGO.GetComponent<Gamepiece>(), x, y);
         gamepieceGO.transform.position = new Vector3(x, y + offset, 0);
-        gamepieceGO.GetComponent<Gamepiece>().Move(x, y, fallTime,MoveType.Fall);
+        StartCoroutine(gamepieceGO.GetComponent<Gamepiece>().Move(x, y, fallTime,MoveType.Fall));
         transform.parent = transform;
     }
 
@@ -180,15 +180,19 @@ public class Board : MonoBehaviour
 
     public void ClickTile(Tile _tile)
     {
-        if (_tile.tileType != TileType.Obstacle)
+        if (gamepieceData.allGamepieces[_tile.xIndex,_tile.yIndex].pieceState == PieceState.CanMove)
         {
-            clickedTile = _tile;
+            if (_tile.tileType != TileType.Obstacle)
+            {
+                clickedTile = _tile;
+            }
         }
     }
 
     public void DragToTile(Tile _tile)
     {
-        if (clickedTile != null && _tile.tileType != TileType.Obstacle)
+        if (clickedTile != null && _tile.tileType != TileType.Obstacle 
+            && gamepieceData.allGamepieces[_tile.xIndex, _tile.yIndex].pieceState == PieceState.CanMove)
         {
             targetTile = _tile;
 
@@ -244,11 +248,9 @@ public class Board : MonoBehaviour
             && clickedGamepiece.gamepieceType != GamepieceType.NotMoveable && targetGamepiece.gamepieceType != GamepieceType.NotMoveable)
         {
             // if clicked and target Gamepieces are exist and moveable we swap this two objects
-            clickedGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime, MoveType.Swap);
-            targetGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime, MoveType.Swap);
-
-            // we wait until end of the switch movement
-            yield return new WaitForSeconds(swapTime);
+            StartCoroutine(clickedGamepiece.Move(_targetTile.xIndex, _targetTile.yIndex, swapTime, MoveType.Swap));
+            yield return StartCoroutine(targetGamepiece.Move(_clickedTile.xIndex, _clickedTile.yIndex, swapTime, MoveType.Swap));
+             
 
             //clicked and target Gamepieces now checking
             StartCoroutine(ApplyGamepieceRule(clickedGamepiece, targetGamepiece));
@@ -280,9 +282,8 @@ public class Board : MonoBehaviour
         // If there isn't any gamepieces to clear we swap back again
         if (!RuleChoser.ChooseRule(clicked, target, this))
         {
-            clicked.Move(target.xIndex, target.yIndex, swapTime, MoveType.Swap);
-            target.Move(clicked.xIndex, clicked.yIndex, swapTime, MoveType.Swap);
-            yield return new WaitForSeconds(swapTime);
+            StartCoroutine(clicked.Move(target.xIndex, target.yIndex, swapTime, MoveType.Swap));
+            yield return StartCoroutine(target.Move(clicked.xIndex, clicked.yIndex, swapTime, MoveType.Swap));
         }
 
         yield return null;
@@ -368,7 +369,7 @@ public class Board : MonoBehaviour
                 {
                     piece = normalPieces.Dequeue();
                     piece.SetCoordinate(i, j);
-                    piece.Move(i, j, fallTime, MoveType.Swap);
+                    StartCoroutine(piece.Move(i, j, fallTime, MoveType.Swap));
                 }
             }
         }
@@ -428,7 +429,7 @@ public class Board : MonoBehaviour
                         allGamepieces[column, i] = allGamepieces[column, j];
                         allGamepieces[column, j] = null;
                         allGamepieces[column, i].SetCoordinate(column, i);
-                        allGamepieces[column, i].Move(column, i, fallTime * (j - i), MoveType.Fall);
+                        StartCoroutine(allGamepieces[column, i].Move(column, i, fallTime * (j - i), MoveType.Fall));
 
                         if (!movingPieces.Contains(allGamepieces[column, i]))
                         {
