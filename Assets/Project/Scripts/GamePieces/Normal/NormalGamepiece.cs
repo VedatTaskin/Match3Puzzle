@@ -31,32 +31,22 @@ public class NormalGamepiece : Gamepiece,IGamepieceRule
         // We can make this better, Refactoring can be done
         if (allMatches.Count != 0 )
         {
-
             board.gamepieceData.ClearGamepieces(allMatches);
 
             //We add bomb immediately after cleaning list 
             if (matchesAtClickedGamepiece.Count >= 4)
             {
-                BombCreation(clicked, board, target, matchesAtClickedGamepiece);
+                board.BombCreation(clicked, target, matchesAtClickedGamepiece);
             }
             if (matchesAtTargetGamepiece.Count >= 4)
             {
-                BombCreation(target, board, clicked, matchesAtTargetGamepiece);
+                board.BombCreation(target, clicked, matchesAtTargetGamepiece);
             }
 
             // silinmiş olan gamepiecelerin yerine üssten yenisi düşecek
-            // Silinecek elemanların içinden en alttaki elemanları
-            // farklı şekilde uyarıyorum ki onlar üstlerini uyarsın,
-            StartCoroutine(board.CollapseRoutine(board,allMatches));
+            StartCoroutine(board.CollapseRoutine(allMatches));
             return true;
         }
         return false;
     }
-
-    void BombCreation(Gamepiece clicked, Board board, Gamepiece target, List<Gamepiece> matches)
-    {
-        Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
-        var bombGO= board.DropBomb(clicked.xIndex, clicked.yIndex, swapDirection, matches);
-    }
-
 }

@@ -180,19 +180,15 @@ public class Board : MonoBehaviour
 
     public void ClickTile(Tile _tile)
     {
-        if (gamepieceData.allGamepieces[_tile.xIndex,_tile.yIndex].pieceState == PieceState.CanMove)
+        if (_tile.tileType != TileType.Obstacle)
         {
-            if (_tile.tileType != TileType.Obstacle)
-            {
-                clickedTile = _tile;
-            }
+            clickedTile = _tile;
         }
     }
 
     public void DragToTile(Tile _tile)
     {
-        if (clickedTile != null && _tile.tileType != TileType.Obstacle 
-            && gamepieceData.allGamepieces[_tile.xIndex, _tile.yIndex].pieceState == PieceState.CanMove)
+        if (clickedTile != null && _tile.tileType != TileType.Obstacle)
         {
             targetTile = _tile;
 
@@ -224,7 +220,7 @@ public class Board : MonoBehaviour
             gamepiecesWillClear = piece.GetComponent<ISelfDestroy>().SelfDestroy(this);
             if (gamepiecesWillClear != null)
             {
-                yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(gamepiecesWillClear));
+                //yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(gamepiecesWillClear));
                 //yield return StartCoroutine(RefillBoard());
             }
         }
@@ -260,20 +256,13 @@ public class Board : MonoBehaviour
 
     }
 
-    //IEnumerator RefillBoard()
-    //{
-    //    FillBoard();
-    //    yield return waitForFallTime;
-    //    StartCoroutine(FindNewMatches());
-    //}
-
     IEnumerator FindNewMatches()
     {
         var newMatches = gamepieceData.FindAllMatches();
 
         if (newMatches != null)
         {
-            yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(newMatches));
+            //yield return StartCoroutine(gamepieceData.ClearAndCollapseRoutine(newMatches));
             //yield return StartCoroutine(RefillBoard());
             yield return new WaitForSeconds(fallTime);
         }
@@ -391,16 +380,14 @@ public class Board : MonoBehaviour
 
     }
 
-
-
-    public IEnumerator CollapseRoutine(Board board, List<Gamepiece> matches)
+    public IEnumerator CollapseRoutine(List<Gamepiece> matches)
     {
         List<Gamepiece> PiecesAtTheBottomOfMatches = new List<Gamepiece>();
 
         //önce ilgili kolonlar gruplandırılıyor kendi içerisinde
         var groupByColumn = matches.GroupBy(n => n.xIndex);
 
-        //bir silinme esnasında en üstteki elemanlar hangisi ise bulunuyor
+        //bir silinme esnasında en alttaki elemanlar hangisi ise bulunuyor
         foreach (var grp in groupByColumn)
         {
             var bottomPiece = grp.OrderByDescending(i => (i.yIndex)).Last();
@@ -453,25 +440,59 @@ public class Board : MonoBehaviour
             }
         }
 
-        FillColumn(allGamepieces, column);
+        StartCoroutine( FillColumn(allGamepieces, column));
         return movingPieces;
+
+        
     }
 
-    private void FillColumn(Gamepiece[,] allGamepieces, int column)
+    IEnumerator FillColumn(Gamepiece[,] allGamepieces, int column)
     {
+        yield return new WaitForSeconds(0.2f);
         for (int i = 0; i < height; i++)
         {
             if (allGamepieces[column, i] == null
                 && tileData.allTiles[column, i].tileType != TileType.Obstacle)
             {
-                Debug.Log(column + ", " + i + " null");
+                //Debug.Log(column + ", " + i + " null");
                 FillRandomGamepieceAt(column, i);
             }
         }
     }
 
+    public IEnumerator CheckMatchesAfterFallDown(Gamepiece piece)
+    {
+        yield return new WaitForSeconds(0.3f);
+        List<Gamepiece> newMatches = new List<Gamepiece>();
+        newMatches = gamepieceData.FindMatchesAt(piece.xIndex,piece.yIndex);
 
+        gamepieceData.ClearGamepieces(newMatches);
 
+        //*******************
+        //We will instantiate bomb immediately 
+        _ = NewMatchesCanMakeBomb(newMatches);
+        //*****************
+
+        StartCoroutine(CollapseRoutine(newMatches));
+    }
+
+    public void BombCreation(Gamepiece clicked,  Gamepiece target, List<Gamepiece> matches)
+    {
+        Vector2 swapDirection = new Vector2(target.xIndex - clicked.xIndex, target.yIndex - clicked.yIndex);
+        _ = DropBomb(clicked.xIndex, clicked.yIndex, swapDirection, matches);
+    }
+
+    // we didn't detailed this method, WE drop a bomb if new matches greater than 4,
+    // we should check their color, and match type 
+    bool NewMatchesCanMakeBomb(List<Gamepiece> newMatches)
+    {
+        if (newMatches.Count >= 4)
+        {
+            DropBomb(newMatches[1].xIndex, newMatches[1].yIndex, new Vector2(0, 1), newMatches);
+            return true;
+        }
+        return false;
+    }
 }
 
 

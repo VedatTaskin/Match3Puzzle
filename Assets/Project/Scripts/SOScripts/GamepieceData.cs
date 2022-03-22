@@ -42,6 +42,8 @@ public class GamepieceData : ScriptableObject
     float collapseTime=0.1f;
     [HideInInspector] public Board board;
 
+
+
     private void OnEnable()
     {
         width = tileData.width;
@@ -247,59 +249,6 @@ public class GamepieceData : ScriptableObject
         return (downMatches.Count > 0 || leftMatches.Count > 0);
     }
 
-    //public List<int> FindCollapsingColumnNumbers(List<Gamepiece> gamepieces)
-    //{
-    //    List<int> columns = new List<int>();
-
-    //    foreach (var piece in gamepieces)
-    //    {
-    //        if (!columns.Contains(piece.xIndex) )
-    //        {
-    //            columns.Add(piece.xIndex);
-    //        }
-    //    }
-    //    return columns;
-    //}
-
-    //public List<Gamepiece> CollapseColumn(List<Gamepiece> gamepieces)
-    //{
-    //    //which pillars will be collapse
-    //    List<int> columns = FindCollapsingColumnNumbers(gamepieces);
-
-    //    // we want to know which pieces are moving, we will check if they make another match after collapsing
-    //    List<Gamepiece> movingPieces = new List<Gamepiece>();
-
-    //    for (int c = 0; c < columns.Count; c++)
-    //    {
-    //        // each pillar will check seperately
-    //        for (int i = 0; i < height - 1; i++)
-    //        {
-    //            if (allGamepieces[columns[c], i] == null && tileData.allTiles[columns[c], i].tileType !=TileType.Obstacle )
-    //            {
-    //                for (int j = i + 1; j < height; j++)
-    //                {
-    //                    if (allGamepieces[columns[c],j] !=null)
-    //                    {
-    //                        var piece = allGamepieces[columns[c], j];
-    //                        allGamepieces[columns[c], i] = piece;
-
-    //                        if (!movingPieces.Contains(piece))
-    //                        {
-    //                            movingPieces.Add(piece);
-    //                        }                            
-
-    //                        piece.Move(columns[c], i, collapseTime * (j-i), MoveType.Fall);
-    //                        piece.SetCoordinate(columns[c], i);
-                            
-    //                        allGamepieces[columns[c], j] = null;
-    //                        break;
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return movingPieces;
-    //}
 
     public IEnumerator ClearAndCollapseRoutine(List<Gamepiece> _allMatches)
     {
@@ -314,7 +263,7 @@ public class GamepieceData : ScriptableObject
             ClearGamepieces(matches);
 
             //instantiate bomb here
-            CheckBombCreation();
+            //CheckBombCreation();
 
             yield return new WaitForSeconds(0.2f);
             //var movingPieces = CollapseColumn(matches);
@@ -334,10 +283,10 @@ public class GamepieceData : ScriptableObject
             //    newMatches = newMatches.Union(FindMatchesAt(piece.xIndex, piece.yIndex)).ToList();
             //}
 
-            if (NewMatchesCanMakeBomb(newMatches))
-            {
-                yield return new WaitForSeconds(0.2f);
-            } 
+            //if (NewMatchesCanMakeBomb(newMatches))
+            //{
+            //    yield return new WaitForSeconds(0.2f);
+            //} 
 
             //check if Collectibles are reached to the bottom of the board
             var collectiblesFound = FindCollectiblesAtRow(0);
@@ -438,17 +387,7 @@ public class GamepieceData : ScriptableObject
         return (Random.Range(0f, 1f) <= chanceForCollectible && collectiblesCount < maxCollectibles);
     }
 
-    //we didn't detailed this method, WE drop a bomb if new matches greater than 4,
-    // we should check their color, and match type 
-    bool NewMatchesCanMakeBomb(List<Gamepiece> newMatches)
-    {
-        if (newMatches.Count >= 4)
-        {
-            board.DropBomb(newMatches[1].xIndex, newMatches[1].yIndex, new Vector2(0, 1), newMatches);
-            return true;
-        }
-        return false;
-    }
+
 }
 
 [System.Serializable]

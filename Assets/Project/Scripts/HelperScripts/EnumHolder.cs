@@ -4,12 +4,13 @@
     Busy
 }
 
-public enum PieceState
-{
-    CanMove,
-    Moving,
-    Busy
-}
+//public enum PieceState
+//{
+//    CanMove,
+//    Falling,
+//    Swapping,
+//    Busy
+//}
 
 
 public enum GamepieceType
