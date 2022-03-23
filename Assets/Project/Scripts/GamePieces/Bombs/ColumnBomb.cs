@@ -167,12 +167,11 @@ public class ColumnBomb : Bombs
             {
                 if (tempPiece.gamepieceType == GamepieceType.Bomb)
                 {
-                    tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this);
+                    StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
                 }
                 else
                 {                    
                     board.gamepieceData.ClearGamepieceAt(xIndex, row);
-                    board.gamepieceData.BreakTilesAt(xIndex, row);
                     return tempPiece;
                 }
             }

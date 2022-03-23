@@ -36,7 +36,6 @@ public class NormalGamepiece : Gamepiece,IGamepieceRule
                 if (piece != null)
                 {
                     board.gamepieceData.ClearGamepieceAt(piece.xIndex, piece.yIndex);
-                    board.gamepieceData.BreakTilesAt(piece.xIndex, piece.yIndex);
                 }
             }
 

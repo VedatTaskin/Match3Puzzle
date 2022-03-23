@@ -128,12 +128,11 @@ public class RowBomb : Bombs
         {
             if (tempPiece.gamepieceType == GamepieceType.Bomb)
             {
-                tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this);
+                StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
             }
             else
             {
                 board.gamepieceData.ClearGamepieceAt(column, yIndex);
-                board.gamepieceData.BreakTilesAt(column, yIndex);
                 board.CollapseAtAPoint(tempPiece);
             }
         }

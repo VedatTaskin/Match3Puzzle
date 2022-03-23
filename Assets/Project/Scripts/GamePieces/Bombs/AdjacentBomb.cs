@@ -134,7 +134,7 @@ public class AdjacentBomb : Bombs
                     {
                         if (piece.gamepieceType == GamepieceType.Bomb)
                         {
-                            piece.GetComponent<ISelfDestroy>().SelfDestroy(board, this);
+                            StartCoroutine(piece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
                         }
                         else
                         {
@@ -147,10 +147,8 @@ public class AdjacentBomb : Bombs
 
         if (matches.Count !=0)
         {
-            Debug.Log("Self Destroying");
-            //board.gamepieceData.ClearGamepieces(matches);
-            //StartCoroutine(board.CollapseRoutine(matches));
-            //return true;
+            board.gamepieceData.ClearGamepieces(matches);
+            StartCoroutine(board.CollapseSomePlaces(matches));
         }
         yield return null;
     }

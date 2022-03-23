@@ -207,8 +207,11 @@ public class GamepieceData : ScriptableObject
             allGamepieces[x, y] = null;
             Destroy(gamepieceToClear.gameObject,0.1f);
         }
+        //If we clear a gamepiece we must break tile at this point
+        BreakTilesAt(x, y);
     }
 
+    // we may want to break tiles without clearing gamepiece  
     public void BreakTilesAt(int x, int y)
     {
         if (tileData.allTiles[x, y].tileType == TileType.Breakable)
@@ -223,8 +226,7 @@ public class GamepieceData : ScriptableObject
         {
             if (piece != null)
             {
-                ClearGamepieceAt(piece.xIndex, piece.yIndex);
-                BreakTilesAt(piece.xIndex, piece.yIndex);
+                ClearGamepieceAt(piece.xIndex, piece.yIndex); 
             }
         }
     }
