@@ -122,7 +122,8 @@ public class ColumnBomb : Bombs
 
         HideMySelf();
 
-        //Clearin objects in right and left direction synchronously
+        //Clearing objects in right and left direction synchronously
+        //objelerin silinme işlemi bittikten sonra collapse çağrılıyor
         for (int i = 0; i < board.height; i++)
         {
             Gamepiece deletedPiece;
@@ -151,7 +152,7 @@ public class ColumnBomb : Bombs
         }
 
 
-        board.CollapseThisColumn(xIndex);
+        board.CollapseAtAColumn(xIndex);
         yield return null;
     }
 

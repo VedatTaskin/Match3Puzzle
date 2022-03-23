@@ -377,7 +377,7 @@ public class Board : MonoBehaviour
 
     }
 
-    public IEnumerator CollapseRoutine(List<Gamepiece> matches)
+    public IEnumerator CollapseSomePlaces(List<Gamepiece> matches)
     {
         List<Gamepiece> PiecesAtTheBottomOfMatches = new List<Gamepiece>();
 
@@ -397,59 +397,30 @@ public class Board : MonoBehaviour
         //now we collapse each column that we have cleared an object
         foreach (var piece in PiecesAtTheBottomOfMatches)
         {
-            _ = CollapseGamepiece(piece);
+            _ = CollapseAtAPoint(piece);
         }
         yield return null;
     }
 
     //we return which gamepieces are collapsing
-    // REFACTORING NECESSARY: CollapseThisColumn İS ALMOST SAME
-    public List<Gamepiece> CollapseGamepiece(Gamepiece piece)
-    {
-        var allGamepieces = gamepieceData.allGamepieces;
-        int column = piece.xIndex;
-
-        //we want to know which pieces are moving, we will check if they make another match after collapsing
-        List<Gamepiece> movingPieces = new List<Gamepiece>();
-
-        for (int i = piece.yIndex; i < height - 1; i++)
-        {
-            if (allGamepieces[column, i] == null
-                && tileData.allTiles[column, i].tileType != TileType.Obstacle)
-            {
-                //Debug.Log(column + ", " + i +" null");
-
-                for (int j = i + 1; j < height; j++)
-                {
-                    if (allGamepieces[column, j] != null)
-                    {
-                        allGamepieces[column, i] = allGamepieces[column, j];
-                        allGamepieces[column, j] = null;
-                        allGamepieces[column, i].SetCoordinate(column, i);
-                        allGamepieces[column, i].Move(column, i, fallTime * (j - i), MoveType.Fall);
-
-                        if (!movingPieces.Contains(allGamepieces[column, i]))
-                        {
-                            movingPieces.Add(allGamepieces[column, i]);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        StartCoroutine(FillColumn( column));
-        return movingPieces;        
+    public List<Gamepiece> CollapseAtAPoint(Gamepiece piece)
+    {        
+        return Collapse(piece.xIndex, piece.yIndex);
     }
 
-    public List<Gamepiece> CollapseThisColumn(int column)
+    public List<Gamepiece> CollapseAtAColumn(int column)
+    {
+        return Collapse(column);
+    }
+
+    private List<Gamepiece> Collapse( int column, int row=0)
     {
         var allGamepieces = gamepieceData.allGamepieces;
 
         //we want to know which pieces are moving, we will check if they make another match after collapsing
         List<Gamepiece> movingPieces = new List<Gamepiece>();
 
-        for (int i = 0; i < height - 1; i++)
+        for (int i = row; i < height - 1; i++)
         {
             if (allGamepieces[column, i] == null
                 && tileData.allTiles[column, i].tileType != TileType.Obstacle)
@@ -508,7 +479,7 @@ public class Board : MonoBehaviour
             _ = NewMatchesCanMakeBomb(newMatches);
             //*****************
 
-            yield return StartCoroutine(CollapseRoutine(newMatches));
+            yield return StartCoroutine(CollapseSomePlaces(newMatches));
         }
         piece.pieceState = PieceState.CanMove;
         yield return null; ;

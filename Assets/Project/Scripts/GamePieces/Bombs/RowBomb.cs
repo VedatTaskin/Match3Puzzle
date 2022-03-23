@@ -134,7 +134,7 @@ public class RowBomb : Bombs
             {
                 board.gamepieceData.ClearGamepieceAt(column, yIndex);
                 board.gamepieceData.BreakTilesAt(column, yIndex);
-                board.CollapseGamepiece(tempPiece);
+                board.CollapseAtAPoint(tempPiece);
             }
         }
     }
@@ -157,7 +157,7 @@ public class RowBomb : Bombs
         board.gamepieceData.allGamepieces[xIndex,yIndex] = null;
         board.gamepieceData.BreakTilesAt(xIndex, yIndex);
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        board.CollapseGamepiece(this);  // boş olan objenin olduğu yerini dolduruyor bu fonksiyon
+        board.CollapseAtAPoint(this);  // boş olan objenin olduğu yerini dolduruyor bu fonksiyon
         transform.position = new Vector3(100, 100);
         Destroy(gameObject, 5f);
     }
