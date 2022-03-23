@@ -87,6 +87,9 @@ public class AdjacentBomb : Bombs
     }
     public override IEnumerator SelfDestroy(Board board, Gamepiece otherGamepiece=null)
     {
+        Debug.Log("cağrıldı" +this.name);
+        HideMySelf();
+
         List<Gamepiece> matches = new List<Gamepiece>();
         matches.Add(this);
 
@@ -96,17 +99,20 @@ public class AdjacentBomb : Bombs
             {
                 if (board.IsWithInBounds(i, j))
                 {
-                    var piece = board.gamepieceData.allGamepieces[i, j];
+                    var tempPiece = board.gamepieceData.allGamepieces[i, j];
 
-                    if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
+                    if (tempPiece != null)
                     {
-                        if (piece.gamepieceType == GamepieceType.Bomb)
+                        if (!matches.Contains(tempPiece) && tempPiece.gamepieceType != GamepieceType.Collectible)
                         {
-                            StartCoroutine(piece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
-                        }
-                        else
-                        {
-                            matches.Add(piece);
+                            if (tempPiece.gamepieceType == GamepieceType.Bomb)
+                            {
+                                StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
+                            }
+                            else
+                            {
+                                matches.Add(tempPiece);
+                            }
                         }
                     }
                 }
@@ -131,5 +137,14 @@ public class AdjacentBomb : Bombs
             board.DropBomb(other.xIndex, other.yIndex, swapDirection, normalMatches);
         }
         return normalMatches;
+    }
+
+    void HideMySelf()
+    {
+        board.gamepieceData.allGamepieces[xIndex, yIndex] = null;
+        board.gamepieceData.BreakTilesAt(xIndex, yIndex);
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        transform.position = new Vector3(100, 100);
+        Destroy(gameObject, 5f);
     }
 }

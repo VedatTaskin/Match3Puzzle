@@ -91,6 +91,7 @@ public class ColumnBomb : Bombs
     }
     public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
+        Debug.Log("cağrıldı" + this.name);
         List<Gamepiece> matches = new List<Gamepiece>();
 
         int upDirection = yIndex;
@@ -98,7 +99,7 @@ public class ColumnBomb : Bombs
 
         HideMySelf();
 
-        //Clearing objects in right and left direction synchronously
+        //Clearing objects in ıp and down direction synchronously
         //objelerin silinme işlemi bittikten sonra collapse çağrılıyor
         for (int i = 0; i < board.height; i++)
         {
@@ -106,7 +107,7 @@ public class ColumnBomb : Bombs
             
             if (upDirection < board.height)
             {
-                deletedPiece= ClearThisGamepiece(upDirection);
+                deletedPiece= ClearThisGamepiece(upDirection,otherGamepiece);
                 if (!matches.Contains(deletedPiece) )
                 {
                     matches.Add(deletedPiece);
@@ -116,7 +117,7 @@ public class ColumnBomb : Bombs
 
             if (downDirection >= 0)
             {
-                deletedPiece= ClearThisGamepiece(downDirection);
+                deletedPiece= ClearThisGamepiece(downDirection,otherGamepiece);
                 if (!matches.Contains(deletedPiece) )
                 {
                     matches.Add(deletedPiece);
@@ -127,11 +128,10 @@ public class ColumnBomb : Bombs
             yield return new WaitForSeconds(0.1f);
         }
 
-
         board.CollapseAtAColumn(xIndex);
         yield return null;
     }
-    Gamepiece ClearThisGamepiece(int row)
+    Gamepiece ClearThisGamepiece(int row, Gamepiece otherGamepiece)
     {
 
         var tempPiece = board.gamepieceData.allGamepieces[xIndex, row];
@@ -140,7 +140,7 @@ public class ColumnBomb : Bombs
         {
             if ( tempPiece.pieceState == PieceState.CanMove)
             {
-                if (tempPiece.gamepieceType == GamepieceType.Bomb)
+                if (tempPiece.gamepieceType == GamepieceType.Bomb )
                 {
                     StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
                 }

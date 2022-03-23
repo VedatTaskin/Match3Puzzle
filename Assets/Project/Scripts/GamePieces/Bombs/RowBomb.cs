@@ -66,8 +66,11 @@ public class RowBomb : Bombs
         return true;
     }
 
+    //other gamepiece may be a bomb that triggered us
+    // we don't want to trigger it recursively
     public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
+        Debug.Log("cağrıldı" + this.name);
         int rightDirection = xIndex;
         int leftDirection = xIndex;
 
@@ -78,13 +81,13 @@ public class RowBomb : Bombs
         {
             if (rightDirection < board.width)
             {
-                ClearThisGamepiece(board, rightDirection);
+                ClearThisGamepiece(board, rightDirection,otherGamepiece);
                 rightDirection++;
             }
 
             if (leftDirection >= 0)
             {
-                ClearThisGamepiece(board, leftDirection);
+                ClearThisGamepiece(board, leftDirection,otherGamepiece);
                 leftDirection--;
             }
             yield return new WaitForSeconds(0.1f);
@@ -93,23 +96,26 @@ public class RowBomb : Bombs
         yield return null;
     }
 
-    void ClearThisGamepiece(Board board, int column)
+    void ClearThisGamepiece(Board board, int column, Gamepiece otherGamepiece)
     {
         var tempPiece = board.gamepieceData.allGamepieces[column, yIndex];
 
-        if (tempPiece.pieceState == PieceState.CanMove
-                && tempPiece != null)
+        if (tempPiece != null)
         {
-            if (tempPiece.gamepieceType == GamepieceType.Bomb)
+            if (tempPiece.pieceState == PieceState.CanMove)
             {
-                StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
-            }
-            else
-            {
-                board.gamepieceData.ClearGamepieceAt(column, yIndex);
-                board.CollapseAtAPoint(tempPiece);
+                if (tempPiece.gamepieceType == GamepieceType.Bomb)
+                {
+                    StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
+                }
+                else
+                {
+                    board.gamepieceData.ClearGamepieceAt(column, yIndex);
+                    board.CollapseAtAPoint(tempPiece);
+                }
             }
         }
+
     }
 
     List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)

@@ -146,11 +146,11 @@ public class Board : MonoBehaviour
         if (prefab != null && IsWithInBounds(x, y))
         {
             GameObject bomb = Instantiate(prefab, new Vector3(x, y, 0), Quaternion.identity) as GameObject;
+            gamepieceData.allGamepieces[x, y] = bomb.GetComponent<Gamepiece>();
             bomb.GetComponent<Bombs>().Init(this);
             bomb.GetComponent<Bombs>().SetCoordinate(x, y);
             bomb.transform.position = new Vector3(x, y, 0);
             bomb.transform.rotation = Quaternion.identity;
-            gamepieceData.allGamepieces[x, y] = bomb.GetComponent<Gamepiece>();
             return bomb;
         }
         return null;
@@ -476,9 +476,13 @@ public class Board : MonoBehaviour
 
             //*******************
             //We will instantiate bomb immediately 
-            _ = NewMatchesCanMakeBomb(newMatches);
+            var bomb = NewMatchesCanMakeBomb(newMatches);
             //*****************
 
+            if (bomb !=null)
+            {
+                newMatches.Remove(bomb.GetComponent<Gamepiece>());
+            }
             yield return StartCoroutine(CollapseSomePlaces(newMatches));
         }
         piece.pieceState = PieceState.CanMove;
@@ -493,14 +497,14 @@ public class Board : MonoBehaviour
 
     // we didn't detailed this method, WE drop a bomb if new matches greater than 4,
     // we should check their color, and match type 
-    bool NewMatchesCanMakeBomb(List<Gamepiece> newMatches)
+    GameObject NewMatchesCanMakeBomb(List<Gamepiece> newMatches)
     {
         if (newMatches.Count >= 4)
         {
-            DropBomb(newMatches[1].xIndex, newMatches[1].yIndex, new Vector2(0, 1), newMatches);
-            return true;
+            var bomb= DropBomb(newMatches[1].xIndex, newMatches[1].yIndex, new Vector2(0, 1), newMatches);
+            return bomb;
         }
-        return false;
+        return null;
     }
 }
 
