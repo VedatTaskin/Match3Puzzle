@@ -468,15 +468,15 @@ public class Board : MonoBehaviour
         {
             gamepieceData.ClearGamepieces(newMatches);
 
-            //*******************
-            //We will instantiate bomb immediately 
-            var bomb = NewMatchesCanMakeBomb(newMatches);
-            //*****************
+            ////*******************
+            ////We will instantiate bomb immediately 
+            //var bomb = NewMatchesCanMakeBomb(newMatches);
+            ////*****************
 
-            if (bomb !=null)
-            {
-                newMatches.Remove(bomb.GetComponent<Gamepiece>());
-            }
+            //if (bomb !=null)
+            //{
+            //    newMatches.Remove(bomb.GetComponent<Gamepiece>());
+            //}
             yield return StartCoroutine(CollapseSomePlacesCR(newMatches));
         }
         piece.pieceState = PieceState.CanMove;
