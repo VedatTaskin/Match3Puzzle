@@ -410,9 +410,6 @@ public class Board : MonoBehaviour
     {
         var allGamepieces = gamepieceData.allGamepieces;
 
-        //we want to know which pieces are moving, we will check if they make another match after collapsing
-        List<Gamepiece> movingPieces = new List<Gamepiece>();
-
         for (int i = row; i < height - 1; i++)
         {
             if (allGamepieces[column, i] == null
@@ -428,11 +425,6 @@ public class Board : MonoBehaviour
                         allGamepieces[column, j] = null;
                         allGamepieces[column, i].SetCoordinate(column, i);
                         allGamepieces[column, i].Move(column, i, fallTime * (j - i), MoveType.Fall);
-
-                        if (!movingPieces.Contains(allGamepieces[column, i]))
-                        {
-                            movingPieces.Add(allGamepieces[column, i]);
-                        }
                         break;
                     }
                 }
