@@ -134,11 +134,21 @@ public class Board : MonoBehaviour
 
     private void CraeateGamepiece(GameObject gamepieceGO, int x, int y)
     {
-        gamepieceGO.GetComponent<Gamepiece>().Init(this);
-        PlaceGamePiece(gamepieceGO.GetComponent<Gamepiece>(), x, y);
-        gamepieceGO.transform.position = new Vector3(x, y + offset, 0);
-        gamepieceGO.GetComponent<Gamepiece>().Move(x, y, fallTime,MoveType.Fall);
-        transform.parent = transform;
+        if (IsWithInBounds(x, y))
+        {
+            var gamepiece = gamepieceGO.GetComponent<Gamepiece>();            
+            gamepieceData.allGamepieces[x, y] = gamepiece;
+            gamepiece.Init(this);
+            gamepiece.SetCoordinate(x, y);
+            gamepieceGO.transform.position = new Vector3(x, y + offset, 0);
+            gamepieceGO.GetComponent<Gamepiece>().Move(x, y, fallTime, MoveType.Fall);
+            gamepieceGO.transform.parent = transform;
+            gamepiece.pieceState = PieceState.CanMove;
+        }
+        else
+        {
+            Destroy(gamepieceGO);
+        }
     }
 
     private GameObject CreateBomb(GameObject prefab, int x, int y)
@@ -151,9 +161,15 @@ public class Board : MonoBehaviour
             bomb.GetComponent<Bombs>().SetCoordinate(x, y);
             bomb.transform.position = new Vector3(x, y, 0);
             bomb.transform.rotation = Quaternion.identity;
+            bomb.transform.parent = transform;
+            bomb.GetComponent<Gamepiece>().pieceState = PieceState.CanMove;
             return bomb;
         }
-        return null;
+        else
+        {
+            return null;
+        }
+
     }
 
     public Gamepiece FillRandomGamepieceAt(int x, int y)
