@@ -31,25 +31,5 @@ MonoBehaviour:
   collectiblePrefab: {fileID: 7824845330932977092, guid: 6fb0c152493719f45a7a3ff5a56bd8ed,
     type: 3}
   chanceForCollectible: 0.52
-  orderedGamepieces:
-  - prefab: {fileID: 4228407111365599603, guid: 3124e7319b9cd894a91b3722c109a747,
-      type: 3}
-    xCoord: 5
-    yCoord: 1
-  - prefab: {fileID: 4228407111365599603, guid: 3124e7319b9cd894a91b3722c109a747,
-      type: 3}
-    xCoord: 5
-    yCoord: 2
-  - prefab: {fileID: 4228407111365599603, guid: 3124e7319b9cd894a91b3722c109a747,
-      type: 3}
-    xCoord: 5
-    yCoord: 4
-  - prefab: {fileID: 4228407111365599603, guid: 3124e7319b9cd894a91b3722c109a747,
-      type: 3}
-    xCoord: 6
-    yCoord: 3
-  - prefab: {fileID: 4228407111365599603, guid: 3124e7319b9cd894a91b3722c109a747,
-      type: 3}
-    xCoord: 5
-    yCoord: 5
+  orderedGamepieces: []
   board: {fileID: 0}

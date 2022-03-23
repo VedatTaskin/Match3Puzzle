@@ -377,40 +377,34 @@ public class Board : MonoBehaviour
 
     }
 
-    public IEnumerator CollapseSomePlaces(List<Gamepiece> matches)
+    public IEnumerator CollapseSomePlacesCR(List<Gamepiece> matches)
     {
-        List<Gamepiece> PiecesAtTheBottomOfMatches = new List<Gamepiece>();
+        List<int> columns = new List<int>();
 
-        //önce ilgili kolonlar gruplandırılıyor kendi içerisinde
-        var groupByColumn = matches.GroupBy(n => n.xIndex);
-
-        //bir silinme esnasında en alttaki elemanlar hangisi ise bulunuyor
-        foreach (var grp in groupByColumn)
+        foreach (var gamepiece in matches)
         {
-            var bottomPiece = grp.OrderByDescending(i => (i.yIndex)).Last();
-            if (!PiecesAtTheBottomOfMatches.Contains(bottomPiece))
+            if (!columns.Contains(gamepiece.xIndex))
             {
-                PiecesAtTheBottomOfMatches.Add(bottomPiece);
+                columns.Add(gamepiece.xIndex);
             }
         }
 
-        //now we collapse each column that we have cleared an object
-        foreach (var piece in PiecesAtTheBottomOfMatches)
+        foreach (var column in columns)
         {
-            _ = CollapseAtAPoint(piece);
+            CollapseAtAColumn(column);
         }
         yield return null;
     }
 
     //we return which gamepieces are collapsing
-    public List<Gamepiece> CollapseAtAPoint(Gamepiece piece)
+    public void CollapseAtAPoint(Gamepiece piece)
     {        
-        return Collapse(piece.xIndex, piece.yIndex);
+        Collapse(piece.xIndex, piece.yIndex);
     }
 
-    public List<Gamepiece> CollapseAtAColumn(int column)
+    public void CollapseAtAColumn(int column)
     {
-        return Collapse(column);
+        Collapse(column);
     }
 
     private List<Gamepiece> Collapse( int column, int row=0)
@@ -445,15 +439,15 @@ public class Board : MonoBehaviour
                 }
             }
         }
-
         StartCoroutine(FillColumn(column));
         return movingPieces;
     }
 
     IEnumerator FillColumn(int column)
     {
-        yield return new WaitForSeconds(0.2f);
-        for (int i = height-1; i >= 0; i--)
+        yield return new WaitForSeconds(0.1f);
+
+        for (int i = 0; i <height; i++)
         {
             if (gamepieceData.allGamepieces[column, i] == null
                 && tileData.allTiles[column, i].tileType != TileType.Obstacle)
@@ -483,7 +477,7 @@ public class Board : MonoBehaviour
             {
                 newMatches.Remove(bomb.GetComponent<Gamepiece>());
             }
-            yield return StartCoroutine(CollapseSomePlaces(newMatches));
+            yield return StartCoroutine(CollapseSomePlacesCR(newMatches));
         }
         piece.pieceState = PieceState.CanMove;
         yield return null; ;

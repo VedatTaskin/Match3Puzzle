@@ -61,7 +61,7 @@ public class RowBomb : Bombs
         if (matches.Count != 0 || matches != null)
         {
             board.gamepieceData.ClearGamepieces(matches);
-            StartCoroutine(board.CollapseSomePlaces(matches));
+            StartCoroutine(board.CollapseSomePlacesCR(matches));
         }
         return true;
     }
@@ -70,13 +70,12 @@ public class RowBomb : Bombs
     // we don't want to trigger it recursively
     public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
-        Debug.Log("cağrıldı" + this.name);
+        HideMySelf();
+
         int rightDirection = xIndex;
         int leftDirection = xIndex;
 
-        HideMySelf();
-
-        //Clearin objects in right and left direction synchronously
+        //Clearing objects in right and left direction synchronously
         for (int i = 0; i < board.width; i++)
         {
             if (rightDirection < board.width)
@@ -120,15 +119,22 @@ public class RowBomb : Bombs
 
     List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)
     {
-        List<Gamepiece> normalMatches = board.gamepieceData.FindMatchesAt(other.xIndex, other.yIndex);
+        List<Gamepiece> matches = board.gamepieceData.FindMatchesAt(other.xIndex, other.yIndex);
+        GameObject newBomb = null;
 
         // if number of matches greater than 4 we create bomb
-        if (normalMatches.Count >= 4)
+        if (matches.Count >= 4)
         {
             Vector2 swapDirection = new Vector2(other.xIndex - bomb.xIndex, other.yIndex - bomb.yIndex);
-            board.DropBomb(other.xIndex, other.yIndex, swapDirection, normalMatches);
+            newBomb= board.DropBomb(other.xIndex, other.yIndex, swapDirection, matches);
         }
-        return normalMatches;
+
+        if (newBomb != null)
+        {
+            matches.Remove(newBomb.GetComponent<Gamepiece>());
+        }
+
+        return matches;
     }
 
     void HideMySelf()

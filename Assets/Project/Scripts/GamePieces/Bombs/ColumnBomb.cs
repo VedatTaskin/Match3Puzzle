@@ -70,7 +70,7 @@ public class ColumnBomb : Bombs
         if (matches.Count != 0 || matches != null)
         {
             board.gamepieceData.ClearGamepieces(matches);
-            StartCoroutine(board.CollapseSomePlaces(matches));
+            StartCoroutine(board.CollapseSomePlacesCR(matches));
 
         }
         return true;
@@ -79,27 +79,31 @@ public class ColumnBomb : Bombs
     private List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> matches = board.gamepieceData.FindMatchesAt(other.xIndex, other.yIndex);
-
+        GameObject newBomb=null;
         // if number of matches greater than 4 we create bomb
         if (matches.Count >= 4)
         {
             Vector2 swapDirection = new Vector2(other.xIndex - bomb.xIndex, other.yIndex - bomb.yIndex);
-            board.DropBomb(other.xIndex, other.yIndex, swapDirection, matches);
+            newBomb= board.DropBomb(other.xIndex, other.yIndex, swapDirection, matches);
         }
 
-        return matches;
+        if (newBomb != null)
+        {
+            matches.Remove(newBomb.GetComponent<Gamepiece>());
+        }
+
+        return matches;        
     }
     public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
-        Debug.Log("cağrıldı" + this.name);
-        List<Gamepiece> matches = new List<Gamepiece>();
 
+        HideMySelf();
+        List<Gamepiece> matches = new List<Gamepiece>();
         int upDirection = yIndex;
         int downDirection = yIndex;
 
-        HideMySelf();
 
-        //Clearing objects in ıp and down direction synchronously
+        //Clearing objects up and down direction synchronously
         //objelerin silinme işlemi bittikten sonra collapse çağrılıyor
         for (int i = 0; i < board.height; i++)
         {
