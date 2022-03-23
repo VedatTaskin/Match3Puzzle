@@ -377,7 +377,7 @@ public class Board : MonoBehaviour
 
     }
 
-    public IEnumerator CollapseSomePlacesCR(List<Gamepiece> matches)
+    public void CollapseSomePlaces(List<Gamepiece> matches)
     {
         List<int> columns = new List<int>();
 
@@ -393,7 +393,6 @@ public class Board : MonoBehaviour
         {
             CollapseAtAColumn(column);
         }
-        yield return null;
     }
 
     //we return which gamepieces are collapsing
@@ -407,7 +406,7 @@ public class Board : MonoBehaviour
         Collapse(column);
     }
 
-    private List<Gamepiece> Collapse( int column, int row=0)
+    private void Collapse( int column, int row=0)
     {
         var allGamepieces = gamepieceData.allGamepieces;
 
@@ -440,7 +439,6 @@ public class Board : MonoBehaviour
             }
         }
         StartCoroutine(FillColumn(column));
-        return movingPieces;
     }
 
     IEnumerator FillColumn(int column)
@@ -477,7 +475,7 @@ public class Board : MonoBehaviour
             //{
             //    newMatches.Remove(bomb.GetComponent<Gamepiece>());
             //}
-            yield return StartCoroutine(CollapseSomePlacesCR(newMatches));
+            CollapseSomePlaces(newMatches);
         }
         piece.pieceState = PieceState.CanMove;
         yield return null; ;

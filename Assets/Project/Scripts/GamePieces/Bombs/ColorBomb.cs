@@ -79,7 +79,7 @@ public class ColorBomb :Bombs, ISelfDestroy
         if (matches.Count != 0 || matches != null)
         {
             board.gamepieceData.ClearGamepieces(matches);
-            StartCoroutine(board.CollapseSomePlacesCR(matches));
+            board.CollapseSomePlaces(matches);
             return true;
         }
         else
@@ -106,7 +106,7 @@ public class ColorBomb :Bombs, ISelfDestroy
         if (matches.Count != 0 || matches != null)
         {
             board.gamepieceData.ClearGamepieces(matches);
-            StartCoroutine(board.CollapseSomePlacesCR(matches));
+            board.CollapseSomePlaces(matches);
             return true;
         }
         else

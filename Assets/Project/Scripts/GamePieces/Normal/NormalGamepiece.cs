@@ -50,7 +50,7 @@ public class NormalGamepiece : Gamepiece,IGamepieceRule
             }
 
             // silinmiş olan gamepiecelerin yerine üssten yenisi düşecek
-            StartCoroutine(board.CollapseSomePlacesCR(allMatches));
+            board.CollapseSomePlaces(allMatches);
             return true;
         }
         return false;

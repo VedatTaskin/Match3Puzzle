@@ -61,7 +61,7 @@ public class RowBomb : Bombs
         if (matches.Count != 0 || matches != null)
         {
             board.gamepieceData.ClearGamepieces(matches);
-            StartCoroutine(board.CollapseSomePlacesCR(matches));
+            board.CollapseSomePlaces(matches);
         }
         return true;
     }
