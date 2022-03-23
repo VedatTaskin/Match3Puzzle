@@ -49,47 +49,21 @@ public class RowBomb : Bombs
     private bool RowVsRow(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
     {
         List<Gamepiece> matches = new List<Gamepiece>();
-        return anyMatches;
+        return false;
     }
 
-    private bool RowVsNormal(Gamepiece bomb, Board board, Gamepiece otherGamepiece)
+    private bool RowVsNormal(Gamepiece bomb, Board board, Gamepiece other)
     {
-        List<Gamepiece> matches = new List<Gamepiece>();
-        matches.Add(this);
+        StartCoroutine(SelfDestroy(board));
 
-        for (int i = 0; i < board.width; i++)
-        {
-            var piece = board.gamepieceData.allGamepieces[i, yIndex];
-
-            if (!matches.Contains(piece) && piece != null && piece.gamepieceType != GamepieceType.Collectible)
-            {
-                if (piece.gamepieceType == GamepieceType.Bomb)
-                {
-                    //var effectedGamepieces = piece.GetComponent<ISelfDestroy>().SelfDestroy(board,this).ToList();
-                    //if (effectedGamepieces != null)
-                    //{
-                    //    matches = matches.Union(effectedGamepieces).ToList();
-                    //}
-                }
-                else
-                {
-                    matches.Add(piece);
-                }
-            }
-        }
-
-        // check if other Normal gamepiece makes a match3
-        matches = matches.Union(CheckNormalMatches(bomb, board, otherGamepiece)).ToList();
-
+        var matches = CheckNormalMatches(bomb, board, other);
 
         if (matches.Count != 0 || matches != null)
         {
-            return true;
+            board.gamepieceData.ClearGamepieces(matches);
+            StartCoroutine(board.CollapseSomePlaces(matches));
         }
-        else
-        {
-            return false;
-        }
+        return true;
     }
 
     public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)

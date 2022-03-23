@@ -78,6 +78,8 @@ public class ColorBomb :Bombs, ISelfDestroy
 
         if (matches.Count != 0 || matches != null)
         {
+            board.gamepieceData.ClearGamepieces(matches);
+            StartCoroutine(board.CollapseSomePlaces(matches));
             return true;
         }
         else
@@ -103,6 +105,8 @@ public class ColorBomb :Bombs, ISelfDestroy
         }
         if (matches.Count != 0 || matches != null)
         {
+            board.gamepieceData.ClearGamepieces(matches);
+            StartCoroutine(board.CollapseSomePlaces(matches));
             return true;
         }
         else
@@ -115,21 +119,21 @@ public class ColorBomb :Bombs, ISelfDestroy
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        return anyMatches;
+        return false;
     }
 
     public bool ColorVsColumn(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        return anyMatches;
+        return false;
     }
 
     public bool ColorVsAdjacent(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
-        return anyMatches;
+        return false;
     }
 
     public override IEnumerator SelfDestroy(Board board, Gamepiece otherGamepiece = null)
@@ -138,4 +142,6 @@ public class ColorBomb :Bombs, ISelfDestroy
         Debug.Log("Color bomb Self Destroying do nothing");
         yield return null;
     }
+
+
 }
