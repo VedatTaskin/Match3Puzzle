@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class ColumnBomb : Bombs
 {
-
     public override BombType bombType => BombType.ColumnBomb;
     public override bool PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
     {
@@ -47,21 +46,24 @@ public class ColumnBomb : Bombs
 
         return anyMatches;
     }
-    public bool ColumnVsColumn(Gamepiece bomb, Board board, Gamepiece other)
+
+    private bool ColumnVsColumn(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
         return false;
 
     }
-    public bool ColumnVsRow(Gamepiece bomb, Board board, Gamepiece other)
+
+    private bool ColumnVsRow(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> bombedPieces = new List<Gamepiece>();
 
         return false;
 
     }
-    public bool ColumnVsNormal(Gamepiece bomb, Board board, Gamepiece other)
+
+    private bool ColumnVsNormal(Gamepiece bomb, Board board, Gamepiece other)
     {
         StartCoroutine(SelfDestroy(board));
 
@@ -94,73 +96,77 @@ public class ColumnBomb : Bombs
     }
     public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
+        List<Gamepiece> matches = new List<Gamepiece>();
+        HideAndClearMyself();
 
-        HideMySelf();
-        //List<Gamepiece> matches = new List<Gamepiece>();
-        //int upDirection = yIndex;
-        //int downDirection = yIndex;
+        int upDirection = yIndex;
+        int downDirection = yIndex;
 
+        //Clearing objects up and down direction synchronously
+        //objelerin silinme işlemi bittikten sonra collapse çağrılıyor
+        for (int i = 0; i < board.height; i++)
+        {
+            Gamepiece hidedPiece;
+            if (upDirection < board.height)
+            {
+                hidedPiece= HideThisGamepiece(upDirection);
+                if (!matches.Contains(hidedPiece) )
+                {
+                    matches.Add(hidedPiece);
+                }
+                upDirection++;
+            }
 
-        ////Clearing objects up and down direction synchronously
-        ////objelerin silinme işlemi bittikten sonra collapse çağrılıyor
-        //for (int i = 0; i < board.height; i++)
-        //{
-        //    Gamepiece deletedPiece;
-            
-        //    if (upDirection < board.height)
-        //    {
-        //        deletedPiece= ClearThisGamepiece(upDirection,otherGamepiece);
-        //        if (!matches.Contains(deletedPiece) )
-        //        {
-        //            matches.Add(deletedPiece);
-        //        }
-        //        upDirection++;
-        //    }
-
-        //    if (downDirection >= 0)
-        //    {
-        //        deletedPiece= ClearThisGamepiece(downDirection,otherGamepiece);
-        //        if (!matches.Contains(deletedPiece) )
-        //        {
-        //            matches.Add(deletedPiece);
-        //        }
-        //        downDirection--;
-        //    }
-
-        //    yield return new WaitForSeconds(0.1f);
-        //}
-
-        //board.CollapseAtAColumn(xIndex);
+            if (downDirection >= 0)
+            {
+                hidedPiece= HideThisGamepiece(downDirection);
+                if (!matches.Contains(hidedPiece) )
+                {
+                    matches.Add(hidedPiece);
+                }
+                downDirection--;
+            }
+            yield return new WaitForSeconds(0.05f);
+        }
+        
+        // we applied special clearing routine, we didn't use ClearAt method
+        // so we trigger the collapse at the end of our column clearing process
+        board.CollapseAtAPoint(xIndex, yIndex);
         yield return null;
     }
-    Gamepiece ClearThisGamepiece(int row, Gamepiece otherGamepiece)
+    Gamepiece HideThisGamepiece(int row)
     {
-
         var tempPiece = board.gamepieceData.allGamepieces[xIndex, row];
 
         if (tempPiece != null)
         {
-            if ( tempPiece.pieceState == PieceState.CanMove)
+            if (tempPiece.gamepieceType == GamepieceType.Bomb )
             {
-                if (tempPiece.gamepieceType == GamepieceType.Bomb )
-                {
-                    StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
-                }
-                else
-                {                    
-                    board.gamepieceData.ClearGamepieceAt(xIndex, row);
-                    return tempPiece;
-                }
+                StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
+            }
+            else
+            {
+                HideGamepiece(tempPiece);
+                return tempPiece;
             }
         }
         return null;
     }
-    void HideMySelf()
+    void HideGamepiece(Gamepiece gamepiece)
+    {
+        board.gamepieceData.allGamepieces[gamepiece.xIndex, gamepiece.yIndex] = null;
+        board.gamepieceData.BreakTilesAt(gamepiece.xIndex, gamepiece.yIndex);
+        gamepiece.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        Destroy(gamepiece.gameObject, 5f);
+    }
+
+    void HideAndClearMyself()
     {
         board.gamepieceData.allGamepieces[xIndex, yIndex] = null;
         board.gamepieceData.BreakTilesAt(xIndex, yIndex);
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        transform.position = new Vector3(100, 100);
         Destroy(gameObject, 5f);
     }
+    
+    
 }

@@ -71,25 +71,25 @@ public class RowBomb : Bombs
     {
         HideMySelf();
 
-        //int rightDirection = xIndex;
-        //int leftDirection = xIndex;
+        int rightDirection = xIndex;
+        int leftDirection = xIndex;
 
-        ////Clearing objects in right and left direction synchronously
-        //for (int i = 0; i < board.width; i++)
-        //{
-        //    if (rightDirection < board.width)
-        //    {
-        //        ClearThisGamepiece(board, rightDirection,otherGamepiece);
-        //        rightDirection++;
-        //    }
+        //Clearing objects in right and left direction synchronously
+        for (int i = 0; i < board.width; i++)
+        {
+            if (rightDirection < board.width)
+            {
+                ClearThisGamepiece(board, rightDirection,otherGamepiece);
+                rightDirection++;
+            }
 
-        //    if (leftDirection >= 0)
-        //    {
-        //        ClearThisGamepiece(board, leftDirection,otherGamepiece);
-        //        leftDirection--;
-        //    }
-        //    yield return new WaitForSeconds(0.1f);
-        //}
+            if (leftDirection >= 0)
+            {
+                ClearThisGamepiece(board, leftDirection,otherGamepiece);
+                leftDirection--;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
 
         yield return null;
     }

@@ -67,9 +67,7 @@ public static class RuleChoser
             {
                 return rule.PerformRule(clicked, board, target);
             }
-
         }
-
         return false;
     }
 

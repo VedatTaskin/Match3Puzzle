@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UnityEngine.Serialization;
 
 public class Board : MonoBehaviour
 {
@@ -12,8 +13,8 @@ public class Board : MonoBehaviour
     public int borderSize;
 
     [Range(0, 1)]
-    public float swapTime = 0.5f;
-    public float fallTime = 0.2f;
+    [HideInInspector] public float swapTime = 0.4f;
+    [HideInInspector] public float fallTime = 0.3f;
 
     [Header("Gamepieces & Tiles SO")]
     public GamepieceData gamepieceData;
@@ -25,15 +26,15 @@ public class Board : MonoBehaviour
     int offset = 10;
     int firstFill = 0;
 
-    public List<Gamepiece> matchesAfterFall;
-    public List<int> collapsingColumnsAfterClearing;
+    [HideInInspector] public List<Gamepiece> matchesListAfterFall;
+    [HideInInspector] public List<int> collapsingColumnsAfterClearing;
 
     private void Awake()
     {
         waitForFallTime = new WaitForSeconds(fallTime);
         width = tileData.width;
         height = tileData.height;
-        matchesAfterFall = new List<Gamepiece>();
+        matchesListAfterFall = new List<Gamepiece>();
         collapsingColumnsAfterClearing = new List<int>();
     }
 
@@ -385,10 +386,10 @@ public class Board : MonoBehaviour
     //we return which gamepieces are collapsing
     public void CollapseAtAPoint(int x,int y =0)
     {        
-        StartCoroutine(Collapse(x));
+        StartCoroutine(Collapse(x,y));
     }
 
-    private IEnumerator Collapse( int column)
+    private IEnumerator Collapse( int column,int row=0)
     {
         var allGamepieces = gamepieceData.allGamepieces;
 
@@ -402,7 +403,7 @@ public class Board : MonoBehaviour
 
         foreach (var c in collapsingColumnsAfterClearing)
         {
-            for (int i = 0; i < height - 1; i++)
+            for (int i = row; i < height - 1; i++)
             {
                 if (allGamepieces[c, i] == null
                     && tileData.allTiles[c, i].tileType != TileType.Obstacle)
@@ -455,9 +456,9 @@ public class Board : MonoBehaviour
 
             foreach (var item in newMatches)
             {
-                if (!matchesAfterFall.Contains(item))
+                if (!matchesListAfterFall.Contains(item))
                 {
-                    matchesAfterFall.Add(item);
+                    matchesListAfterFall.Add(item);
                 }
             }
 
@@ -465,15 +466,15 @@ public class Board : MonoBehaviour
 
             // Her fixed update zamanında biriken eşleşmeleri birlikte siler,
             // tekrarlayan komutlardaki benzer silmeleri engeller
-            if (matchesAfterFall.Count>0)
+            if (matchesListAfterFall.Count>0)
             {
-                gamepieceData.ClearGamepieces(matchesAfterFall);
+                gamepieceData.ClearGamepieces(matchesListAfterFall);
 
                 //coroutine i başlatan object coroutine bitmeden yok olursa coroutine hiç sona ermiyor gibi
                 //Bu yüzden buradaki değeri ona göre ayarlamak gerekti
                 yield return new WaitForSeconds(0.1f);
             }
-            matchesAfterFall.Clear();
+            matchesListAfterFall.Clear();
 
 
 
