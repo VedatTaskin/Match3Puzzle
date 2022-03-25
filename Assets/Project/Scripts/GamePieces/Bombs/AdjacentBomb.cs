@@ -79,8 +79,6 @@ public class AdjacentBomb : Bombs
         if (matches.Count != 0 || matches != null)
         {
             board.gamepieceData.ClearGamepieces(matches);
-            board.CollapseSomePlaces(matches);
-
         }
         return true;
 
@@ -89,40 +87,40 @@ public class AdjacentBomb : Bombs
     {
         HideMySelf();
 
-        List<Gamepiece> matches = new List<Gamepiece>();
-        matches.Add(this);
+        //List<Gamepiece> matches = new List<Gamepiece>();
+        //matches.Add(this);
 
-        for (int i = xIndex - neighborMultiplier; i <= xIndex + neighborMultiplier; i++)
-        {
-            for (int j = yIndex - neighborMultiplier; j <=yIndex + neighborMultiplier; j++)
-            {
-                if (board.IsWithInBounds(i, j))
-                {
-                    var tempPiece = board.gamepieceData.allGamepieces[i, j];
+        //for (int i = xIndex - neighborMultiplier; i <= xIndex + neighborMultiplier; i++)
+        //{
+        //    for (int j = yIndex - neighborMultiplier; j <=yIndex + neighborMultiplier; j++)
+        //    {
+        //        if (board.IsWithInBounds(i, j))
+        //        {
+        //            var tempPiece = board.gamepieceData.allGamepieces[i, j];
 
-                    if (tempPiece != null)
-                    {
-                        if (!matches.Contains(tempPiece) && tempPiece.gamepieceType != GamepieceType.Collectible)
-                        {
-                            if (tempPiece.gamepieceType == GamepieceType.Bomb)
-                            {
-                                StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
-                            }
-                            else
-                            {
-                                matches.Add(tempPiece);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //            if (tempPiece != null)
+        //            {
+        //                if (!matches.Contains(tempPiece) && tempPiece.gamepieceType != GamepieceType.Collectible)
+        //                {
+        //                    if (tempPiece.gamepieceType == GamepieceType.Bomb)
+        //                    {
+        //                        StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
+        //                    }
+        //                    else
+        //                    {
+        //                        matches.Add(tempPiece);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
-        if (matches.Count !=0)
-        {
-            board.gamepieceData.ClearGamepieces(matches);
-            board.CollapseSomePlaces(matches);
-        }
+        //if (matches.Count !=0)
+        //{
+        //    board.gamepieceData.ClearGamepieces(matches);
+        //    board.CollapseSomePlaces(matches);
+        //}
         yield return null;
     }
     private List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)

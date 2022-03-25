@@ -70,8 +70,6 @@ public class ColumnBomb : Bombs
         if (matches.Count != 0 || matches != null)
         {
             board.gamepieceData.ClearGamepieces(matches);
-            board.CollapseSomePlaces(matches);
-
         }
         return true;
 
@@ -98,41 +96,41 @@ public class ColumnBomb : Bombs
     {
 
         HideMySelf();
-        List<Gamepiece> matches = new List<Gamepiece>();
-        int upDirection = yIndex;
-        int downDirection = yIndex;
+        //List<Gamepiece> matches = new List<Gamepiece>();
+        //int upDirection = yIndex;
+        //int downDirection = yIndex;
 
 
-        //Clearing objects up and down direction synchronously
-        //objelerin silinme işlemi bittikten sonra collapse çağrılıyor
-        for (int i = 0; i < board.height; i++)
-        {
-            Gamepiece deletedPiece;
+        ////Clearing objects up and down direction synchronously
+        ////objelerin silinme işlemi bittikten sonra collapse çağrılıyor
+        //for (int i = 0; i < board.height; i++)
+        //{
+        //    Gamepiece deletedPiece;
             
-            if (upDirection < board.height)
-            {
-                deletedPiece= ClearThisGamepiece(upDirection,otherGamepiece);
-                if (!matches.Contains(deletedPiece) )
-                {
-                    matches.Add(deletedPiece);
-                }
-                upDirection++;
-            }
+        //    if (upDirection < board.height)
+        //    {
+        //        deletedPiece= ClearThisGamepiece(upDirection,otherGamepiece);
+        //        if (!matches.Contains(deletedPiece) )
+        //        {
+        //            matches.Add(deletedPiece);
+        //        }
+        //        upDirection++;
+        //    }
 
-            if (downDirection >= 0)
-            {
-                deletedPiece= ClearThisGamepiece(downDirection,otherGamepiece);
-                if (!matches.Contains(deletedPiece) )
-                {
-                    matches.Add(deletedPiece);
-                }
-                downDirection--;
-            }
+        //    if (downDirection >= 0)
+        //    {
+        //        deletedPiece= ClearThisGamepiece(downDirection,otherGamepiece);
+        //        if (!matches.Contains(deletedPiece) )
+        //        {
+        //            matches.Add(deletedPiece);
+        //        }
+        //        downDirection--;
+        //    }
 
-            yield return new WaitForSeconds(0.1f);
-        }
+        //    yield return new WaitForSeconds(0.1f);
+        //}
 
-        board.CollapseAtAColumn(xIndex);
+        //board.CollapseAtAColumn(xIndex);
         yield return null;
     }
     Gamepiece ClearThisGamepiece(int row, Gamepiece otherGamepiece)

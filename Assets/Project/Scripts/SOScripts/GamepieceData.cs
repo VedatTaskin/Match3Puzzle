@@ -70,7 +70,7 @@ public class GamepieceData : ScriptableObject
         List<Gamepiece> matches = new List<Gamepiece>();
         Gamepiece startPiece = allGamepieces[startX, startY];
 
-        if (startPiece != null )
+        if (startPiece != null && startPiece.isFalling == false)
         {
             matches.Add(startPiece);
         }
@@ -96,15 +96,16 @@ public class GamepieceData : ScriptableObject
 
             Gamepiece nextPiece = allGamepieces[nextX, nextY];
 
-
             if (nextPiece == null)
             {
                 break;
             }
+
             else
             {
                 if (startPiece.normalGamepieceType == nextPiece.normalGamepieceType &&
-                        startPiece.gamepieceType == GamepieceType.Normal && nextPiece.gamepieceType == GamepieceType.Normal)
+                        startPiece.gamepieceType == GamepieceType.Normal && nextPiece.gamepieceType == GamepieceType.Normal &&
+                          nextPiece.isFalling == false)
                 {
                     matches.Add(nextPiece);
                 }
@@ -205,10 +206,13 @@ public class GamepieceData : ScriptableObject
         if (gamepieceToClear != null)
         {
             allGamepieces[x, y] = null;
-            Destroy(gamepieceToClear.gameObject,0.1f);
+            //If we clear a gamepiece we must break tile at this point
+            BreakTilesAt(x, y);
+            board.CollapseAtAPoint(x, y);
+
+            gamepieceToClear.GetComponent<SpriteRenderer>().enabled = false;
+            Destroy(gamepieceToClear.gameObject,0.11f);
         }
-        //If we clear a gamepiece we must break tile at this point
-        BreakTilesAt(x, y);
     }
 
     // we may want to break tiles without clearing gamepiece  
@@ -246,77 +250,6 @@ public class GamepieceData : ScriptableObject
             downMatches = new List<Gamepiece>();
         }
         return (downMatches.Count > 0 || leftMatches.Count > 0);
-    }
-
-    //obsolete Method, will be deleted soon
-    public IEnumerator ClearAndCollapseRoutine(List<Gamepiece> _allMatches)
-    {
-        var matches = _allMatches;
-        bool routineIsFinished = true;
-        int maxIterations = 100;
-        int iterations = 0;
-
-        do
-        {
-            yield return new WaitForSeconds(0.2f);
-            //ClearGamepieces(matches);
-
-            //instantiate bomb here
-            //CheckBombCreation();
-
-            yield return new WaitForSeconds(0.2f);
-            //var movingPieces = CollapseColumn(matches);
-
-            // sanki bu çalışmıyor :(
-            //while (!Utility.GamepiecesAreCollapsed(movingPieces))
-            {
-                yield return null;
-            }
-
-            //check if there are another matches after collapsing column
-            yield return new WaitForSeconds(0.2f);
-
-            var newMatches = new List<Gamepiece>();
-            //foreach (var piece in movingPieces)
-            //{
-            //    newMatches = newMatches.Union(FindMatchesAt(piece.xIndex, piece.yIndex)).ToList();
-            //}
-
-            //if (NewMatchesCanMakeBomb(newMatches))
-            //{
-            //    yield return new WaitForSeconds(0.2f);
-            //} 
-
-            //check if Collectibles are reached to the bottom of the board
-            var collectiblesFound = FindCollectiblesAtRow(0);
-            if (collectiblesFound.Count != 0)
-            {
-                newMatches = newMatches.Union(collectiblesFound).ToList();
-                collectiblesCount -= collectiblesFound.Count;
-            }
-
-            // if there are not any pieces to clear we end up the loop
-            if (newMatches.Count == 0)
-            {
-                routineIsFinished = true;
-            }
-
-            // if there is a gamepiece to clear we restart the loop
-            else
-            {
-                routineIsFinished = false;
-                matches = newMatches;
-            }
-
-            // check point to prevent infinite loop
-            iterations++;
-            if (iterations > maxIterations)
-            {
-                break;
-            }
-
-        } while (!routineIsFinished);
-
     }
 
     //To find collectible in a specific row
@@ -374,8 +307,6 @@ public class GamepieceData : ScriptableObject
     {
         return (Random.Range(0f, 1f) <= chanceForCollectible && collectiblesCount < maxCollectibles);
     }
-
-
 }
 
 [System.Serializable]

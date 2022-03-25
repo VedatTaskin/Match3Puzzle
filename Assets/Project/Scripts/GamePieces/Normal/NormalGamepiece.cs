@@ -49,8 +49,6 @@ public class NormalGamepiece : Gamepiece,IGamepieceRule
                 board.BombCreation(target, clicked, matchesAtTargetGamepiece);
             }
 
-            // silinmiş olan gamepiecelerin yerine üssten yenisi düşecek
-            board.CollapseSomePlaces(allMatches);
             return true;
         }
         return false;

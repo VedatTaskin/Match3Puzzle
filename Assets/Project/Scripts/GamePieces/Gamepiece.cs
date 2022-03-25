@@ -10,6 +10,7 @@ public class Gamepiece : MonoBehaviour
     public int yIndex;
     public float fallTime = 0.3f;
 
+
     public PieceState pieceState = PieceState.CanMove;
         
     public virtual GamepieceType gamepieceType { get; }
@@ -18,7 +19,10 @@ public class Gamepiece : MonoBehaviour
     public virtual BombType bombType { get; }
 
     public Ease easeType;
-    [Space(10)]
+    public bool isFalling = false;
+
+    Sequence fallSequence;
+
     [SerializeField] AnimationCurve animationCurve;
 
     [HideInInspector] public Board board;
@@ -26,6 +30,8 @@ public class Gamepiece : MonoBehaviour
     public void Init( Board _board)
     {
         board = _board;
+        fallSequence = DOTween.Sequence();
+
     }
 
     public void SetCoordinate( int x, int y)
@@ -49,13 +55,22 @@ public class Gamepiece : MonoBehaviour
         }
         else if (movetype == MoveType.Fall)
         {
+            if (isFalling)
+            {
+                fallSequence.Kill();
+                fallSequence =DOTween.Sequence();
+            }
+
+            isFalling = true;
             timeToMove = Mathf.Clamp(timeToMove, 0.25f, 0.6f);
-            transform.DOMove(new Vector3(destX, destY, transform.position.z), timeToMove).SetEase(animationCurve).
+            fallSequence.Append(transform.DOMove(new Vector3(destX, destY, transform.position.z), timeToMove).SetEase(animationCurve).
                 OnComplete(() =>
-                {
+                {                    
                     board.PlaceGamePiece(this, destX, destY);
                     StartCoroutine(board.CheckMatchesAfterFallDown(this));
-                });
+                    isFalling = false;
+                    pieceState = PieceState.CanMove;
+                }));
         }
     }
 }

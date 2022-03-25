@@ -5,8 +5,6 @@ using UnityEngine;
 
 public static class RuleChoser 
 {
-    
-
     public static bool ChooseRule(Gamepiece clicked, Gamepiece target, Board board)
     {
 

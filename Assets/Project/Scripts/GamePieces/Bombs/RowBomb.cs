@@ -61,7 +61,6 @@ public class RowBomb : Bombs
         if (matches.Count != 0 || matches != null)
         {
             board.gamepieceData.ClearGamepieces(matches);
-            board.CollapseSomePlaces(matches);
         }
         return true;
     }
@@ -72,25 +71,25 @@ public class RowBomb : Bombs
     {
         HideMySelf();
 
-        int rightDirection = xIndex;
-        int leftDirection = xIndex;
+        //int rightDirection = xIndex;
+        //int leftDirection = xIndex;
 
-        //Clearing objects in right and left direction synchronously
-        for (int i = 0; i < board.width; i++)
-        {
-            if (rightDirection < board.width)
-            {
-                ClearThisGamepiece(board, rightDirection,otherGamepiece);
-                rightDirection++;
-            }
+        ////Clearing objects in right and left direction synchronously
+        //for (int i = 0; i < board.width; i++)
+        //{
+        //    if (rightDirection < board.width)
+        //    {
+        //        ClearThisGamepiece(board, rightDirection,otherGamepiece);
+        //        rightDirection++;
+        //    }
 
-            if (leftDirection >= 0)
-            {
-                ClearThisGamepiece(board, leftDirection,otherGamepiece);
-                leftDirection--;
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
+        //    if (leftDirection >= 0)
+        //    {
+        //        ClearThisGamepiece(board, leftDirection,otherGamepiece);
+        //        leftDirection--;
+        //    }
+        //    yield return new WaitForSeconds(0.1f);
+        //}
 
         yield return null;
     }
@@ -110,7 +109,6 @@ public class RowBomb : Bombs
                 else
                 {
                     board.gamepieceData.ClearGamepieceAt(column, yIndex);
-                    board.CollapseAtAPoint(tempPiece);
                 }
             }
         }
@@ -142,7 +140,7 @@ public class RowBomb : Bombs
         board.gamepieceData.allGamepieces[xIndex,yIndex] = null;
         board.gamepieceData.BreakTilesAt(xIndex, yIndex);
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        board.CollapseAtAPoint(this);  // boş olan objenin olduğu yerini dolduruyor bu fonksiyon
+        board.CollapseAtAPoint(xIndex);  // boş olan objenin olduğu yerini dolduruyor bu fonksiyon
         transform.position = new Vector3(100, 100);
         Destroy(gameObject, 5f);
     }

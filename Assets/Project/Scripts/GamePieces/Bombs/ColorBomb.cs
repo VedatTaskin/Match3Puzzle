@@ -79,13 +79,10 @@ public class ColorBomb :Bombs, ISelfDestroy
         if (matches.Count != 0 || matches != null)
         {
             board.gamepieceData.ClearGamepieces(matches);
-            board.CollapseSomePlaces(matches);
             return true;
         }
-        else
-        {
-            return false;
-        }
+        
+        return false;
     }
 
     public bool ColorVsColor(Gamepiece bomb, Board board, Gamepiece other)
@@ -106,7 +103,6 @@ public class ColorBomb :Bombs, ISelfDestroy
         if (matches.Count != 0 || matches != null)
         {
             board.gamepieceData.ClearGamepieces(matches);
-            board.CollapseSomePlaces(matches);
             return true;
         }
         else

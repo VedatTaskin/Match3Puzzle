@@ -25,12 +25,18 @@ public class Board : MonoBehaviour
     int offset = 10;
     int firstFill = 0;
 
+    public List<Gamepiece> matchesAfterFall;
+    public List<int> collapsingColumnsAfterClearing;
+
     private void Awake()
     {
         waitForFallTime = new WaitForSeconds(fallTime);
         width = tileData.width;
         height = tileData.height;
+        matchesAfterFall = new List<Gamepiece>();
+        collapsingColumnsAfterClearing = new List<int>();
     }
+
 
     private void Start()
     {
@@ -141,7 +147,7 @@ public class Board : MonoBehaviour
             gamepiece.Init(this);
             gamepiece.SetCoordinate(x, y);
             gamepieceGO.transform.position = new Vector3(x, y + offset, 0);
-            gamepieceGO.GetComponent<Gamepiece>().Move(x, y, fallTime, MoveType.Fall);
+            gamepieceGO.GetComponent<Gamepiece>().Move(x, y, fallTime*2, MoveType.Fall);
             gamepieceGO.transform.parent = transform;
             gamepiece.pieceState = PieceState.CanMove;
         }
@@ -150,6 +156,8 @@ public class Board : MonoBehaviour
             Destroy(gamepieceGO);
         }
     }
+    
+    
 
     private GameObject CreateBomb(GameObject prefab, int x, int y)
     {
@@ -318,16 +326,7 @@ public class Board : MonoBehaviour
                 else
                 {
                     //row bomb
-                    if (swapDirection.x != 0)
-                    {
-                        bombGO = CreateBomb(gamepieceData.rowBomb, x, y);
-                    }
-                    //column bomb
-                    else
-                    {
-                        bombGO = CreateBomb(gamepieceData.columnBomb, x, y);
-                    }
-
+                    bombGO = CreateBomb(swapDirection.x != 0 ? gamepieceData.rowBomb : gamepieceData.columnBomb, x, y);
                 }
 
             }
@@ -335,17 +334,7 @@ public class Board : MonoBehaviour
             else
             {
                 //color bomb
-                if (gamepieces.Count >= 7)
-                {
-                    bombGO = CreateBomb(gamepieceData.colorBomb, x, y);
-                }
-
-                //adjacent bomb
-                else
-                {                    
-                    bombGO = CreateBomb(gamepieceData.adjacentBomb, x, y);
-                }
-
+                bombGO = CreateBomb(gamepieces.Count >= 7 ? gamepieceData.colorBomb : gamepieceData.adjacentBomb, x, y);
             }
         }
         gamepieceData.bomb = bombGO;
@@ -393,100 +382,112 @@ public class Board : MonoBehaviour
 
     }
 
-    public void CollapseSomePlaces(List<Gamepiece> matches)
-    {
-        List<int> columns = new List<int>();
-
-        foreach (var gamepiece in matches)
-        {
-            if (!columns.Contains(gamepiece.xIndex))
-            {
-                columns.Add(gamepiece.xIndex);
-            }
-        }
-
-        foreach (var column in columns)
-        {
-            CollapseAtAColumn(column);
-        }
-    }
-
     //we return which gamepieces are collapsing
-    public void CollapseAtAPoint(Gamepiece piece)
+    public void CollapseAtAPoint(int x,int y =0)
     {        
-        Collapse(piece.xIndex, piece.yIndex);
+        StartCoroutine(Collapse(x));
     }
 
-    public void CollapseAtAColumn(int column)
-    {
-        Collapse(column);
-    }
-
-    private void Collapse( int column, int row=0)
+    private IEnumerator Collapse( int column)
     {
         var allGamepieces = gamepieceData.allGamepieces;
 
-        for (int i = row; i < height - 1; i++)
+        if (!collapsingColumnsAfterClearing.Contains(column))
         {
-            if (allGamepieces[column, i] == null
-                && tileData.allTiles[column, i].tileType != TileType.Obstacle)
-            {
-                //Debug.Log(column + ", " + i +" null");
+            collapsingColumnsAfterClearing.Add(column);
+        }
 
-                for (int j = i + 1; j < height; j++)
+        //ilgili kolonların birikmesini bekliyoruz aynı kolonu iki defa kontrol etmemek için
+        yield return new WaitForSeconds(0.03f);
+
+        foreach (var c in collapsingColumnsAfterClearing)
+        {
+            for (int i = 0; i < height - 1; i++)
+            {
+                if (allGamepieces[c, i] == null
+                    && tileData.allTiles[c, i].tileType != TileType.Obstacle)
                 {
-                    if (allGamepieces[column, j] != null)
+                    //Debug.Log(column + ", " + i +" null");
+
+                    for (int j = i + 1; j < height; j++)
                     {
-                        allGamepieces[column, i] = allGamepieces[column, j];
-                        allGamepieces[column, j] = null;
-                        allGamepieces[column, i].SetCoordinate(column, i);
-                        allGamepieces[column, i].Move(column, i, fallTime * (j - i), MoveType.Fall);
-                        break;
+                        if (allGamepieces[c, j] != null)
+                        {
+                            allGamepieces[c, i] = allGamepieces[c, j];
+                            allGamepieces[c, j] = null;
+                            allGamepieces[c, i].isFalling = true;
+                            allGamepieces[c, i].SetCoordinate(c, i);
+                            allGamepieces[c, i].Move(c, i, fallTime * (j - i), MoveType.Fall);
+                            break;
+                        }
                     }
                 }
             }
         }
-        StartCoroutine(FillColumn(column));
+
     }
 
-    IEnumerator FillColumn(int column)
-    {
-        yield return new WaitForSeconds(0.1f);
+    //IEnumerator FillColumn(int column)
+    //{
+    //    yield return new WaitForSeconds(0.1f);
 
-        for (int i = 0; i <height; i++)
-        {
-            if (gamepieceData.allGamepieces[column, i] == null
-                && tileData.allTiles[column, i].tileType != TileType.Obstacle)
-            {
-                //Debug.Log(column + ", " + i + " null");
-                FillRandomGamepieceAt(column, i);
-            }
-        }
-    }
+    //    for (int i = 0; i <height; i++)
+    //    {
+    //        if (gamepieceData.allGamepieces[column, i] == null
+    //            && tileData.allTiles[column, i].tileType != TileType.Obstacle)
+    //        {
+    //            //Debug.Log(column + ", " + i + " null");
+    //            FillRandomGamepieceAt(column, i);
+    //        }
+    //    }
+    //}
+
 
     public IEnumerator CheckMatchesAfterFallDown(Gamepiece piece)
     {
-        yield return new WaitForSeconds(0.2f);
-        List<Gamepiece> newMatches = new List<Gamepiece>();
-        newMatches = gamepieceData.FindMatchesAt(piece.xIndex,piece.yIndex);
+        yield return new WaitForSeconds(fallTime);
 
+        var newMatches = gamepieceData.FindMatchesAt(piece.xIndex,piece.yIndex);
+
+                                
         if (newMatches.Count != 0)
         {
-            gamepieceData.ClearGamepieces(newMatches);
 
-            ////*******************
-            ////We will instantiate bomb immediately 
-            //var bomb = NewMatchesCanMakeBomb(newMatches);
-            ////*****************
+            foreach (var item in newMatches)
+            {
+                if (!matchesAfterFall.Contains(item))
+                {
+                    matchesAfterFall.Add(item);
+                }
+            }
 
-            //if (bomb !=null)
-            //{
-            //    newMatches.Remove(bomb.GetComponent<Gamepiece>());
-            //}
-            CollapseSomePlaces(newMatches);
-        }
-        piece.pieceState = PieceState.CanMove;
-        yield return null; ;
+            yield return new WaitForFixedUpdate();
+
+            // Her fixed update zamanında biriken eşleşmeleri birlikte siler,
+            // tekrarlayan komutlardaki benzer silmeleri engeller
+            if (matchesAfterFall.Count>0)
+            {
+                gamepieceData.ClearGamepieces(matchesAfterFall);
+
+                //coroutine i başlatan object coroutine bitmeden yok olursa coroutine hiç sona ermiyor gibi
+                //Bu yüzden buradaki değeri ona göre ayarlamak gerekti
+                yield return new WaitForSeconds(0.1f);
+            }
+            matchesAfterFall.Clear();
+
+
+
+            //////*******************
+            //////We will instantiate bomb immediately 
+            ////var bomb = NewMatchesCanMakeBomb(newMatches);
+            //////*****************
+
+            ////if (bomb !=null)
+            ////{
+            ////    newMatches.Remove(bomb.GetComponent<Gamepiece>());
+            ////}
+
+        }        
     }
 
     public void BombCreation(Gamepiece clicked,  Gamepiece target, List<Gamepiece> matches)
@@ -505,6 +506,17 @@ public class Board : MonoBehaviour
             return bomb;
         }
         return null;
+    }
+
+    IEnumerator SignTheGamepieces(List<Gamepiece> gamepieces)
+    {      
+
+        foreach (var gamepiece in gamepieces)
+        {
+            var gampieceColor = gamepiece.GetComponent<SpriteRenderer>().color;
+            gamepiece.GetComponent<SpriteRenderer>().color = new Color(gampieceColor.r, gampieceColor.g, gampieceColor.b, gampieceColor.a * 0.8f); 
+        }
+        yield return new WaitForSeconds(10f);
     }
 }
 
