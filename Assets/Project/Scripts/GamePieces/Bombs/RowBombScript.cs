@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class RowBomb : Bombs
+public class RowBombScript : Bombs
 {
+    public GameObject RowRocketGO;
+    
     public override BombType bombType => BombType.RowBomb;
 
     public override bool PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
@@ -70,26 +72,29 @@ public class RowBomb : Bombs
     public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
         HideMySelf();
+        var position = new Vector3(xIndex, yIndex, -2);
 
-        int rightDirection = xIndex;
-        int leftDirection = xIndex;
+        Instantiate(RowRocketGO, position, Quaternion.identity);
 
-        //Clearing objects in right and left direction synchronously
-        for (int i = 0; i < board.width; i++)
-        {
-            if (rightDirection < board.width)
-            {
-                ClearThisGamepiece(board, rightDirection,otherGamepiece);
-                rightDirection++;
-            }
-
-            if (leftDirection >= 0)
-            {
-                ClearThisGamepiece(board, leftDirection,otherGamepiece);
-                leftDirection--;
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
+        // int rightDirection = xIndex;
+        // int leftDirection = xIndex;
+        //
+        // //Clearing objects in right and left direction synchronously
+        // for (int i = 0; i < board.width; i++)
+        // {
+        //     if (rightDirection < board.width)
+        //     {
+        //         ClearThisGamepiece(board, rightDirection,otherGamepiece);
+        //         rightDirection++;
+        //     }
+        //
+        //     if (leftDirection >= 0)
+        //     {
+        //         ClearThisGamepiece(board, leftDirection,otherGamepiece);
+        //         leftDirection--;
+        //     }
+        //     yield return new WaitForSeconds(0.1f);
+        // }
 
         yield return null;
     }

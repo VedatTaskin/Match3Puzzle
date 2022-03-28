@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 2081567949804697020}
   - component: {fileID: 2081567949804697023}
   - component: {fileID: 2551549172306587265}
-  m_Layer: 0
+  - component: {fileID: -4713543164851243837}
+  m_Layer: 2
   m_Name: ColumnBomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,6 +101,7 @@ MonoBehaviour:
   pieceState: 0
   normalGamepieceType: 9
   easeType: 12
+  isFalling: 0
   animationCurve:
     serializedVersion: 2
     m_Curve:
@@ -126,3 +128,19 @@ MonoBehaviour:
     m_RotationOrder: 4
   board: {fileID: 0}
   anyMatches: 0
+--- !u!58 &-4713543164851243837
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2081567949804697022}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.4

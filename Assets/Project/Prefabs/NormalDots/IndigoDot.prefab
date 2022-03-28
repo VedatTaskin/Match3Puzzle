@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 3283208138097736733}
   - component: {fileID: 3283208138097736734}
   - component: {fileID: -6917538925262212257}
-  m_Layer: 0
+  - component: {fileID: 7467050053144658682}
+  m_Layer: 2
   m_Name: IndigoDot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,8 +98,10 @@ MonoBehaviour:
   xIndex: 0
   yIndex: 0
   fallTime: 0.2
+  pieceState: 0
   normalGamepieceType: 3
   easeType: 12
+  isFalling: 0
   animationCurve:
     serializedVersion: 2
     m_Curve:
@@ -133,3 +136,19 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   board: {fileID: 0}
+--- !u!58 &7467050053144658682
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3283208138097736735}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.35

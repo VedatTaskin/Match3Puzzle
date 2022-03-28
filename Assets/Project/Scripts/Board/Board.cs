@@ -158,8 +158,6 @@ public class Board : MonoBehaviour
         }
     }
     
-    
-
     private GameObject CreateBomb(GameObject prefab, int x, int y)
     {
         if (prefab != null && IsWithInBounds(x, y))
