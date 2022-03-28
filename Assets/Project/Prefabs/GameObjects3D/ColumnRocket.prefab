@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upRocket: {fileID: 470129824922488949}
   downRocket: {fileID: 470129824306138872}
+  timeToMove: 1.4
 --- !u!1 &470129824306138872
 GameObject:
   m_ObjectHideFlags: 0

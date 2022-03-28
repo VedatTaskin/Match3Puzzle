@@ -96,6 +96,7 @@ public class ColumnRocket : Bombs
 
         return matches;        
     }
+    
     public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
         //we lock the tiles that column we are in,
@@ -105,74 +106,11 @@ public class ColumnRocket : Bombs
         }
 
         HideMySelf();
-
         var position = new Vector3(xIndex, yIndex, -2);
         Instantiate(columnRocketGO, position, Quaternion.identity);
-
         yield return null;
 
-
-        //Clearing objects up and down direction synchronously
-        //objelerin silinme işlemi bittikten sonra collapse çağrılıyor
-        // for (int i = 0; i < board.height; i++)
-        // {
-        //     Gamepiece hidedPiece;
-        //     if (upDirection < board.height)
-        //     {
-        //         hidedPiece= HideThisGamepiece(upDirection);
-        //         if (!matches.Contains(hidedPiece) )
-        //         {
-        //             matches.Add(hidedPiece);
-        //         }
-        //         upDirection++;
-        //     }
-        //
-        //     if (downDirection >= 0)
-        //     {
-        //         hidedPiece= HideThisGamepiece(downDirection);
-        //         if (!matches.Contains(hidedPiece) )
-        //         {
-        //             matches.Add(hidedPiece);
-        //         }
-        //         downDirection--;
-        //     }
-
-        //     yield return null;
-        // }
-        
-        // we applied special clearing routine, we didn't use ClearAt method
-        // so we trigger the collapse at the end of our column clearing process
-        //board.CollapseAtAPoint(xIndex, yIndex);
-        yield return null;
     }
-    
-    
-    Gamepiece HideThisGamepiece(int row)
-    {
-        // var tempPiece = board.gamepieceData.allGamepieces[xIndex, row];
-        //
-        // if (tempPiece != null)
-        // {
-        //     if (tempPiece.gamepieceType == GamepieceType.Bomb )
-        //     {
-        //         StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
-        //     }
-        //     else
-        //     {
-        //         HideGamepiece(tempPiece);
-        //         return tempPiece;
-        //     }
-        // }
-        return null;
-    }
-    
-    // void HideGamepiece(Gamepiece gamepiece)
-    // {
-    //     board.gamepieceData.allGamepieces[gamepiece.xIndex, gamepiece.yIndex] = null;
-    //     board.gamepieceData.BreakTilesAt(gamepiece.xIndex, gamepiece.yIndex);
-    //     gamepiece.gameObject.GetComponent<SpriteRenderer>().enabled = false;
-    //     Destroy(gamepiece.gameObject, 5f);
-    // }
 
     void HideMySelf()
     {
