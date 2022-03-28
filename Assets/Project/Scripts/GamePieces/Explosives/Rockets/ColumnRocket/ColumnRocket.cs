@@ -98,17 +98,17 @@ public class ColumnRocket : Bombs
     }
     public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
+        //we lock the tiles that column we are in,
+        for (int i = 0; i < board.height; i++)
+        {
+            board.tileData.allTiles[xIndex, i].isLockedAgainstCollapse = true;
+        }
+
         HideMySelf();
+
         var position = new Vector3(xIndex, yIndex, -2);
         Instantiate(columnRocketGO, position, Quaternion.identity);
 
-        // we lock the tiles that column we are in,
-        // for (int i = 0; i < board.height; i++)
-        // {
-        //     board.tileData.allTiles[xIndex, i].isLocked = true;
-        // }
-
-        
         yield return null;
 
 

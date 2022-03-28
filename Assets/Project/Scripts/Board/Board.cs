@@ -403,6 +403,11 @@ public class Board : MonoBehaviour
         {
             for (int i = row; i < height - 1; i++)
             {
+
+                if (tileData.allTiles[c,i].isLockedAgainstCollapse)
+                {
+                    continue;
+                }
                 if (allGamepieces[c, i] == null
                     && tileData.allTiles[c, i].tileType != TileType.Obstacle)
                 {

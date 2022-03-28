@@ -208,7 +208,12 @@ public class GamepieceData : ScriptableObject
             allGamepieces[x, y] = null;
             //If we clear a gamepiece we must break tile at this point
             BreakTilesAt(x, y);
-            board.CollapseAtAPoint(x, y);
+            
+            // we wont trigger the collapse if tile is locked (if column bomb clear this etc.)
+            if (!board.tileData.allTiles[x,y].isLockedAgainstCollapse)
+            {
+                board.CollapseAtAPoint(x, y);
+            }
 
             gamepieceToClear.GetComponent<SpriteRenderer>().enabled = false;
             Destroy(gamepieceToClear.gameObject,0.11f);

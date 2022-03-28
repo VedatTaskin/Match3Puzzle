@@ -33,16 +33,14 @@ public class ColumnRocketMovingParts : MonoBehaviour
                 {
                     if (tempPiece.gamepieceType == GamepieceType.Bomb)
                     {
-                        //board.tileData.allTiles[xPosition, yPosition].isLocked = true;
                         StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, transform.parent.GetComponent<Gamepiece>()));
                     }
                     else
                     {
                         board.gamepieceData.ClearGamepieceAt(xPosition, yPosition);
-                        //board.tileData.allTiles[xPosition, yPosition].isLocked = true;
-                        lastPosition = yPosition;
                     }
                 }
+                lastPosition = yPosition;
             }
         }
     }
