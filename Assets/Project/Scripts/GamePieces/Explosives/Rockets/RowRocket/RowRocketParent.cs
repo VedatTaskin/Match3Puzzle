@@ -18,7 +18,7 @@ namespace Project.Scripts.Rocket
 
         void TaskFinished()
         {
-            Debug.Log("bombing finished");
+            //Debug.Log("bombing finished");
         }
     }
 }

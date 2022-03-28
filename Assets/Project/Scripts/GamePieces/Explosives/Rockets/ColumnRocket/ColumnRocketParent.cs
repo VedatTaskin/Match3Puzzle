@@ -19,7 +19,8 @@ public class ColumnRocketParent : MonoBehaviour
     
     public void TaskFinished()
     {
-        Debug.Log("bombing finished");
+        //Debug.Log("bombing finished");
+        
         //we lock the tiles that column we are in,
         for (int i = 0; i < board.height; i++)
         {
