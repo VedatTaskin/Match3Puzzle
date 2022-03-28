@@ -11,6 +11,7 @@ public class ColumnRocketParent : MonoBehaviour
     void Start()
     {
         board = GameObject.FindGameObjectWithTag("Board").GetComponent<Board>();
+        Time.timeScale = 0.1f;
 
         upRocket.transform.DOMoveY(20, timeToMove).OnComplete(()=>TaskFinished());
         downRocket.transform.DOMoveY(-20, timeToMove);
