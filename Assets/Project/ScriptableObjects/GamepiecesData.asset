@@ -36,4 +36,8 @@ MonoBehaviour:
       type: 3}
     xCoord: 1
     yCoord: 1
+  - prefab: {fileID: 2081567949804697022, guid: 36c9b9c0794c8854694885e84d28d892,
+      type: 3}
+    xCoord: 6
+    yCoord: 1
   board: {fileID: 0}

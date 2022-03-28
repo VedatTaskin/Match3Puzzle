@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class RowBombScript : Bombs
+public class RowRocket : Bombs
 {
     public GameObject RowRocketGO;
     
@@ -67,59 +67,6 @@ public class RowBombScript : Bombs
         return true;
     }
 
-    //other gamepiece may be a bomb that triggered us
-    // we don't want to trigger it recursively
-    public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
-    {
-        HideMySelf();
-        var position = new Vector3(xIndex, yIndex, -2);
-
-        Instantiate(RowRocketGO, position, Quaternion.identity);
-
-        // int rightDirection = xIndex;
-        // int leftDirection = xIndex;
-        //
-        // //Clearing objects in right and left direction synchronously
-        // for (int i = 0; i < board.width; i++)
-        // {
-        //     if (rightDirection < board.width)
-        //     {
-        //         ClearThisGamepiece(board, rightDirection,otherGamepiece);
-        //         rightDirection++;
-        //     }
-        //
-        //     if (leftDirection >= 0)
-        //     {
-        //         ClearThisGamepiece(board, leftDirection,otherGamepiece);
-        //         leftDirection--;
-        //     }
-        //     yield return new WaitForSeconds(0.1f);
-        // }
-
-        yield return null;
-    }
-
-    void ClearThisGamepiece(Board board, int column, Gamepiece otherGamepiece)
-    {
-        var tempPiece = board.gamepieceData.allGamepieces[column, yIndex];
-
-        if (tempPiece != null)
-        {
-            if (tempPiece.pieceState == PieceState.CanMove)
-            {
-                if (tempPiece.gamepieceType == GamepieceType.Bomb)
-                {
-                    StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
-                }
-                else
-                {
-                    board.gamepieceData.ClearGamepieceAt(column, yIndex);
-                }
-            }
-        }
-
-    }
-
     List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> matches = board.gamepieceData.FindMatchesAt(other.xIndex, other.yIndex);
@@ -138,6 +85,16 @@ public class RowBombScript : Bombs
         }
 
         return matches;
+    }
+    
+    //other gamepiece may be a bomb that triggered us
+    // we don't want to trigger it recursively
+    public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
+    {
+        HideMySelf();
+        var position = new Vector3(xIndex, yIndex, -2);
+        Instantiate(RowRocketGO, position, Quaternion.identity);
+        yield return null;
     }
 
     void HideMySelf()

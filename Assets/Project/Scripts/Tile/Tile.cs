@@ -6,6 +6,7 @@ public class Tile : MonoBehaviour
 {
     public int xIndex;
     public int yIndex;
+    public bool isLocked;
     public virtual TileType tileType { get; set; }
 
     Board board;

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ColumnBomb : Bombs
+public class ColumnRocket : Bombs
 {
+    public GameObject columnRocketGO;
     public override BombType bombType => BombType.ColumnBomb;
     public override bool PerformRule(Gamepiece gamepiece, Board board, Gamepiece otherGamepiece)
     {
@@ -76,6 +77,7 @@ public class ColumnBomb : Bombs
         return true;
 
     }
+    
     private List<Gamepiece> CheckNormalMatches(Gamepiece bomb, Board board, Gamepiece other)
     {
         List<Gamepiece> matches = board.gamepieceData.FindMatchesAt(other.xIndex, other.yIndex);
@@ -96,75 +98,88 @@ public class ColumnBomb : Bombs
     }
     public override IEnumerator SelfDestroy(Board board,Gamepiece otherGamepiece=null)
     {
-        List<Gamepiece> matches = new List<Gamepiece>();
-        HideAndClearMyself();
+        HideMySelf();
+        var position = new Vector3(xIndex, yIndex, -2);
+        Instantiate(columnRocketGO, position, Quaternion.identity);
 
-        int upDirection = yIndex;
-        int downDirection = yIndex;
+        // we lock the tiles that column we are in,
+        // for (int i = 0; i < board.height; i++)
+        // {
+        //     board.tileData.allTiles[xIndex, i].isLocked = true;
+        // }
+
+        
+        yield return null;
+
 
         //Clearing objects up and down direction synchronously
         //objelerin silinme işlemi bittikten sonra collapse çağrılıyor
-        for (int i = 0; i < board.height; i++)
-        {
-            Gamepiece hidedPiece;
-            if (upDirection < board.height)
-            {
-                hidedPiece= HideThisGamepiece(upDirection);
-                if (!matches.Contains(hidedPiece) )
-                {
-                    matches.Add(hidedPiece);
-                }
-                upDirection++;
-            }
+        // for (int i = 0; i < board.height; i++)
+        // {
+        //     Gamepiece hidedPiece;
+        //     if (upDirection < board.height)
+        //     {
+        //         hidedPiece= HideThisGamepiece(upDirection);
+        //         if (!matches.Contains(hidedPiece) )
+        //         {
+        //             matches.Add(hidedPiece);
+        //         }
+        //         upDirection++;
+        //     }
+        //
+        //     if (downDirection >= 0)
+        //     {
+        //         hidedPiece= HideThisGamepiece(downDirection);
+        //         if (!matches.Contains(hidedPiece) )
+        //         {
+        //             matches.Add(hidedPiece);
+        //         }
+        //         downDirection--;
+        //     }
 
-            if (downDirection >= 0)
-            {
-                hidedPiece= HideThisGamepiece(downDirection);
-                if (!matches.Contains(hidedPiece) )
-                {
-                    matches.Add(hidedPiece);
-                }
-                downDirection--;
-            }
-            yield return new WaitForSeconds(0.05f);
-        }
+        //     yield return null;
+        // }
         
         // we applied special clearing routine, we didn't use ClearAt method
         // so we trigger the collapse at the end of our column clearing process
-        board.CollapseAtAPoint(xIndex, yIndex);
+        //board.CollapseAtAPoint(xIndex, yIndex);
         yield return null;
     }
+    
+    
     Gamepiece HideThisGamepiece(int row)
     {
-        var tempPiece = board.gamepieceData.allGamepieces[xIndex, row];
-
-        if (tempPiece != null)
-        {
-            if (tempPiece.gamepieceType == GamepieceType.Bomb )
-            {
-                StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
-            }
-            else
-            {
-                HideGamepiece(tempPiece);
-                return tempPiece;
-            }
-        }
+        // var tempPiece = board.gamepieceData.allGamepieces[xIndex, row];
+        //
+        // if (tempPiece != null)
+        // {
+        //     if (tempPiece.gamepieceType == GamepieceType.Bomb )
+        //     {
+        //         StartCoroutine(tempPiece.GetComponent<ISelfDestroy>().SelfDestroy(board, this));
+        //     }
+        //     else
+        //     {
+        //         HideGamepiece(tempPiece);
+        //         return tempPiece;
+        //     }
+        // }
         return null;
     }
-    void HideGamepiece(Gamepiece gamepiece)
-    {
-        board.gamepieceData.allGamepieces[gamepiece.xIndex, gamepiece.yIndex] = null;
-        board.gamepieceData.BreakTilesAt(gamepiece.xIndex, gamepiece.yIndex);
-        gamepiece.gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        Destroy(gamepiece.gameObject, 5f);
-    }
+    
+    // void HideGamepiece(Gamepiece gamepiece)
+    // {
+    //     board.gamepieceData.allGamepieces[gamepiece.xIndex, gamepiece.yIndex] = null;
+    //     board.gamepieceData.BreakTilesAt(gamepiece.xIndex, gamepiece.yIndex);
+    //     gamepiece.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+    //     Destroy(gamepiece.gameObject, 5f);
+    // }
 
-    void HideAndClearMyself()
+    void HideMySelf()
     {
         board.gamepieceData.allGamepieces[xIndex, yIndex] = null;
         board.gamepieceData.BreakTilesAt(xIndex, yIndex);
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        transform.position = new Vector3(100, 100);
         Destroy(gameObject, 5f);
     }
     

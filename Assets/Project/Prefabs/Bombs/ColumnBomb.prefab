@@ -128,6 +128,8 @@ MonoBehaviour:
     m_RotationOrder: 4
   board: {fileID: 0}
   anyMatches: 0
+  columnRocketGO: {fileID: 470129824067680134, guid: eaf1da67db710a04cbadc4e47062b168,
+    type: 3}
 --- !u!58 &-4713543164851243837
 CircleCollider2D:
   m_ObjectHideFlags: 0
